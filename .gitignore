@@ -1,0 +1,9 @@
+# read-only prior-art clones; the harness reads sulu/skeleton from .references/sulu-skeleton
+/.references/
+
+# JetBrains (PhpStorm, IntelliJ, ...)
+/.idea/
+
+# PoC build tooling and compiled endpoint
+/.tools/
+/output/
