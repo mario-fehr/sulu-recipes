@@ -24,9 +24,7 @@ The recipes assume the package set of `sulu/skeleton`. A bare `composer require 
 
 You need PHP 8.5, Composer, Docker and `jq`.
 
-The test harness reads `sulu/skeleton` from `.references/sulu-skeleton`, so clone it there before running the harness (CI does the same):
-
-    git clone https://github.com/sulu/skeleton.git .references/sulu-skeleton
+The harness clones the upstream repositories it reads into its work directory on first use and reads them only at the pinned commits.
 
 - `tests/setup-tools.sh` installs the recipe checker.
 - `tests/build-endpoint.sh` lints the recipes and compiles the endpoint into `output/`.
