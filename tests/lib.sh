@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 REFS="$REPO_ROOT/.references"
 TOOLS="$REPO_ROOT/.tools"
 OUTPUT="$REPO_ROOT/output"
-WORK="${POC_WORKDIR:-${TMPDIR:-/tmp}/sulu-recipes-poc}"
+WORK="${SULU_RECIPES_WORKDIR:-${TMPDIR:-/tmp}/sulu-recipes}"
 ENDPOINT_PORT=8000
 ENDPOINT_URL="http://127.0.0.1:$ENDPOINT_PORT/index.json"
 OUR_REPO="github.com/mario-fehr/sulu-recipes"
@@ -13,7 +13,6 @@ OUR_REPO="github.com/mario-fehr/sulu-recipes"
 SULU_SKELETON_SHA=336f7ba
 SYMFONY_RECIPES_SHA=64dab29
 SYMFONY_RECIPES_CONTRIB_SHA=38fc43a
-RECIPES_CHECKER_SHA=7696783
 SULU_SKELETON_VERSION=3.0.10
 
 RECIPE_VENDORS="symfony scheb friendsofsymfony symfony-cmf doctrine sulu"
@@ -25,7 +24,7 @@ WORK="$(cd "$WORK" && pwd -P)"
 
 # Same as sulu/skeleton's own CI: translation cache warmup exceeds the default 128M.
 mkdir -p "$WORK/php-ini"
-echo "memory_limit=-1" > "$WORK/php-ini/zz-sulu-recipes-poc.ini"
+echo "memory_limit=-1" > "$WORK/php-ini/zz-sulu-recipes.ini"
 export PHP_INI_SCAN_DIR=":$WORK/php-ini"
 
 skel_show() { git -C "$REFS/sulu-skeleton" show "$SULU_SKELETON_SHA:$1"; }

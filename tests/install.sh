@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 source "$(dirname "$0")/lib.sh"
 P="$WORK/project-a"
-DB_CONTAINER=sulu-poc-mysql
+DB_CONTAINER=sulu-recipes-mysql
 : >"$WORK/checks.log"
 
-"$REPO_ROOT/tests/poc/build-endpoint.sh"
+"$REPO_ROOT/tests/build-endpoint.sh"
 start_endpoint
 
 rm -rf "$P"
@@ -55,7 +55,7 @@ docker rm -f "$DB_CONTAINER" >/dev/null 2>&1 || true
 docker run -d --name "$DB_CONTAINER" -e MYSQL_ROOT_PASSWORD=ChangeMe -p 3307:3306 mysql:8.4 >/dev/null
 # mysqladmin ping already answers the init-phase server, which has no TCP; wait for a TCP connection.
 for _ in $(seq 1 90); do docker exec "$DB_CONTAINER" mysql -h 127.0.0.1 -uroot -pChangeMe -e "SELECT 1" >/dev/null 2>&1 && break; sleep 1; done
-echo 'DATABASE_URL="mysql://root:ChangeMe@127.0.0.1:3307/su_poc?serverVersion=8.4&charset=utf8mb4"' > .env.local
+echo 'DATABASE_URL="mysql://root:ChangeMe@127.0.0.1:3307/sulu_recipes?serverVersion=8.4&charset=utf8mb4"' > .env.local
 check "sulu:build dev" bin/adminconsole sulu:build dev --no-interaction
 
 php -S 127.0.0.1:8001 -t public config/router.php >"$WORK/web.log" 2>&1 &

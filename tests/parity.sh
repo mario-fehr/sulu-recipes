@@ -2,13 +2,13 @@
 source "$(dirname "$0")/lib.sh"
 SKELETON_DIR="${SKELETON_DIR:-$HOME/Projects/private/sulu-flex-skeleton}"
 A="$WORK/flex"; B="$WORK/upstream"
-REPORT="$WORK/milestone-b-report.txt"
-DIFFS="$WORK/milestone-b-diffs"
+REPORT="$WORK/parity-report.txt"
+DIFFS="$WORK/parity-diffs"
 mkdir -p "$DIFFS"
 find "$DIFFS" -name '*.diff' -delete
-EXPECTED="$REPO_ROOT/tests/poc/milestone-b-expected.txt"
+EXPECTED="$REPO_ROOT/tests/parity-expected.txt"
 
-"$REPO_ROOT/tests/poc/build-endpoint.sh"
+"$REPO_ROOT/tests/build-endpoint.sh"
 start_endpoint
 
 # A scratch COMPOSER_HOME allows the plain-http local endpoint without touching either compared composer.json.
@@ -17,8 +17,8 @@ export COMPOSER_HOME="$WORK/composer-home"
 mkdir -p "$COMPOSER_HOME"
 echo '{"config":{"secure-http":false}}' > "$COMPOSER_HOME/config.json"
 
-if [ "${POC_REUSE:-0}" = 1 ] && [ -d "$A/vendor" ] && [ -d "$B/vendor" ]; then
-  echo "POC_REUSE=1: reusing $A and $B"
+if [ "${SULU_RECIPES_REUSE:-0}" = 1 ] && [ -d "$A/vendor" ] && [ -d "$B/vendor" ]; then
+  echo "SULU_RECIPES_REUSE=1: reusing $A and $B"
 else
   rm -rf "$A" "$B"
   composer create-project mario-fehr/sulu-flex-skeleton:dev-main "$A" --no-interaction \
@@ -62,8 +62,8 @@ blocks() {
 } | sort > "$REPORT"
 
 if diff <(sed 's/  #reason: .*$//' "$EXPECTED" | grep -v '^$' | sort) "$REPORT"; then
-  echo "PASS milestone B: only documented differences"
+  echo "PASS parity: only documented differences"
 else
-  echo "FAIL milestone B: '<' expected but missing, '>' unexplained (full report: $REPORT)"
+  echo "FAIL parity: '<' expected but missing, '>' unexplained (full report: $REPORT)"
   exit 1
 fi

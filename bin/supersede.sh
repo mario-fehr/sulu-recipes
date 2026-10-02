@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-source "$(dirname "$0")/lib.sh"
+source "$(dirname "$0")/../tests/lib.sh"
 repo="$1"; official="$2"; target="$REPO_ROOT/$3"
 case "$repo" in
   recipes) src="$REFS/symfony-recipes"; sha="$SYMFONY_RECIPES_SHA" ;;
