@@ -9,11 +9,17 @@ WORK="${SULU_RECIPES_WORKDIR:-${TMPDIR:-/tmp}/sulu-recipes}"
 ENDPOINT_PORT=8000
 ENDPOINT_URL="http://127.0.0.1:$ENDPOINT_PORT/index.json"
 OUR_REPO="github.com/mario-fehr/sulu-recipes"
+SULU_LINE="${SULU_LINE:-3.0}"
+LINE_FILE="$REPO_ROOT/tests/lines/$SULU_LINE.env"
+if [ ! -f "$LINE_FILE" ]; then
+  echo "no pin file $LINE_FILE for SULU_LINE=$SULU_LINE" >&2
+  exit 1
+fi
+# shellcheck source=/dev/null
+source "$LINE_FILE"
 
-SULU_SKELETON_SHA=336f7ba
 SYMFONY_RECIPES_SHA=64dab29
 SYMFONY_RECIPES_CONTRIB_SHA=38fc43a
-SULU_SKELETON_VERSION=3.0.10
 
 RECIPE_VENDORS="symfony scheb friendsofsymfony symfony-cmf doctrine sulu"
 SUPERSEDED="symfony/framework-bundle symfony/security-bundle symfony/console symfony/twig-bundle scheb/2fa-bundle friendsofsymfony/jsrouting-bundle doctrine/doctrine-bundle"
