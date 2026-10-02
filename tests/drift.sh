@@ -19,7 +19,7 @@ list() {
 
 shipped="$(for v in $RECIPE_VENDORS; do
   for d in "$REPO_ROOT/$v"/*/*/; do
-    [ -d "$d" ] && (cd "$d" && find . -type f ! -name manifest.json ! -name post-install.txt | sed 's|^\./||')
+    if [ -d "$d" ]; then (cd "$d" && find . -type f ! -name manifest.json ! -name post-install.txt | sed 's|^\./||'); fi
   done
 done | sort -u)"
 
@@ -32,7 +32,7 @@ for line in $lines; do
   latest="$(git -C "$SKEL" tag -l "$line.*" | grep -E "^${line//./\\.}\.[0-9]+$" | sort -V | tail -n 1 || true)"
   [ -n "$latest" ] || continue
   newer "$pin_version" "$latest" || continue
-  changed="$(git -C "$SKEL" diff --name-only "$pin_sha" "$latest")"
+  changed="$(git -C "$SKEL" diff --name-only --no-renames "$pin_sha" "$latest")"
   ours="$(grep -Fx -f <(echo "$shipped") <<<"$changed" || true)"
   others="$(grep -Fxv -f <(echo "$shipped") <<<"$changed" || true)"
   {
@@ -87,13 +87,14 @@ for pkg in $SUPERSEDED $SULU_YAML_PACKAGES; do
     echo
     echo "Commits:"
     echo
+    # Bare #N would link to this repository's issues, and @user would ping on every body edit.
     while read -r sha subject; do
       echo "- [\`$sha\`](https://github.com/$gh_repo/commit/$sha) $subject"
-    done <<<"$commits"
+    done < <(sed -E -e "s,(^|[^[:alnum:]_/])#([0-9]+),\1$gh_repo#\2,g" -e "s,(^|[[:space:](])@([[:alnum:]][[:alnum:]-]*),\1\`@\2\`,g" <<<"$commits")
     echo
     echo "Changed paths:"
     echo
-    list "$(git -C "$UP/$repo" diff --name-only "$pin" origin/main -- "$pkg/")"
+    list "$(git -C "$UP/$repo" diff --name-only --no-renames "$pin" origin/main -- "$pkg/")"
   } > "$OUT/official-${pkg//\//-}.md"
 done
 
