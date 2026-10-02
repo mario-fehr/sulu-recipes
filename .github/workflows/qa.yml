@@ -58,7 +58,7 @@ defaults:
 jobs:
     lint:
         name: lint
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         timeout-minutes: 30
         steps:
             -
@@ -84,7 +84,7 @@ jobs:
 
     lines:
         name: lines
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         timeout-minutes: 5
         outputs:
             lines: ${{ steps.lines.outputs.lines }}
@@ -114,7 +114,7 @@ jobs:
     install:
         name: install (${{ matrix.line }})
         needs: [lint, lines]
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         timeout-minutes: 30
         strategy:
             fail-fast: false
@@ -162,7 +162,7 @@ jobs:
     parity:
         name: parity (${{ matrix.line }})
         needs: [lint, lines]
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         timeout-minutes: 30
         strategy:
             fail-fast: false
