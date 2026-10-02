@@ -1,0 +1,26 @@
+{
+    "manifests": {
+        "friendsofsymfony/jsrouting-bundle": {
+            "manifest": {
+                "bundles": {
+                    "FOS\\JsRoutingBundle\\FOSJsRoutingBundle": [
+                        "all"
+                    ]
+                },
+                "copy-from-recipe": {
+                    "config/": "%CONFIG_DIR%/"
+                }
+            },
+            "files": {
+                "config/routes/fos_js_routing.yaml": {
+                    "contents": [
+                        "# Fos JS Routing is currently only needed for admin and not for website",
+                        ""
+                    ],
+                    "executable": false
+                }
+            },
+            "ref": "4a25dfa5d3d637cfd0311be6ed456364ee5bc897"
+        }
+    }
+}

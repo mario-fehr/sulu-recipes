@@ -1,0 +1,66 @@
+{
+    "aliases": {
+        "2fa": "scheb/2fa-bundle",
+        "cli": "symfony/console",
+        "console": "symfony/console",
+        "framework-bundle": "symfony/framework-bundle",
+        "frameworkbundle": "symfony/framework-bundle",
+        "security": "symfony/security-bundle",
+        "security-bundle": "symfony/security-bundle",
+        "securitybundle": "symfony/security-bundle",
+        "twig-bundle": "symfony/twig-bundle",
+        "twigbundle": "symfony/twig-bundle"
+    },
+    "recipes": {
+        "doctrine/doctrine-bundle": [
+            "2.13"
+        ],
+        "friendsofsymfony/jsrouting-bundle": [
+            "3.6"
+        ],
+        "scheb/2fa-bundle": [
+            "6.10"
+        ],
+        "sulu/sulu": [
+            "3.0"
+        ],
+        "symfony-cmf/routing-bundle": [
+            "3.0"
+        ],
+        "symfony/console": [
+            "6.4"
+        ],
+        "symfony/framework-bundle": [
+            "6.4"
+        ],
+        "symfony/security-bundle": [
+            "6.4"
+        ],
+        "symfony/twig-bundle": [
+            "6.4"
+        ]
+    },
+    "recipe-conflicts": {
+        "doctrine/doctrine-bundle": {
+            "2.13": {
+                "symfony/framework-bundle": "<7.1"
+            }
+        },
+        "symfony/twig-bundle": {
+            "6.4": {
+                "symfony/framework-bundle": "<5.3"
+            }
+        }
+    },
+    "versions": [],
+    "branch": "main",
+    "is_contrib": false,
+    "_links": {
+        "repository": "github.com/mario-fehr/sulu-recipes",
+        "origin_template": "{package}:{version}@github.com/mario-fehr/sulu-recipes:main",
+        "recipe_template": "https://raw.githubusercontent.com/mario-fehr/sulu-recipes/flex/main/{package_dotted}.{version}.json",
+        "recipe_template_relative": "{package_dotted}.{version}.json",
+        "archived_recipes_template": "https://raw.githubusercontent.com/mario-fehr/sulu-recipes/flex/main/archived/{package_dotted}/{ref}.json",
+        "archived_recipes_template_relative": "archived/{package_dotted}/{ref}.json"
+    }
+}

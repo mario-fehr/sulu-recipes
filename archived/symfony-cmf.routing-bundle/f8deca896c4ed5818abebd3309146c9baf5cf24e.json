@@ -1,0 +1,16 @@
+{
+    "manifests": {
+        "symfony-cmf/routing-bundle": {
+            "manifest": {
+                "bundles": {
+                    "Symfony\\Cmf\\Bundle\\RoutingBundle\\CmfRoutingBundle": [
+                        "all",
+                        "website"
+                    ]
+                }
+            },
+            "files": [],
+            "ref": "f8deca896c4ed5818abebd3309146c9baf5cf24e"
+        }
+    }
+}
