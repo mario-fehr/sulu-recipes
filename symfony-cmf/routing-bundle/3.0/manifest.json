@@ -1,0 +1,5 @@
+{
+    "bundles": {
+        "Symfony\\Cmf\\Bundle\\RoutingBundle\\CmfRoutingBundle": ["all", "website"]
+    }
+}
