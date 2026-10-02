@@ -23,7 +23,7 @@ git -C "$REPO_ROOT" archive "$TREE" -- "${vendors[@]}" | tar -x -C "$BUILD"
 cd "$BUILD"
 $CHECKER lint:manifests
 # sulu/skeleton ships an intentionally empty sulu_article.yaml; lint:yaml rejects empty root keys.
-find . -type f \( -name '*.yaml' -o -name '*.yml' \) | sed 's|^\./||' | grep -vx 'sulu/sulu/3.0/config/packages/sulu_article.yaml' | $CHECKER lint:yaml
+find . -type f \( -name '*.yaml' -o -name '*.yml' \) | sed 's|^\./||' | grep -vx 'sulu/sulu/[^/]*/config/packages/sulu_article.yaml' | $CHECKER lint:yaml
 $CHECKER lint:packages
 recipe_dirs=(*/*/*)
 git -C "$REPO_ROOT" ls-tree "$TREE" "${recipe_dirs[@]}" |$CHECKER generate:flex-endpoint mario-fehr/sulu-recipes main flex/main "$OUTPUT"

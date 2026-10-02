@@ -7,7 +7,7 @@ REPORT="$WORK/parity-report.txt"
 DIFFS="$WORK/parity-diffs"
 mkdir -p "$DIFFS"
 find "$DIFFS" -name '*.diff' -delete
-EXPECTED="$REPO_ROOT/tests/parity-expected.txt"
+EXPECTED="$REPO_ROOT/tests/lines/$SULU_LINE.parity-expected.txt"
 : >"$WORK/checks.log"
 
 "$REPO_ROOT/tests/build-endpoint.sh"
@@ -24,13 +24,17 @@ if [ "${SULU_RECIPES_REUSE:-0}" = 1 ] && [ -d "$A/vendor" ] && [ -d "$B/vendor" 
     echo "recipes changed since install; rerun without SULU_RECIPES_REUSE" >&2
     exit 1
   fi
+  if [ "$(cat "$WORK/parity.line" 2>/dev/null)" != "$SULU_LINE" ]; then
+    echo "projects were installed for another line; rerun without SULU_RECIPES_REUSE" >&2
+    exit 1
+  fi
   echo "SULU_RECIPES_REUSE=1: reusing $A and $B"
 else
   if [ -e "$SKELETON_DIR/composer.lock" ] || [ -e "$SKELETON_DIR/symfony.lock" ]; then
     echo "$SKELETON_DIR has been installed into; use a clean checkout" >&2
     exit 1
   fi
-  rm -rf "$A" "$B" "$SRC" "$WORK/endpoint.tree"
+  rm -rf "$A" "$B" "$SRC" "$WORK/endpoint.tree" "$WORK/parity.line"
   mkdir -p "$SRC"
   # Flex keeps the skeleton's own endpoints after SYMFONY_ENDPOINT, so a recipe removed here would still come from flex/main.
   (cd "$SKELETON_DIR" && tar -cf - --exclude=.git --exclude=vendor .) | tar -xf - -C "$SRC"
@@ -40,6 +44,7 @@ else
   composer create-project "sulu/skeleton:$SULU_SKELETON_VERSION" "$B" --no-interaction
   (cd "$A" && update_build_guarded)
   cp "$WORK/endpoint.tree.current" "$WORK/endpoint.tree"
+  echo "$SULU_LINE" > "$WORK/parity.line"
 fi
 
 va="$(cd "$A" && composer show sulu/sulu --format=json | jq -r '.versions[0]')"
