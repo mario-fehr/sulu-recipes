@@ -1,0 +1,50 @@
+name: Drift
+
+on:
+    schedule:
+        -
+            cron: '0 6 * * 1'
+    workflow_dispatch:
+
+permissions:
+    contents: read
+    issues: write
+
+concurrency:
+    group: drift
+
+defaults:
+    run:
+        shell: bash
+
+jobs:
+    drift:
+        name: drift
+        runs-on: ubuntu-latest
+        steps:
+            -
+                run: echo "SULU_RECIPES_WORKDIR=$RUNNER_TEMP/sulu-recipes" >> "$GITHUB_ENV"
+            -
+                uses: actions/checkout@v7
+                with:
+                    persist-credentials: false
+            -
+                run: tests/drift.sh
+            -
+                env:
+                    GH_TOKEN: ${{ github.token }}
+                    GH_REPO: ${{ github.repository }}
+                run: |
+                    gh label create drift --force --color d93f0b --description "An upstream source moved past its pin"
+                    open="$(gh issue list --state open --label drift --limit 200 --json number,title)"
+                    for f in "$SULU_RECIPES_WORKDIR"/drift/*.md; do
+                        [ -e "$f" ] || continue
+                        title="$(head -n 1 "$f")"
+                        tail -n +3 "$f" > "$RUNNER_TEMP/body.md"
+                        number="$(jq -r --arg t "$title" 'map(select(.title == $t)) | first | .number // empty' <<<"$open")"
+                        if [ -n "$number" ]; then
+                            gh issue edit "$number" --body-file "$RUNNER_TEMP/body.md"
+                        else
+                            gh issue create --title "$title" --label drift --body-file "$RUNNER_TEMP/body.md"
+                        fi
+                    done
