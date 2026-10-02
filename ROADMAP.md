@@ -4,9 +4,8 @@ Deferred ideas without a spec, one line each. Research starts when an item is pi
 
 ## Hosting and publishing
 
-- Publish this repo on GitHub, bootstrap an orphan `flex/main` branch, and add `flex-update.yml` (with `concurrency`) calling `symfony/recipes`' official reusable workflow.
-- Publish `sulu-flex-skeleton` on GitHub and Packagist, with tags per release line.
 - Move both repos to the `sulu` GitHub org once proven; manifest content stays org-agnostic for that.
+- Register `sulu-flex-skeleton` on Packagist under its final name once the org move is done.
 
 ## Release lines and versions
 
@@ -18,22 +17,15 @@ Deferred ideas without a spec, one line each. Research starts when an item is pi
 
 ## CI and drift
 
-- `qa.yml`: lint plus a real `composer require sulu/sulu` against a locally served endpoint.
+- Add a PHP 8.2 to 8.4 and MySQL 5.7/8.0 matrix to `qa.yml`, like the CI of `sulu/skeleton`.
+- Port the style checks from `callable-qa.yml` in `symfony/recipes`: indentation, `.yaml` extension, no `.gitkeep`, no symlinks.
 - Detect drift between the recipes and `sulu/skeleton` or the superseded official recipes; issue only, no auto-fix.
 - `pr-preview` and `flex-cleanup`, only once there are outside contributors; block symlinks and use `persist-credentials: false`.
 - A functional smoke test in CI (boot, build, admin login).
+- Harness polish left over from the milestone C review: check port 8000 before the endpoint build, notice a `php -S` that exits, a clear message when no install recorded `endpoint.tree`, labels in `checks.log`, a guard for an empty `require-dev` list, and a top-level-only `vendor` exclude in `parity.sh`.
 
 ## Content
 
 - Ship Sulu's stricter tooling configs (`phpstan.dist.neon` at level `max` with its `tests/phpstan/*` stubs, Sulu's `.php-cs-fixer.dist.php`).
 - Decide how `sulu-flex-skeleton` tracks `sulu/skeleton`'s `composer.json` `conflict` key over time.
 - Trimming `sulu-flex-skeleton`'s `require` to non-transitive packages is not planned: the created project's `src/Kernel.php` uses `symfony/config` and FOS HttpCache directly, and Composer's convention is to require what your own code uses.
-
-## Known harness gaps
-
-Found in the PoC's final review; they matter once the harnesses run unattended in CI. Remove each line when the CI spec covers it.
-
-- `milestone-b.sh` discards `debug:config`/`debug:router` exit codes; a crash on both sides compares as equal.
-- `POC_REUSE=1` rebuilds the endpoint but compares projects installed from the previous one.
-- `milestone-a.sh` does not probe port 8001 and waits a fixed `sleep 2` for `php -S`.
-- `build-endpoint.sh` compiles from a copy of the working tree, so git-ignored stray files under a recipe directory would be published locally but not by CI.
