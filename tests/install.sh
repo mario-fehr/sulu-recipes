@@ -3,9 +3,10 @@ source "$(dirname "$0")/lib.sh"
 P="$WORK/project-a"
 DB_CONTAINER=sulu-recipes-mysql
 : >"$WORK/checks.log"
+require_free_port 8001
 
 "$REPO_ROOT/tests/build-endpoint.sh"
-start_endpoint
+serve endpoint "$ENDPOINT_PORT" "$OUTPUT"
 
 rm -rf "$P"
 composer create-project 'symfony/skeleton:7.4.*' "$P" --no-install --no-interaction
@@ -19,10 +20,11 @@ done
 composer install --no-interaction
 # Same package set as sulu/skeleton: Sulu's config assumes it (2FA in security.yaml, web profiler routes).
 pkgs() { skel_show composer.json | jq -r --arg k "$1" '.[$k] | to_entries[] | select(.key | test("^(php|ext-.*)$") | not) | "\(.key):\(.value)"'; }
-OLD_IFS="$IFS"; IFS=$'\n'; set -f
-composer require $(pkgs require) --no-update --no-interaction
-composer require --dev $(pkgs require-dev) --no-update --no-interaction
-IFS="$OLD_IFS"; set +f
+require=(); require_dev=()
+while IFS= read -r p; do require+=("$p"); done < <(pkgs require)
+while IFS= read -r p; do require_dev+=("$p"); done < <(pkgs require-dev)
+composer require "${require[@]}" --no-update --no-interaction
+composer require --dev "${require_dev[@]}" --no-update --no-interaction
 composer update --no-interaction
 # sulu/skeleton commits public/build/admin; recipes cannot ship it sensibly, Sulu downloads the matching build instead.
 update_build_guarded
@@ -51,6 +53,7 @@ done
 check "admin route 2fa_login_check_admin" bin/adminconsole debug:router 2fa_login_check_admin
 check "no website route fos_js_routing_js" sh -c 'bin/websiteconsole debug:router >/dev/null && ! bin/websiteconsole debug:router fos_js_routing_js'
 
+CONTAINERS="$DB_CONTAINER"
 docker rm -f "$DB_CONTAINER" >/dev/null 2>&1 || true
 docker run -d --name "$DB_CONTAINER" -e MYSQL_ROOT_PASSWORD=ChangeMe -p 3307:3306 mysql:8.4 >/dev/null
 # mysqladmin ping already answers the init-phase server, which has no TCP; wait for a TCP connection.
@@ -58,10 +61,7 @@ for _ in $(seq 1 90); do docker exec "$DB_CONTAINER" mysql -h 127.0.0.1 -uroot -
 echo 'DATABASE_URL="mysql://root:ChangeMe@127.0.0.1:3307/sulu_recipes?serverVersion=8.4&charset=utf8mb4"' > .env.local
 check "sulu:build dev" bin/adminconsole sulu:build dev --no-interaction
 
-php -S 127.0.0.1:8001 -t public config/router.php >"$WORK/web.log" 2>&1 &
-WEB_PID=$!
-trap 'kill "$ENDPOINT_PID" "$WEB_PID" 2>/dev/null || true; docker rm -f "$DB_CONTAINER" >/dev/null 2>&1 || true' EXIT
-sleep 2
+serve web 8001 public config/router.php
 check "/admin answers 200 with the Sulu admin" sh -c 'curl -fsL http://127.0.0.1:8001/admin | grep -qi sulu'
 check "homepage renders the content block" sh -c 'curl -fs http://127.0.0.1:8001/ | grep -q "<h1>"'
 

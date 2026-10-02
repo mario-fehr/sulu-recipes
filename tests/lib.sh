@@ -29,19 +29,38 @@ export PHP_INI_SCAN_DIR=":$WORK/php-ini"
 
 skel_show() { git -C "$REFS/sulu-skeleton" show "$SULU_SKELETON_SHA:$1"; }
 
-start_endpoint() {
-  if curl -fs "$ENDPOINT_URL" >/dev/null 2>&1; then
-    echo "port $ENDPOINT_PORT already serves an endpoint; stop it first" >&2
+SERVER_PIDS=""
+CONTAINERS=""
+cleanup() {
+  for pid in $SERVER_PIDS; do kill "$pid" 2>/dev/null || true; done
+  for c in $CONTAINERS; do docker rm -f "$c" >/dev/null 2>&1 || true; done
+}
+trap cleanup EXIT
+
+require_free_port() {
+  local rc=0
+  curl -s -m 2 -o /dev/null "http://127.0.0.1:$1/" || rc=$?
+  # 7: connection refused. Any other result, including a timeout or a non-HTTP reply, means something holds the port.
+  if [ "$rc" != 7 ]; then
+    echo "port $1 already answers; stop that server first" >&2
     return 1
   fi
-  php -S "127.0.0.1:$ENDPOINT_PORT" -t "$OUTPUT" >"$WORK/endpoint.log" 2>&1 &
-  ENDPOINT_PID=$!
-  trap 'kill "$ENDPOINT_PID" 2>/dev/null || true' EXIT
-  for _ in 1 2 3 4 5 6 7 8 9 10; do
-    curl -fs "$ENDPOINT_URL" >/dev/null 2>&1 && return 0
+}
+
+serve() {
+  local name="$1" port="$2" docroot="$3" router="${4:-}"
+  require_free_port "$port"
+  if [ -n "$router" ]; then
+    php -S "127.0.0.1:$port" -t "$docroot" "$router" >"$WORK/$name.log" 2>&1 &
+  else
+    php -S "127.0.0.1:$port" -t "$docroot" >"$WORK/$name.log" 2>&1 &
+  fi
+  SERVER_PIDS="$SERVER_PIDS $!"
+  for _ in $(seq 1 60); do
+    curl -s -m 10 -o /dev/null "http://127.0.0.1:$port/" && return 0
     sleep 0.5
   done
-  echo "endpoint did not start, see $WORK/endpoint.log" >&2
+  echo "$name server did not start, see $WORK/$name.log" >&2
   return 1
 }
 

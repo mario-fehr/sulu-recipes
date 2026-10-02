@@ -2,14 +2,16 @@
 source "$(dirname "$0")/lib.sh"
 SKELETON_DIR="${SKELETON_DIR:-$HOME/Projects/private/sulu-flex-skeleton}"
 A="$WORK/flex"; B="$WORK/upstream"
+SRC="$WORK/skeleton-src"
 REPORT="$WORK/parity-report.txt"
 DIFFS="$WORK/parity-diffs"
 mkdir -p "$DIFFS"
 find "$DIFFS" -name '*.diff' -delete
 EXPECTED="$REPO_ROOT/tests/parity-expected.txt"
+: >"$WORK/checks.log"
 
 "$REPO_ROOT/tests/build-endpoint.sh"
-start_endpoint
+serve endpoint "$ENDPOINT_PORT" "$OUTPUT"
 
 # A scratch COMPOSER_HOME allows the plain-http local endpoint without touching either compared composer.json.
 export COMPOSER_CACHE_DIR="${COMPOSER_CACHE_DIR:-$(composer config --global cache-dir)}"
@@ -18,13 +20,26 @@ mkdir -p "$COMPOSER_HOME"
 echo '{"config":{"secure-http":false}}' > "$COMPOSER_HOME/config.json"
 
 if [ "${SULU_RECIPES_REUSE:-0}" = 1 ] && [ -d "$A/vendor" ] && [ -d "$B/vendor" ]; then
+  if ! cmp -s "$WORK/endpoint.tree" "$WORK/endpoint.tree.current"; then
+    echo "recipes changed since install; rerun without SULU_RECIPES_REUSE" >&2
+    exit 1
+  fi
   echo "SULU_RECIPES_REUSE=1: reusing $A and $B"
 else
-  rm -rf "$A" "$B"
-  composer create-project mario-fehr/sulu-flex-skeleton:dev-main "$A" --no-interaction \
-    --repository="{\"type\":\"path\",\"url\":\"$SKELETON_DIR\",\"options\":{\"symlink\":false}}"
+  if [ -e "$SKELETON_DIR/composer.lock" ] || [ -e "$SKELETON_DIR/symfony.lock" ]; then
+    echo "$SKELETON_DIR has been installed into; use a clean checkout" >&2
+    exit 1
+  fi
+  rm -rf "$A" "$B" "$SRC" "$WORK/endpoint.tree"
+  mkdir -p "$SRC"
+  # Flex keeps the skeleton's own endpoints after SYMFONY_ENDPOINT, so a recipe removed here would still come from flex/main.
+  (cd "$SKELETON_DIR" && tar -cf - --exclude=.git --exclude=vendor .) | tar -xf - -C "$SRC"
+  composer config --working-dir="$SRC" extra.symfony.endpoint --json "[\"$ENDPOINT_URL\", \"flex://defaults\"]"
+  composer create-project 'mario-fehr/sulu-flex-skeleton:*@dev' "$A" --no-interaction \
+    --repository="{\"type\":\"path\",\"url\":\"$SRC\",\"options\":{\"symlink\":false}}"
   composer create-project "sulu/skeleton:$SULU_SKELETON_VERSION" "$B" --no-interaction
   (cd "$A" && update_build_guarded)
+  cp "$WORK/endpoint.tree.current" "$WORK/endpoint.tree"
 fi
 
 va="$(cd "$A" && composer show sulu/sulu --format=json | jq -r '.versions[0]')"
@@ -38,11 +53,19 @@ blocks() {
        inb { if ($0 != "") buf = buf $0 "|"; next }
        NF { print "_outside\t" $0 }' "$1" | norm | sort
 }
+compare() {
+  local label="$1" out="$2" failed=0
+  shift 2
+  (cd "$A" && "$@") >"$WORK/side-flex.out" 2>>"$WORK/checks.log" || { echo "$label failed on flex"; failed=1; }
+  (cd "$B" && "$@") >"$WORK/side-upstream.out" 2>>"$WORK/checks.log" || { echo "$label failed on upstream"; failed=1; }
+  [ "$failed" = 0 ] || return 0
+  diff <(norm <"$WORK/side-flex.out") <(norm <"$WORK/side-upstream.out") >"$out" || echo "$label differs"
+}
 
 {
   { diff -rq "$A" "$B" -x .git -x vendor -x var -x composer.lock 2>&1 || true; } | sed -e "s|$A|<flex>|g" -e "s|$B|<upstream>|g"
   for f in .env .env.dev .env.test .env.stage .gitignore; do
-    [ -f "$A/$f" ] && [ -f "$B/$f" ] || continue
+    { [ -f "$A/$f" ] && [ -f "$B/$f" ]; } || continue
     diff <(blocks "$A/$f") <(blocks "$B/$f") | grep '^[<>]' | sed "s|^|$f |" || true
   done
   diff <(grep -oE '[A-Za-z\\]+::class => \[[^]]*\]' "$A/config/bundles.php" | sort) \
@@ -50,13 +73,9 @@ blocks() {
   for console in adminconsole websiteconsole; do
     for env in dev prod stage; do
       for ext in framework doctrine flysystem fos_rest jms_serializer monolog stof_doctrine_extensions; do
-        diff <(cd "$A" && APP_ENV=$env bin/$console debug:config "$ext" 2>/dev/null | norm) \
-             <(cd "$B" && APP_ENV=$env bin/$console debug:config "$ext" 2>/dev/null | norm) >"$DIFFS/$console-$env-$ext.diff" \
-          || echo "debug:config $console $env $ext differs"
+        compare "debug:config $console $env $ext" "$DIFFS/$console-$env-$ext.diff" env APP_ENV="$env" "bin/$console" debug:config "$ext"
       done
-      diff <(cd "$A" && APP_ENV=$env bin/$console debug:router 2>/dev/null | norm) \
-           <(cd "$B" && APP_ENV=$env bin/$console debug:router 2>/dev/null | norm) >"$DIFFS/$console-$env-router.diff" \
-        || echo "debug:router $console $env differs"
+      compare "debug:router $console $env" "$DIFFS/$console-$env-router.diff" env APP_ENV="$env" "bin/$console" debug:router
     done
   done
 } | sort > "$REPORT"
