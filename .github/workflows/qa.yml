@@ -132,15 +132,6 @@ jobs:
                     ref: ${{ env.RECIPES_REF }}
                     persist-credentials: false
             -
-                run: grep . "tests/lines/$SULU_LINE.env" >> "$GITHUB_ENV"
-            -
-                uses: actions/checkout@v7
-                with:
-                    repository: sulu/skeleton
-                    ref: ${{ env.SULU_SKELETON_SHA }}
-                    path: .references/sulu-skeleton
-                    persist-credentials: false
-            -
                 uses: shivammathur/setup-php@v2
                 with:
                     php-version: '8.5'
@@ -183,7 +174,7 @@ jobs:
             -
                 run: |
                     echo "SULU_RECIPES_WORKDIR=$RUNNER_TEMP/sulu-recipes" >> "$GITHUB_ENV"
-                    echo "SKELETON_DIR=$GITHUB_WORKSPACE/.references/sulu-flex-skeleton" >> "$GITHUB_ENV"
+                    echo "SKELETON_DIR=$GITHUB_WORKSPACE/.ci/sulu-flex-skeleton" >> "$GITHUB_ENV"
             -
                 uses: actions/checkout@v7
                 with:
@@ -201,16 +192,9 @@ jobs:
             -
                 uses: actions/checkout@v7
                 with:
-                    repository: sulu/skeleton
-                    ref: ${{ env.SULU_SKELETON_SHA }}
-                    path: .references/sulu-skeleton
-                    persist-credentials: false
-            -
-                uses: actions/checkout@v7
-                with:
                     repository: ${{ env.SKELETON_REPOSITORY }}
                     ref: ${{ env.SKELETON_REF }}
-                    path: .references/sulu-flex-skeleton
+                    path: .ci/sulu-flex-skeleton
                     persist-credentials: false
             -
                 uses: shivammathur/setup-php@v2

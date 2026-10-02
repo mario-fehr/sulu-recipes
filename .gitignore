@@ -1,4 +1,4 @@
-# read-only prior-art clones; the harness reads sulu/skeleton from .references/sulu-skeleton
+# read-only prior-art clones for agents; the harness does not read them
 /.references/
 
 # JetBrains (PhpStorm, IntelliJ, ...)
