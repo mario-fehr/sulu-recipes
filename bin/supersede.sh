@@ -2,10 +2,13 @@
 source "$(dirname "$0")/../tests/lib.sh"
 repo="$1"; official="$2"; target="$REPO_ROOT/$3"
 case "$repo" in
-  recipes) src="$REFS/symfony-recipes"; sha="$SYMFONY_RECIPES_SHA" ;;
-  contrib) src="$REFS/symfony-recipes-contrib"; sha="$SYMFONY_RECIPES_CONTRIB_SHA" ;;
+  recipes) name=symfony-recipes; gh_repo=symfony/recipes; sha="$SYMFONY_RECIPES_SHA" ;;
+  contrib) name=symfony-recipes-contrib; gh_repo=symfony/recipes-contrib; sha="$SYMFONY_RECIPES_CONTRIB_SHA" ;;
   *) echo "repo must be recipes or contrib" >&2; exit 1 ;;
 esac
+upstream "$name" "$gh_repo" "$sha"
+upstream sulu-skeleton sulu/skeleton "$SULU_SKELETON_SHA"
+src="$WORK/clones/$name"
 
 rm -rf "$target"
 mkdir -p "$target"

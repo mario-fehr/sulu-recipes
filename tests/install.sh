@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 source "$(dirname "$0")/lib.sh"
+upstream sulu-skeleton sulu/skeleton "$SULU_SKELETON_SHA"
 P="$WORK/project-a"
 DB_CONTAINER=sulu-recipes-mysql
 : >"$WORK/checks.log"
