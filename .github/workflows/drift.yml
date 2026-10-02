@@ -1,6 +1,7 @@
 name: Drift
 
 on:
+    # GitHub disables scheduled workflows after 60 days without repository activity; re-enable it in the Actions tab.
     schedule:
         -
             cron: '0 6 * * 1'
@@ -45,6 +46,12 @@ jobs:
                         if [ -n "$number" ]; then
                             gh issue edit "$number" --body-file "$RUNNER_TEMP/body.md"
                         else
-                            gh issue create --title "$title" --label drift --body-file "$RUNNER_TEMP/body.md"
+                            url="$(gh issue create --title "$title" --label drift --body-file "$RUNNER_TEMP/body.md")"
+                            number="${url##*/}"
                         fi
+                        # A newer tag of a line supersedes the issue for the older tag.
+                        [[ "$title" =~ ^(sulu/skeleton [0-9]+\.[0-9]+: ) ]] || continue
+                        jq -r --arg p "${BASH_REMATCH[1]}" --arg t "$title" '.[] | select((.title | startswith($p)) and .title != $t) | .number' <<<"$open" | while read -r old; do
+                            gh issue close "$old" --comment "Superseded by #$number."
+                        done
                     done
