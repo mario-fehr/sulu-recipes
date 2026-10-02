@@ -10,7 +10,7 @@ Deferred ideas without a spec, one line each. Research starts when an item is pi
 ## Release lines and versions
 
 - The 2.6 line.
-- The 3.1 line (upstream already has a `3.1` branch).
+- The 3.1 line, once `sulu/skeleton` tags `3.1.0`; the harness already takes one pin file per line in `tests/lines/`.
 - Test Symfony 6.4 and 8.x against the `6.4/` recipe folders.
 - Check the recipes against every `3.0.x` tag, not only the pinned one.
 - Prove a bare `composer require sulu/sulu` (without `sulu/skeleton`'s package set): Sulu's config needs `scheb/2fa-bundle` and the web profiler routes, so the recipe would need to guard or drop those parts. Also: `/public/uploads` is then not gitignored, since only `sulu-flex-skeleton`'s hand-written `.gitignore` covers it.
@@ -19,7 +19,7 @@ Deferred ideas without a spec, one line each. Research starts when an item is pi
 
 - Add a PHP 8.2 to 8.4 and MySQL 5.7/8.0 matrix to `qa.yml`, like the CI of `sulu/skeleton`.
 - Port the style checks from `callable-qa.yml` in `symfony/recipes`: indentation, `.yaml` extension, no `.gitkeep`, no symlinks.
-- Once others contribute or the repos move to the `sulu` org, require the `lint`, `install` and `parity` checks on `main` (and `qa / lint`, `qa / install`, `qa / parity` on the skeleton's `3.0`) through branch protection; today only force pushes and deletion are blocked, and `flex-update.yml` publishes only after `qa.yml` passes.
+- Once others contribute or the repos move to the `sulu` org, require the `lint`, `install (3.0)` and `parity (3.0)` checks on `main` (and `qa / lint`, `qa / install (3.0)`, `qa / parity (3.0)` on the skeleton's `3.0`) through branch protection; today only force pushes and deletion are blocked, and `flex-update.yml` publishes only after `qa.yml` passes.
 - Detect drift between the recipes and `sulu/skeleton` or the superseded official recipes; issue only, no auto-fix.
 - `pr-preview` and `flex-cleanup`, only once there are outside contributors; block symlinks and use `persist-credentials: false`.
 - A functional smoke test in CI (boot, build, admin login).

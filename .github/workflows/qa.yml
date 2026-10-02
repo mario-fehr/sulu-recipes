@@ -18,6 +18,9 @@ on:
             skeleton-ref:
                 type: string
                 required: false
+            line:
+                type: string
+                required: false
     workflow_call:
         inputs:
             recipes-repository:
@@ -32,6 +35,9 @@ on:
             skeleton-ref:
                 type: string
                 required: false
+            line:
+                type: string
+                required: false
 
 permissions:
     contents: read
@@ -44,8 +50,6 @@ env:
     RECIPES_REPOSITORY: ${{ inputs.recipes-repository || github.repository }}
     RECIPES_REF: ${{ inputs.recipes-ref || github.sha }}
     SKELETON_REPOSITORY: ${{ inputs.skeleton-repository || format('{0}/sulu-flex-skeleton', github.repository_owner) }}
-    SKELETON_REF: ${{ inputs.skeleton-ref || '3.0' }}
-    SULU_SKELETON_SHA: 336f7ba88a2a4b10d63ec942981c38f9c2a94f04
 
 defaults:
     run:
@@ -78,11 +82,46 @@ jobs:
             -
                 run: tests/build-endpoint.sh
 
+    lines:
+        name: lines
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        outputs:
+            lines: ${{ steps.lines.outputs.lines }}
+        steps:
+            -
+                uses: actions/checkout@v7
+                with:
+                    repository: ${{ env.RECIPES_REPOSITORY }}
+                    ref: ${{ env.RECIPES_REF }}
+                    persist-credentials: false
+            -
+                id: lines
+                env:
+                    LINE: ${{ inputs.line }}
+                run: |
+                    if [ -n "$LINE" ]; then
+                        if [ ! -f "tests/lines/$LINE.env" ]; then
+                            echo "no pin file tests/lines/$LINE.env for line $LINE" >&2
+                            exit 1
+                        fi
+                        lines=$(jq -cn --arg l "$LINE" '[$l]')
+                    else
+                        lines=$(find tests/lines -maxdepth 1 -name '*.env' | sort | jq -R -s -c 'split("\n") | map(select(. != "") | sub("^.*/"; "") | rtrimstr(".env"))')
+                    fi
+                    echo "lines=$lines" >> "$GITHUB_OUTPUT"
+
     install:
-        name: install
-        needs: lint
+        name: install (${{ matrix.line }})
+        needs: [lint, lines]
         runs-on: ubuntu-latest
         timeout-minutes: 30
+        strategy:
+            fail-fast: false
+            matrix:
+                line: ${{ fromJSON(needs.lines.outputs.lines) }}
+        env:
+            SULU_LINE: ${{ matrix.line }}
         steps:
             -
                 run: echo "SULU_RECIPES_WORKDIR=$RUNNER_TEMP/sulu-recipes" >> "$GITHUB_ENV"
@@ -92,6 +131,8 @@ jobs:
                     repository: ${{ env.RECIPES_REPOSITORY }}
                     ref: ${{ env.RECIPES_REF }}
                     persist-credentials: false
+            -
+                run: grep . "tests/lines/$SULU_LINE.env" >> "$GITHUB_ENV"
             -
                 uses: actions/checkout@v7
                 with:
@@ -113,8 +154,8 @@ jobs:
                 uses: actions/cache@v6
                 with:
                     path: ${{ steps.composer-cache.outputs.dir }}
-                    key: composer-${{ runner.os }}-${{ github.job }}-${{ github.run_id }}
-                    restore-keys: composer-${{ runner.os }}-${{ github.job }}-
+                    key: composer-${{ runner.os }}-${{ github.job }}-${{ matrix.line }}-${{ github.run_id }}
+                    restore-keys: composer-${{ runner.os }}-${{ github.job }}-${{ matrix.line }}-
             -
                 run: tests/setup-tools.sh
             -
@@ -123,15 +164,21 @@ jobs:
                 if: failure() || cancelled()
                 uses: actions/upload-artifact@v7
                 with:
-                    name: install-logs
+                    name: install-logs-${{ matrix.line }}
                     path: ${{ env.SULU_RECIPES_WORKDIR }}/*.log
                     retention-days: 7
 
     parity:
-        name: parity
-        needs: lint
+        name: parity (${{ matrix.line }})
+        needs: [lint, lines]
         runs-on: ubuntu-latest
         timeout-minutes: 30
+        strategy:
+            fail-fast: false
+            matrix:
+                line: ${{ fromJSON(needs.lines.outputs.lines) }}
+        env:
+            SULU_LINE: ${{ matrix.line }}
         steps:
             -
                 run: |
@@ -143,6 +190,14 @@ jobs:
                     repository: ${{ env.RECIPES_REPOSITORY }}
                     ref: ${{ env.RECIPES_REF }}
                     persist-credentials: false
+            -
+                env:
+                    INPUT_SKELETON_REF: ${{ inputs.skeleton-ref }}
+                run: |
+                    grep . "tests/lines/$SULU_LINE.env" >> "$GITHUB_ENV"
+                    # shellcheck source=/dev/null
+                    . "tests/lines/$SULU_LINE.env"
+                    echo "SKELETON_REF=${INPUT_SKELETON_REF:-$SULU_FLEX_SKELETON_REF}" >> "$GITHUB_ENV"
             -
                 uses: actions/checkout@v7
                 with:
@@ -171,8 +226,8 @@ jobs:
                 uses: actions/cache@v6
                 with:
                     path: ${{ steps.composer-cache.outputs.dir }}
-                    key: composer-${{ runner.os }}-${{ github.job }}-${{ github.run_id }}
-                    restore-keys: composer-${{ runner.os }}-${{ github.job }}-
+                    key: composer-${{ runner.os }}-${{ github.job }}-${{ matrix.line }}-${{ github.run_id }}
+                    restore-keys: composer-${{ runner.os }}-${{ github.job }}-${{ matrix.line }}-
             -
                 run: tests/setup-tools.sh
             -
@@ -183,7 +238,7 @@ jobs:
                 if: failure() || cancelled()
                 uses: actions/upload-artifact@v7
                 with:
-                    name: parity-logs
+                    name: parity-logs-${{ matrix.line }}
                     path: |
                         ${{ env.SULU_RECIPES_WORKDIR }}/*.log
                         ${{ env.SULU_RECIPES_WORKDIR }}/parity-report.txt
