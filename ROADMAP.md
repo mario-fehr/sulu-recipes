@@ -19,6 +19,7 @@ Deferred ideas without a spec, one line each. Research starts when an item is pi
 
 - Add a PHP 8.2 to 8.4 and MySQL 5.7/8.0 matrix to `qa.yml`, like the CI of `sulu/skeleton`.
 - Port the style checks from `callable-qa.yml` in `symfony/recipes`: indentation, `.yaml` extension, no `.gitkeep`, no symlinks.
+- Once others contribute or the repos move to the `sulu` org, require the `lint`, `install` and `parity` checks on `main` (and `qa / lint`, `qa / install`, `qa / parity` on the skeleton's `3.0`) through branch protection; today only force pushes and deletion are blocked, and `flex-update.yml` publishes only after `qa.yml` passes.
 - Detect drift between the recipes and `sulu/skeleton` or the superseded official recipes; issue only, no auto-fix.
 - `pr-preview` and `flex-cleanup`, only once there are outside contributors; block symlinks and use `persist-credentials: false`.
 - A functional smoke test in CI (boot, build, admin login).

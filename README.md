@@ -18,7 +18,7 @@ The recipes assume the package set of `sulu/skeleton`. A bare `composer require 
 
 ## Publishing
 
-`.github/workflows/flex-update.yml` compiles the recipes into the `flex/main` branch on every push to `main`.
+`.github/workflows/flex-update.yml` compiles the recipes into the `flex/main` branch on every push to `main`, but only after `qa.yml` has passed for that commit.
 
 ## Development
 

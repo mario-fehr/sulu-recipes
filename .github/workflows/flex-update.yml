@@ -10,7 +10,13 @@ defaults:
         shell: bash
 
 jobs:
+    qa:
+        uses: ./.github/workflows/qa.yml
+        permissions:
+            contents: read
+
     call-flex-update:
+        needs: qa
         concurrency: flex-update-${{ github.ref }}
         uses: symfony/recipes/.github/workflows/callable-flex-update.yml@main
         permissions:
