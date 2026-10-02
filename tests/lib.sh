@@ -22,6 +22,7 @@ SYMFONY_RECIPES_CONTRIB_SHA=38fc43a
 
 RECIPE_VENDORS="symfony scheb friendsofsymfony symfony-cmf doctrine sulu"
 SUPERSEDED="symfony/framework-bundle symfony/security-bundle symfony/console symfony/twig-bundle scheb/2fa-bundle friendsofsymfony/jsrouting-bundle doctrine/doctrine-bundle"
+SULU_YAML_PACKAGES="friendsofsymfony/rest-bundle jms/serializer-bundle league/flysystem-bundle stof/doctrine-extensions-bundle symfony/mailer symfony/messenger symfony/monolog-bundle symfony/routing symfony/translation"
 
 mkdir -p "$WORK"
 # PHP reports physical paths (/private/var/... on macOS); path normalization needs the same form.
