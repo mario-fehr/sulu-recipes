@@ -1,0 +1,53 @@
+{
+    "bundles": {
+        "Sulu\\Bundle\\CoreBundle\\SuluCoreBundle": ["all"],
+        "FOS\\HttpCacheBundle\\FOSHttpCacheBundle": ["all"],
+        "Sulu\\Bundle\\AdminBundle\\SuluAdminBundle": ["all"],
+        "Sulu\\Bundle\\PersistenceBundle\\SuluPersistenceBundle": ["all"],
+        "Sulu\\Bundle\\ContactBundle\\SuluContactBundle": ["all"],
+        "Sulu\\Bundle\\MediaBundle\\SuluMediaBundle": ["all"],
+        "Sulu\\Bundle\\SecurityBundle\\SuluSecurityBundle": ["all"],
+        "Sulu\\Bundle\\CategoryBundle\\SuluCategoryBundle": ["all"],
+        "Sulu\\Bundle\\TagBundle\\SuluTagBundle": ["all"],
+        "Sulu\\Bundle\\WebsiteBundle\\SuluWebsiteBundle": ["all"],
+        "Sulu\\Bundle\\LocationBundle\\SuluLocationBundle": ["all"],
+        "Sulu\\Bundle\\HttpCacheBundle\\SuluHttpCacheBundle": ["all"],
+        "Sulu\\Bundle\\HashBundle\\SuluHashBundle": ["all"],
+        "Sulu\\Bundle\\MarkupBundle\\SuluMarkupBundle": ["all"],
+        "Massive\\Bundle\\BuildBundle\\MassiveBuildBundle": ["all"],
+        "Sulu\\Bundle\\TestBundle\\SuluTestBundle": ["dev", "test"],
+        "Sulu\\Bundle\\PreviewBundle\\SuluPreviewBundle": ["all"],
+        "Sulu\\Bundle\\ActivityBundle\\SuluActivityBundle": ["all"],
+        "Sulu\\Bundle\\TrashBundle\\SuluTrashBundle": ["all"],
+        "Sulu\\Bundle\\ReferenceBundle\\SuluReferenceBundle": ["all"],
+        "Sulu\\Content\\Infrastructure\\Symfony\\HttpKernel\\SuluContentBundle": ["all"],
+        "Sulu\\Route\\Infrastructure\\Symfony\\HttpKernel\\SuluRouteBundle": ["all"],
+        "Sulu\\Messenger\\Infrastructure\\Symfony\\HttpKernel\\SuluMessengerBundle": ["all"],
+        "Sulu\\Article\\Infrastructure\\Symfony\\HttpKernel\\SuluArticleBundle": ["all"],
+        "Sulu\\Snippet\\Infrastructure\\Symfony\\HttpKernel\\SuluSnippetBundle": ["all"],
+        "Sulu\\Page\\Infrastructure\\Symfony\\HttpKernel\\SuluPageBundle": ["all"],
+        "Sulu\\Search\\Infrastructure\\Symfony\\HttpKernel\\SuluSearchBundle": ["all"],
+        "Sulu\\CustomUrl\\Infrastructure\\Symfony\\HttpKernel\\SuluCustomUrlBundle": ["all"]
+    },
+    "copy-from-recipe": {
+        ".env.stage": ".env.stage",
+        ".twig-cs-fixer.dist.php": ".twig-cs-fixer.dist.php",
+        "rector.php": "rector.php",
+        "assets/": "assets/",
+        "bin/": "%BIN_DIR%/",
+        "config/": "%CONFIG_DIR%/",
+        "public/": "%PUBLIC_DIR%/",
+        "templates/": "templates/",
+        "tests/": "tests/",
+        "var/": "%VAR_DIR%/"
+    },
+    "env": {
+        "#1": "Email address that will receive system notifications and might be used as universal fallback value by bundles",
+        "SULU_ADMIN_EMAIL": "example@localhost"
+    },
+    "dotenv": {
+        "test": {
+            "SEAL_DSN": "memory://"
+        }
+    }
+}

@@ -1,0 +1,50 @@
+# Sulu's settings for packages whose official recipes are not superseded.
+# Loaded after fos_rest, jms_serializer, mailer, monolog, routing and
+# stof_doctrine_extensions, so these values win.
+fos_rest:
+    zone:
+        - { path: ^/admin/* }
+
+framework:
+    mailer:
+        envelope:
+            sender: '%env(SULU_ADMIN_EMAIL)%'
+
+stof_doctrine_extensions:
+    default_locale: '%default_locale%'
+
+when@stage:
+    framework:
+        router:
+            strict_requirements: null
+
+    jms_serializer:
+        visitors:
+            json_serialization:
+                options:
+                    - JSON_UNESCAPED_SLASHES
+                    - JSON_PRESERVE_ZERO_FRACTION
+
+    monolog:
+        handlers:
+            main:
+                type: fingers_crossed
+                action_level: error
+                handler: nested
+                excluded_http_codes: [404, 405]
+                channels: ["!deprecation"]
+                buffer_size: 50
+            nested:
+                type: stream
+                path: php://stderr
+                level: debug
+                formatter: monolog.formatter.json
+            console:
+                type: console
+                process_psr_3_messages: false
+                channels: ["!event", "!doctrine"]
+            deprecation:
+                type: stream
+                channels: [deprecation]
+                path: php://stderr
+                formatter: monolog.formatter.json

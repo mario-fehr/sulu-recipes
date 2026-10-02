@@ -1,0 +1,2 @@
+  * Download the administration build for your Sulu version:
+    <fg=green>bin/adminconsole sulu:admin:update-build</>
