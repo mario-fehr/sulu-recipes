@@ -2,7 +2,6 @@
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-REFS="$REPO_ROOT/.references"
 TOOLS="$REPO_ROOT/.tools"
 OUTPUT="$REPO_ROOT/output"
 WORK="${SULU_RECIPES_WORKDIR:-${TMPDIR:-/tmp}/sulu-recipes}"
@@ -33,7 +32,24 @@ mkdir -p "$WORK/php-ini"
 echo "memory_limit=-1" > "$WORK/php-ini/zz-sulu-recipes.ini"
 export PHP_INI_SCAN_DIR=":$WORK/php-ini"
 
-skel_show() { git -C "$REFS/sulu-skeleton" show "$SULU_SKELETON_SHA:$1"; }
+upstream() {
+  local name="$1" repo="$2" sha="${3:-}" dir="$WORK/clones/$1"
+  if [ ! -d "$dir" ]; then
+    if [ "$name" = sulu-skeleton ]; then
+      git clone --quiet --no-checkout "https://github.com/$repo.git" "$dir"
+    else
+      git clone --quiet --no-checkout --filter=blob:none "https://github.com/$repo.git" "$dir"
+    fi
+  elif [ -z "$sha" ]; then
+    git -C "$dir" fetch --quiet --tags --force origin
+  fi
+  [ -n "$sha" ] || return 0
+  git -C "$dir" cat-file -e "$sha^{commit}" 2>/dev/null && return 0
+  git -C "$dir" fetch --quiet origin "$sha" 2>/dev/null || git -C "$dir" fetch --quiet --tags --force origin || true
+  git -C "$dir" cat-file -e "$sha^{commit}" 2>/dev/null || { echo "pin $sha not found in $repo" >&2; exit 1; }
+}
+
+skel_show() { git -C "$WORK/clones/sulu-skeleton" show "$SULU_SKELETON_SHA:$1"; }
 
 SERVER_PIDS=""
 CONTAINERS=""
