@@ -175,6 +175,7 @@ finish() {
 
 lock_repo() { [ "$(jq -r --arg p "$1" '.[$p].recipe.repo' symfony.lock)" = "$2" ]; }
 lock_version() { [ "$(jq -r --arg p "$1" '.[$p].recipe.version' symfony.lock)" = "$2" ]; }
+installed() { composer show "$1" >/dev/null 2>&1; }
 lock_recipes() {
   jq -r 'to_entries[] | select(.value.recipe) | "\(.key) \(.value.recipe.version) \(.value.recipe.repo)"' symfony.lock \
     | sed "s|$OUR_REPO|<this repo>|" | sort
