@@ -65,7 +65,7 @@ SERVERS=""
 CONTAINERS=""
 cleanup() {
   for s in $SERVERS; do kill "${s%%:*}" 2>/dev/null || true; done
-  for c in $CONTAINERS; do docker rm -f "$c" >/dev/null 2>&1 || true; done
+  for c in $CONTAINERS; do docker rm -fv "$c" >/dev/null 2>&1 || true; done
 }
 trap cleanup EXIT
 
@@ -166,7 +166,7 @@ runtime_checks() {
     done
   done
   CONTAINERS="$CONTAINERS $db"
-  docker rm -f "$db" >/dev/null 2>&1 || true
+  docker rm -fv "$db" >/dev/null 2>&1 || true
   docker run -d --name "$db" -e MYSQL_ROOT_PASSWORD=ChangeMe -p 3307:3306 mysql:8.4 >/dev/null
   # mysqladmin ping already answers the init-phase server, which has no TCP; wait for a TCP connection.
   for _ in $(seq 1 90); do docker exec "$db" mysql -h 127.0.0.1 -uroot -pChangeMe -e "SELECT 1" >/dev/null 2>&1 && break; sleep 1; done
