@@ -120,6 +120,20 @@ lock_recipes() {
 }
 same_as_skeleton() { skel_show "$1" | cmp -s - "$1"; }
 
+# --no-install: framework-bundle and console must get their recipes from this endpoint, so it is set before the first install.
+new_symfony_project() {
+  local constraint="$1" dir="$2" plugin
+  rm -rf "$dir"
+  composer create-project "symfony/skeleton:$constraint" "$dir" --no-install --no-interaction
+  composer config --working-dir="$dir" extra.symfony.endpoint --json "[\"$ENDPOINT_URL\", \"flex://defaults\"]"
+  composer config --working-dir="$dir" extra.symfony.allow-contrib true
+  composer config --working-dir="$dir" secure-http false
+  for plugin in $(skel_show composer.json | jq -r '.config["allow-plugins"] | to_entries[] | select(.value == true) | .key'); do
+    composer config --working-dir="$dir" "allow-plugins.$plugin" true
+  done
+  composer install --working-dir="$dir" --no-interaction
+}
+
 runtime_checks() {
   local db=sulu-recipes-mysql
   check "admin build present" test -f public/build/admin/manifest.json

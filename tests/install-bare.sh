@@ -10,17 +10,8 @@ require_free_port 8001
 "$REPO_ROOT/tests/build-endpoint.sh"
 serve endpoint "$ENDPOINT_PORT" "$OUTPUT"
 
-rm -rf "$P"
-# --no-install: framework-bundle and console must get their recipes from this endpoint, so it is set before the first install.
-composer create-project "symfony/skeleton:$SULU_BARE_SYMFONY.*" "$P" --no-install --no-interaction
+new_symfony_project "$SULU_BARE_SYMFONY.*" "$P"
 cd "$P"
-composer config extra.symfony.endpoint --json "[\"$ENDPOINT_URL\", \"flex://defaults\"]"
-composer config extra.symfony.allow-contrib true
-composer config secure-http false
-for plugin in $(skel_show composer.json | jq -r '.config["allow-plugins"] | to_entries[] | select(.value == true) | .key'); do
-  composer config "allow-plugins.$plugin" true
-done
-composer install --no-interaction
 echo "symfony/framework-bundle $(composer show symfony/framework-bundle --format=json | jq -r '.versions[0]')"
 
 # The documented bare install, with sulu/sulu at the pinned sulu/skeleton version; no other package from sulu/skeleton's set.

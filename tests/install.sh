@@ -8,16 +8,8 @@ require_free_port 8001
 "$REPO_ROOT/tests/build-endpoint.sh"
 serve endpoint "$ENDPOINT_PORT" "$OUTPUT"
 
-rm -rf "$P"
-composer create-project 'symfony/skeleton:7.4.*' "$P" --no-install --no-interaction
+new_symfony_project '7.4.*' "$P"
 cd "$P"
-composer config extra.symfony.endpoint --json "[\"$ENDPOINT_URL\", \"flex://defaults\"]"
-composer config extra.symfony.allow-contrib true
-composer config secure-http false
-for plugin in $(skel_show composer.json | jq -r '.config["allow-plugins"] | to_entries[] | select(.value == true) | .key'); do
-  composer config "allow-plugins.$plugin" true
-done
-composer install --no-interaction
 # Same package set as sulu/skeleton: Sulu's config assumes it (2FA in security.yaml, web profiler routes).
 pkgs() { skel_show composer.json | jq -r --arg k "$1" '.[$k] | to_entries[] | select(.key | test("^(php|ext-.*)$") | not) | "\(.key):\(.value)"'; }
 require=(); require_dev=()
