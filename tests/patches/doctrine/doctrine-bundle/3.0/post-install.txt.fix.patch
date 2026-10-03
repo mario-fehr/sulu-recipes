@@ -1,0 +1,12 @@
+Reason: (e) The hint names MySQL 8.4, the database the manifest configures.
+Evidence: sulu/skeleton .env (DATABASE_URL with serverVersion=8.4.7) at the pin in tests/lines/3.0.env.
+
+--- a/post-install.txt
++++ b/post-install.txt
+@@ -1,4 +1,4 @@
+   * Modify your DATABASE_URL config in <fg=green>.env</>
+ 
+-  * Configure the <fg=green>driver</> (postgresql) and
+-    <fg=green>server_version</> (16) in <fg=green>config/packages/doctrine.yaml</>
++  * Configure the <fg=green>driver</> (mysql) and
++    <fg=green>server_version</> (8.4) in <fg=green>config/packages/doctrine.yaml</>

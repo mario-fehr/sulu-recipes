@@ -1,0 +1,15 @@
+Reason: (e) The recipe ships Sulu's .twig-cs-fixer.dist.php and ignores /.twig-cs-fixer.php, as sulu/skeleton does.
+Evidence: sulu/skeleton .twig-cs-fixer.dist.php and .gitignore at the pin in tests/lines/3.0.env; tests/install.sh compares the file.
+
+--- a/manifest.json
++++ b/manifest.json
+@@ -1,5 +1,9 @@
+ {
++    "copy-from-recipe": {
++        ".twig-cs-fixer.dist.php": ".twig-cs-fixer.dist.php"
++    },
+     "gitignore": [
++        "/.twig-cs-fixer.php",
+         "/.twig-cs-fixer.cache"
+     ]
+ }

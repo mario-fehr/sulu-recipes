@@ -1,0 +1,15 @@
+Reason: (f) templates/base.html.twig differs between Sulu 2.6 and 3.0, so the sulu/sulu recipe of each line ships it.
+Evidence: sulu/skeleton templates/base.html.twig differs between the pins in tests/lines/2.6.env and tests/lines/3.0.env.
+
+--- a/manifest.json
++++ b/manifest.json
+@@ -3,8 +3,7 @@
+         "Symfony\\Bundle\\TwigBundle\\TwigBundle": ["all"]
+     },
+     "copy-from-recipe": {
+-        "config/": "%CONFIG_DIR%/",
+-        "templates/": "templates/"
++        "config/": "%CONFIG_DIR%/"
+     },
+     "conflict": {
+         "symfony/framework-bundle": "<5.3"

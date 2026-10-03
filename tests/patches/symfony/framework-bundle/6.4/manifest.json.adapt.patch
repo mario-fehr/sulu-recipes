@@ -1,0 +1,31 @@
+Reason: (f) The manifest matches the official framework-bundle 7.4 recipe that sulu/skeleton uses, with .editorconfig, an empty APP_SECRET in .env, the generated secret in .env.dev, and APP_SHARE_DIR.
+Evidence: symfony/recipes symfony/framework-bundle/7.4/manifest.json at SYMFONY_RECIPES_SHA; sulu/skeleton symfony.lock records framework-bundle recipe 7.4.
+
+--- a/manifest.json
++++ b/manifest.json
+@@ -5,7 +5,8 @@
+     "copy-from-recipe": {
+         "config/": "%CONFIG_DIR%/",
+         "public/": "%PUBLIC_DIR%/",
+-        "src/": "%SRC_DIR%/"
++        "src/": "%SRC_DIR%/",
++        ".editorconfig": ".editorconfig"
+     },
+     "composer-scripts": {
+         "cache:clear": "symfony-cmd",
+@@ -13,8 +14,14 @@
+     },
+     "env": {
+         "APP_ENV": "dev",
+-        "APP_SECRET": "%generate(secret)%"
++        "APP_SECRET": "",
++        "APP_SHARE_DIR": "%VAR_DIR%/share"
+     },
++    "dotenv": {
++        "dev": {
++            "APP_SECRET": "%generate(secret)%"
++        }
++    },
+     "gitignore": [
+         "/.env.local",
+         "/.env.local.php",

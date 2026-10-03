@@ -86,8 +86,8 @@ rebuild_file() {
   local recipe="$1" path="$2" ref="$3" tmp kind err rc=0 n=1
   tmp="$(mktemp -d)"
   mkdir -p "$tmp/$(dirname "$path")"
-  if ! git -C "$WORK/clones/sulu-skeleton" show "$ref:$path" >"$tmp/$path" 2>/dev/null; then
-    echo "sulu/skeleton has no $path at $ref" >&2
+  if ! git -C "$WORK/clones/${4:-sulu-skeleton}" show "$ref:${5:-$path}" >"$tmp/$path" 2>/dev/null; then
+    echo "${4:-sulu-skeleton} has no ${5:-$path} at $ref" >&2
     rm -rf "$tmp"
     return 1
   fi
@@ -103,6 +103,58 @@ rebuild_file() {
   if [ "$rc" = 0 ]; then cat "$tmp/$path"; fi
   rm -rf "$tmp"
   return "$rc"
+}
+official_clones() {
+  if [ -z "${SYMFONY_RECIPES_SHA:-}" ] || [ -z "${SYMFONY_RECIPES_CONTRIB_SHA:-}" ]; then
+    echo "tests/pins.env must set SYMFONY_RECIPES_SHA and SYMFONY_RECIPES_CONTRIB_SHA" >&2
+    exit 1
+  fi
+  upstream symfony-recipes symfony/recipes "$SYMFONY_RECIPES_SHA"
+  upstream symfony-recipes-contrib symfony/recipes-contrib "$SYMFONY_RECIPES_CONTRIB_SHA"
+}
+skeleton_pins() {
+  local f
+  for f in "$REPO_ROOT"/tests/lines/*.env; do
+    upstream sulu-skeleton sulu/skeleton "$(sed -n 's/^SULU_SKELETON_SHA=//p' "$f")"
+  done
+}
+official_origin() {
+  local pkg="${1%/*}" v="${1##*/}" clone sha best
+  case " $SUPERSEDED " in *" $pkg "*) ;; *) return 0 ;; esac
+  for clone in symfony-recipes symfony-recipes-contrib; do
+    if [ "$clone" = symfony-recipes ]; then sha="${2:-$SYMFONY_RECIPES_SHA}"; else sha="${2:-$SYMFONY_RECIPES_CONTRIB_SHA}"; fi
+    if ! git -C "$WORK/clones/$clone" cat-file -e "$sha^{commit}" 2>/dev/null; then
+      echo "$clone has no commit $sha; run official_clones first" >&2
+      return 1
+    fi
+    best="$(git -C "$WORK/clones/$clone" ls-tree --name-only "$sha" "$pkg/" | sed "s#^$pkg/##" | while IFS= read -r x; do
+      if [ "$(printf '%s\n' "$x" "$v" | sort -V | head -n 1)" = "$x" ]; then echo "$x"; fi
+    done | sort -V | tail -n 1)"
+    if [ -n "$best" ]; then echo "$clone $sha $pkg/$best"; return 0; fi
+  done
+  echo "$1: $pkg is superseded, but no official recipe folder at or below $v exists" >&2
+  return 1
+}
+skeleton_has() {
+  local f sha
+  for f in "${2:-$REPO_ROOT}"/tests/lines/*.env; do
+    sha="$(sed -n 's/^SULU_SKELETON_SHA=//p' "$f")"
+    if ! git -C "$WORK/clones/sulu-skeleton" cat-file -e "$sha^{commit}" 2>/dev/null; then
+      echo "sulu-skeleton has no commit $sha; run skeleton_pins first" >&2
+      return 0
+    fi
+    if git -C "$WORK/clones/sulu-skeleton" cat-file -e "$sha:$1" 2>/dev/null; then return 0; fi
+  done
+  return 1
+}
+official_files() {
+  local path
+  while IFS= read -r path; do
+    case "$path" in
+      manifest.json|post-install.txt) echo "$path" ;;
+      *) if ! skeleton_has "$path" "$1"; then echo "$path"; fi ;;
+    esac
+  done < <(cd "$1/$2" && find . -type f | sed 's|^\./||' | sort)
 }
 
 SERVERS=""

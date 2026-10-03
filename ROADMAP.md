@@ -19,7 +19,6 @@ Deferred ideas without a spec, one line each. Research starts when an item is pi
 ## CI and drift
 
 - Move `qa.yml` and `drift.yml` from `ubuntu-24.04` to Ubuntu 26 once `setup-php` supports PHP 8.5 there; `ubuntu-latest` moves to Ubuntu 26 from 19 October 2026.
-- Patches for files that come only from an official recipe (`symfony/recipes`, `symfony/recipes-contrib`). `tests/patches.sh` covers only files shared with `sulu/skeleton`; the others are checked by `tests/drift.sh` against the pins in `tests/pins.env`, and there is no way to patch them.
 - Make `tests/patches.sh` check that each `add-lines` block of the tool recipes, once inserted into its base file, equals the `sulu/skeleton` file. After a pin bump, an outdated block then fails in the `lint` job instead of in the install harnesses.
 
 ## Content

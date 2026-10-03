@@ -1,0 +1,15 @@
+Reason: (f) The manifest matches the official security-bundle 7.4 recipe that sulu/skeleton uses, and its conflict on symfony/framework-bundle <5.3 cannot apply because Sulu requires Symfony 6.4 or newer.
+Evidence: symfony/recipes symfony/security-bundle/7.4/manifest.json at SYMFONY_RECIPES_SHA; sulu/skeleton symfony.lock records security-bundle recipe 7.4.
+
+--- a/manifest.json
++++ b/manifest.json
+@@ -5,8 +5,5 @@
+     "copy-from-recipe": {
+         "config/": "%CONFIG_DIR%/"
+     },
+-    "aliases": ["security"],
+-    "conflict": {
+-        "symfony/framework-bundle": "<5.3"
+-    }
++    "aliases": ["security"]
+ }
