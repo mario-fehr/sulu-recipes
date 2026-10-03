@@ -1,2 +1,6 @@
 indent sulu/sulu/3.0/config/packages/security.yaml  #reason: equals sulu/skeleton at SULU_SKELETON_SHA plus its patches
 underscore sulu/sulu/3.0/config/image-formats.xml  #reason: byte-identical with sulu/skeleton at SULU_SKELETON_SHA
+indent sulu/sulu/2.6/config/packages/security.yaml  #reason: equals sulu/skeleton at SULU_SKELETON_SHA plus its patches
+underscore sulu/sulu/2.6/config/image-formats.xml  #reason: byte-identical with sulu/skeleton at SULU_SKELETON_SHA
+parameters sulu/sulu/2.6/config/packages/sulu_document_manager.yaml  #reason: byte-identical with sulu/skeleton at SULU_SKELETON_SHA
+parameters sulu/sulu/2.6/config/packages/massive_search.yaml  #reason: byte-identical with sulu/skeleton at SULU_SKELETON_SHA

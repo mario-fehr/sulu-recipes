@@ -6,7 +6,8 @@ P="$WORK/project-bare"
 BARE_LOCK="$REPO_ROOT/tests/lines/$SULU_LINE.bare-lock${SULU_BARE_LOCK:+.$SULU_BARE_LOCK}.txt"
 case "${SULU_BARE_DEPS:-highest}" in
   highest) deps=() ;;
-  lowest) deps=(--prefer-lowest) ;;
+  # SULU_BARE_LOWEST_FLOOR: lowest versions sulu/sulu's constraints allow that do not boot on this Symfony, raised for the lowest run only.
+  lowest) read -ra deps <<<"${SULU_BARE_LOWEST_FLOOR:-}"; deps+=(--prefer-lowest) ;;
   *) echo "SULU_BARE_DEPS must be highest or lowest" >&2; exit 1 ;;
 esac
 : >"$WORK/checks.log"

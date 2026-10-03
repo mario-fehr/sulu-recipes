@@ -1,0 +1,8 @@
+  * Download the administration build for your Sulu version:
+    <fg=green>bin/adminconsole sulu:admin:update-build</>
+
+  * Install the search library for the default zend_lucene adapter (skip if the project already has it):
+    <fg=green>composer require handcraftedinthealps/zendsearch</>
+
+  * Optional, to get log files in var/log/:
+    <fg=green>composer require symfony/monolog-bundle</>
