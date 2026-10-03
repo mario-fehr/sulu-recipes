@@ -3,6 +3,7 @@
         "2fa": "scheb/2fa-bundle",
         "cli": "symfony/console",
         "console": "symfony/console",
+        "form": "symfony/form",
         "framework-bundle": "symfony/framework-bundle",
         "frameworkbundle": "symfony/framework-bundle",
         "security": "symfony/security-bundle",
@@ -20,13 +21,17 @@
             "2.13",
             "3.0"
         ],
+        "doctrine/phpcr-bundle": [
+            "2.0"
+        ],
         "friendsofsymfony/jsrouting-bundle": [
-            "3.6"
+            "3.0"
         ],
         "scheb/2fa-bundle": [
             "6.10"
         ],
         "sulu/sulu": [
+            "2.6",
             "3.0"
         ],
         "symfony-cmf/routing-bundle": [
@@ -34,6 +39,9 @@
         ],
         "symfony/console": [
             "6.4"
+        ],
+        "symfony/form": [
+            "7.2"
         ],
         "symfony/framework-bundle": [
             "6.4"

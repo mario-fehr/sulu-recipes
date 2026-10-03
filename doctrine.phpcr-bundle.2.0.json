@@ -1,9 +1,9 @@
 {
     "manifests": {
-        "symfony/security-bundle": {
+        "doctrine/phpcr-bundle": {
             "manifest": {
                 "bundles": {
-                    "Symfony\\Bundle\\SecurityBundle\\SecurityBundle": [
+                    "Doctrine\\Bundle\\PHPCRBundle\\DoctrinePHPCRBundle": [
                         "all"
                     ]
                 },
@@ -12,18 +12,15 @@
                 }
             },
             "files": {
-                "config/routes/security.yaml": {
+                "config/packages/doctrine_phpcr.yaml": {
                     "contents": [
-                        "# Not in use currently for sulu:",
-                        "#_security_logout:",
-                        "#    resource: security.route_loader.logout",
-                        "#    type: service",
+                        "# PHPCR connections should be configured over the `sulu_document_manager` bundle",
                         ""
                     ],
                     "executable": false
                 }
             },
-            "ref": "0744506fa8a5cafb463b0b6ac24ddf3b287b90a0"
+            "ref": "45c60550cc33ad752dfb77369edebda5c20e5fd8"
         }
     }
 }

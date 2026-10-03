@@ -6,10 +6,19 @@
                     "Sulu\\Bundle\\CoreBundle\\SuluCoreBundle": [
                         "all"
                     ],
+                    "HandcraftedInTheAlps\\RestRoutingBundle\\RestRoutingBundle": [
+                        "all"
+                    ],
+                    "Massive\\Bundle\\SearchBundle\\MassiveSearchBundle": [
+                        "all"
+                    ],
                     "FOS\\HttpCacheBundle\\FOSHttpCacheBundle": [
                         "all"
                     ],
                     "Sulu\\Bundle\\AdminBundle\\SuluAdminBundle": [
+                        "all"
+                    ],
+                    "Sulu\\Bundle\\SearchBundle\\SuluSearchBundle": [
                         "all"
                     ],
                     "Sulu\\Bundle\\PersistenceBundle\\SuluPersistenceBundle": [
@@ -27,6 +36,12 @@
                     "Sulu\\Bundle\\CategoryBundle\\SuluCategoryBundle": [
                         "all"
                     ],
+                    "Sulu\\Bundle\\SnippetBundle\\SuluSnippetBundle": [
+                        "all"
+                    ],
+                    "Sulu\\Bundle\\PageBundle\\SuluPageBundle": [
+                        "all"
+                    ],
                     "Sulu\\Bundle\\TagBundle\\SuluTagBundle": [
                         "all"
                     ],
@@ -39,10 +54,22 @@
                     "Sulu\\Bundle\\HttpCacheBundle\\SuluHttpCacheBundle": [
                         "all"
                     ],
+                    "Sulu\\Bundle\\DocumentManagerBundle\\SuluDocumentManagerBundle": [
+                        "all"
+                    ],
                     "Sulu\\Bundle\\HashBundle\\SuluHashBundle": [
                         "all"
                     ],
+                    "Sulu\\Bundle\\CustomUrlBundle\\SuluCustomUrlBundle": [
+                        "all"
+                    ],
+                    "Sulu\\Bundle\\RouteBundle\\SuluRouteBundle": [
+                        "all"
+                    ],
                     "Sulu\\Bundle\\MarkupBundle\\SuluMarkupBundle": [
+                        "all"
+                    ],
+                    "PHPCR\\PhpcrMigrationsBundle\\PhpcrMigrationsBundle": [
                         "all"
                     ],
                     "Massive\\Bundle\\BuildBundle\\MassiveBuildBundle": [
@@ -55,6 +82,10 @@
                     "Sulu\\Bundle\\PreviewBundle\\SuluPreviewBundle": [
                         "all"
                     ],
+                    "Symfony\\Cmf\\Bundle\\RoutingBundle\\CmfRoutingBundle": [
+                        "all",
+                        "website"
+                    ],
                     "Sulu\\Bundle\\ActivityBundle\\SuluActivityBundle": [
                         "all"
                     ],
@@ -62,30 +93,6 @@
                         "all"
                     ],
                     "Sulu\\Bundle\\ReferenceBundle\\SuluReferenceBundle": [
-                        "all"
-                    ],
-                    "Sulu\\Content\\Infrastructure\\Symfony\\HttpKernel\\SuluContentBundle": [
-                        "all"
-                    ],
-                    "Sulu\\Route\\Infrastructure\\Symfony\\HttpKernel\\SuluRouteBundle": [
-                        "all"
-                    ],
-                    "Sulu\\Messenger\\Infrastructure\\Symfony\\HttpKernel\\SuluMessengerBundle": [
-                        "all"
-                    ],
-                    "Sulu\\Article\\Infrastructure\\Symfony\\HttpKernel\\SuluArticleBundle": [
-                        "all"
-                    ],
-                    "Sulu\\Snippet\\Infrastructure\\Symfony\\HttpKernel\\SuluSnippetBundle": [
-                        "all"
-                    ],
-                    "Sulu\\Page\\Infrastructure\\Symfony\\HttpKernel\\SuluPageBundle": [
-                        "all"
-                    ],
-                    "Sulu\\Search\\Infrastructure\\Symfony\\HttpKernel\\SuluSearchBundle": [
-                        "all"
-                    ],
-                    "Sulu\\CustomUrl\\Infrastructure\\Symfony\\HttpKernel\\SuluCustomUrlBundle": [
                         "all"
                     ]
                 },
@@ -105,11 +112,6 @@
                     "#1": "Email address that will receive system notifications and might be used as universal fallback value by bundles",
                     "SULU_ADMIN_EMAIL": "example@localhost"
                 },
-                "dotenv": {
-                    "test": {
-                        "SEAL_DSN": "memory://"
-                    }
-                },
                 "gitignore": [
                     "/%PUBLIC_DIR%/uploads/"
                 ],
@@ -117,16 +119,11 @@
                     "  * Download the administration build for your Sulu version:",
                     "    <fg=green>bin/adminconsole sulu:admin:update-build</>",
                     "",
-                    "  * Install a search adapter, Loupe for a start (skip what the project already has):",
-                    "    <fg=green>composer require cmsig/seal-loupe-adapter</>",
-                    "",
-                    "  * Install the in-memory adapter for tests:",
-                    "    <fg=green>composer require --dev cmsig/seal-memory-adapter</>",
+                    "  * Install the search library for the default zend_lucene adapter (skip if the project already has it):",
+                    "    <fg=green>composer require handcraftedinthealps/zendsearch</>",
                     "",
                     "  * Optional, to get log files in var/log/:",
-                    "    <fg=green>composer require symfony/monolog-bundle</>",
-                    "",
-                    "  * Requirement: doctrine/doctrine-bundle 2.13 or newer. An older version installed together with sulu/sulu gets no Doctrine recipe from this endpoint."
+                    "    <fg=green>composer require symfony/monolog-bundle</>"
                 ]
             },
             "files": {
@@ -285,15 +282,15 @@
                         "        \"sulu-audience-targeting-bundle\": \"file:../../vendor/sulu/sulu/src/Sulu/Bundle/AudienceTargetingBundle/Resources/js\",",
                         "        \"sulu-category-bundle\": \"file:../../vendor/sulu/sulu/src/Sulu/Bundle/CategoryBundle/Resources/js\",",
                         "        \"sulu-contact-bundle\": \"file:../../vendor/sulu/sulu/src/Sulu/Bundle/ContactBundle/Resources/js\",",
-                        "        \"sulu-custom-url-bundle\": \"file:../../vendor/sulu/sulu/packages/custom-url/assets/js\",",
+                        "        \"sulu-custom-url-bundle\": \"file:../../vendor/sulu/sulu/src/Sulu/Bundle/CustomUrlBundle/Resources/js\",",
                         "        \"sulu-location-bundle\": \"file:../../vendor/sulu/sulu/src/Sulu/Bundle/LocationBundle/Resources/js\",",
                         "        \"sulu-media-bundle\": \"file:../../vendor/sulu/sulu/src/Sulu/Bundle/MediaBundle/Resources/js\",",
-                        "        \"sulu-page-bundle\": \"file:../../vendor/sulu/sulu/packages/page/assets/js\",",
+                        "        \"sulu-page-bundle\": \"file:../../vendor/sulu/sulu/src/Sulu/Bundle/PageBundle/Resources/js\",",
                         "        \"sulu-preview-bundle\": \"file:../../vendor/sulu/sulu/src/Sulu/Bundle/PreviewBundle/Resources/js\",",
-                        "        \"sulu-route-bundle\": \"file:../../vendor/sulu/sulu/packages/route/assets/js\",",
-                        "        \"sulu-search-bundle\": \"file:../../vendor/sulu/sulu/packages/search/assets/js\",",
+                        "        \"sulu-route-bundle\": \"file:../../vendor/sulu/sulu/src/Sulu/Bundle/RouteBundle/Resources/js\",",
+                        "        \"sulu-search-bundle\": \"file:../../vendor/sulu/sulu/src/Sulu/Bundle/SearchBundle/Resources/js\",",
                         "        \"sulu-security-bundle\": \"file:../../vendor/sulu/sulu/src/Sulu/Bundle/SecurityBundle/Resources/js\",",
-                        "        \"sulu-snippet-bundle\": \"file:../../vendor/sulu/sulu/packages/snippet/assets/js\",",
+                        "        \"sulu-snippet-bundle\": \"file:../../vendor/sulu/sulu/src/Sulu/Bundle/SnippetBundle/Resources/js\",",
                         "        \"sulu-trash-bundle\": \"file:../../vendor/sulu/sulu/src/Sulu/Bundle/TrashBundle/Resources/js\",",
                         "        \"sulu-website-bundle\": \"file:../../vendor/sulu/sulu/src/Sulu/Bundle/WebsiteBundle/Resources/js\"",
                         "    },",
@@ -459,7 +456,7 @@
                         "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"",
                         "         xsi:schemaLocation=\"http://schemas.sulu.io/media/formats http://schemas.sulu.io/media/formats-1.1.xsd\">",
                         "",
-                        "    <!-- See: https://docs.sulu.io/3.x/book/image-formats.html how to define image-formats -->",
+                        "    <!-- See: http://docs.sulu.io/en/latest/book/image-formats.html how to define image-formats -->",
                         "",
                         "    <!--",
                         "    <format key=\"300x\">",
@@ -507,6 +504,31 @@
                     ],
                     "executable": false
                 },
+                "config/packages/massive_search.yaml": {
+                    "contents": [
+                        "parameters:",
+                        "    env(MASSIVE_SEARCH_PREFIX): 'massive'",
+                        "",
+                        "massive_search:",
+                        "    metadata:",
+                        "        prefix: '%env(resolve:MASSIVE_SEARCH_PREFIX)%'",
+                        "",
+                        "# By default massive search uses zend lucene index saved in var/indexes folder",
+                        "# For multi server setup you can switch to the elasticsearch adapter:",
+                        "#",
+                        "#    adapter: elastic",
+                        "#    adapters:",
+                        "#        elastic:",
+                        "#            version: 7.16",
+                        "#            hosts: ['%env(ELASTICSEARCH_HOST)%']",
+                        "",
+                        "when@test:",
+                        "    massive_search:",
+                        "        adapter: test",
+                        ""
+                    ],
+                    "executable": false
+                },
                 "config/packages/security.yaml": {
                     "contents": [
                         "security:",
@@ -548,7 +570,7 @@
                         "       #    # For an advanced user management with registration and opt-in emails have a look at the:",
                         "       #    # https://github.com/sulu/SuluCommunityBundle",
                         "       #    # Also have a look at the user context based caching when you output user role specific data",
-                        "       #    # https://docs.sulu.io/3.x/cookbook/user-context-caching.html",
+                        "       #    # https://docs.sulu.io/en/2.6/cookbook/user-context-caching.html",
                         "       #    form_login:",
                         "       #        login_path: login",
                         "       #        check_path: login",
@@ -675,9 +697,66 @@
                     ],
                     "executable": false
                 },
-                "config/packages/sulu_article.yaml": {
+                "config/packages/sulu_document_manager.yaml": {
                     "contents": [
-                        "sulu_article: {}",
+                        "parameters:",
+                        "    env(PHPCR_WORKSPACE): 'default'",
+                        "",
+                        "sulu_document_manager:",
+                        "    versioning:",
+                        "        enabled: false # See https://docs.sulu.io/en/2.6/bundles/page/versioning.html if you want to enable versioning",
+                        "    sessions:",
+                        "        # See https://docs.sulu.io/en/2.6/cookbook/jackrabbit.html if you want to use Jackrabbit",
+                        "        default:",
+                        "            backend:",
+                        "                type: doctrinedbal",
+                        "            workspace: \"%env(PHPCR_WORKSPACE)%\"",
+                        "        live:",
+                        "            backend:",
+                        "                type: doctrinedbal",
+                        "            workspace: \"%env(PHPCR_WORKSPACE)%_live\"",
+                        "",
+                        "when@prod: &prod",
+                        "    sulu_document_manager:",
+                        "        sessions:",
+                        "            default:",
+                        "                backend:",
+                        "                    caches:",
+                        "                        meta: doctrine_phpcr.meta_cache_provider",
+                        "                        nodes: doctrine_phpcr.nodes_cache_provider",
+                        "            live:",
+                        "                backend:",
+                        "                    caches:",
+                        "                        meta: doctrine_phpcr.meta_cache_provider",
+                        "                        nodes: doctrine_phpcr.nodes_cache_provider",
+                        "",
+                        "    services:",
+                        "        doctrine_phpcr.meta_cache_provider:",
+                        "            class: Symfony\\Component\\Cache\\Psr16Cache",
+                        "            public: false",
+                        "            arguments:",
+                        "                - '@doctrine_phpcr.meta_cache_pool'",
+                        "            tags:",
+                        "                - { name: 'kernel.reset', method: 'reset' }",
+                        "",
+                        "        doctrine_phpcr.nodes_cache_provider:",
+                        "            class: Symfony\\Component\\Cache\\Psr16Cache",
+                        "            public: false",
+                        "            arguments:",
+                        "                - '@doctrine_phpcr.nodes_cache_pool'",
+                        "            tags:",
+                        "                - { name: 'kernel.reset', method: 'reset' }",
+                        "",
+                        "    framework:",
+                        "        cache:",
+                        "            pools:",
+                        "                doctrine_phpcr.meta_cache_pool:",
+                        "                    adapter: cache.app",
+                        "",
+                        "                doctrine_phpcr.nodes_cache_pool:",
+                        "                    adapter: cache.app",
+                        "",
+                        "when@stage: *prod",
                         ""
                     ],
                     "executable": false
@@ -692,7 +771,7 @@
                         "",
                         "    # Varnish Configuration:",
                         "    #",
-                        "    # See: https://docs.sulu.io/3.x/cookbook/caching-with-varnish.html",
+                        "    # See: https://docs.sulu.io/en/2.6/cookbook/caching-with-varnish.html",
                         "    # Changes in the public/index.php is needed to disable the symfony http cache and use varnish instead",
                         "    #",
                         "    #        varnish:",
@@ -707,7 +786,7 @@
                 },
                 "config/packages/sulu_markup.yaml": {
                     "contents": [
-                        "# see also: https://docs.sulu.io/3.x/bundles/markup/index.html",
+                        "# see also: https://docs.sulu.io/en/2.6/bundles/markup/index.html",
                         "sulu_markup:",
                         "    link_tag:",
                         "        provider_attribute: 'data-provider'",
@@ -721,7 +800,7 @@
                         "    format_manager:",
                         "        default_imagine_options:",
                         "            # a value between 95 and 75 is recommended",
-                        "            # see also: https://docs.sulu.io/3.x/book/image-formats.html",
+                        "            # see also: https://docs.sulu.io/en/2.6/book/image-formats.html",
                         "            jpeg_quality: 90",
                         "            webp_quality: 90",
                         "            avif_quality: 90",
@@ -749,6 +828,17 @@
                         "when@test:",
                         "    sulu_test:",
                         "        enable_test_user_provider: true",
+                        ""
+                    ],
+                    "executable": false
+                },
+                "config/packages/sulu_website.yaml": {
+                    "contents": [
+                        "sulu_website:",
+                        "    twig:",
+                        "        attributes:",
+                        "            urls: false",
+                        "            path: false",
                         ""
                     ],
                     "executable": false
@@ -840,16 +930,8 @@
                         "    resource: \"@SuluSecurityBundle/Resources/config/routing_api.yaml\"",
                         "    prefix: /admin/api",
                         "",
-                        "sulu_route_api:",
-                        "    resource: \"@SuluRouteBundle/config/routing_admin_api.yaml\"",
-                        "    prefix: /admin/api",
-                        "",
                         "sulu_page_api:",
-                        "    resource: \"@SuluPageBundle/config/routing_admin_api.yaml\"",
-                        "    prefix: /admin/api",
-                        "",
-                        "sulu_search_api:",
-                        "    resource: \"@SuluSearchBundle/config/routing_admin_api.yaml\"",
+                        "    resource: \"@SuluPageBundle/Resources/config/routing_api.yaml\"",
                         "    prefix: /admin/api",
                         "",
                         "sulu_media:",
@@ -868,7 +950,7 @@
                         "    prefix: /admin/api",
                         "",
                         "sulu_snippet_api:",
-                        "    resource: \"@SuluSnippetBundle/config/routing_admin_api.yaml\"",
+                        "    resource: \"@SuluSnippetBundle/Resources/config/routing_api.yaml\"",
                         "    prefix: /admin/api",
                         "",
                         "sulu_location:",
@@ -883,6 +965,18 @@
                         "    resource: \"@SuluWebsiteBundle/Resources/config/routing_api.yaml\"",
                         "    prefix: /admin/api",
                         "",
+                        "sulu_core:",
+                        "    resource: \"@SuluCoreBundle/Resources/config/routing_api.yaml\"",
+                        "    prefix: /admin/api",
+                        "",
+                        "sulu_custom_urls_api:",
+                        "    resource: \"@SuluCustomUrlBundle/Resources/config/routing_api.yaml\"",
+                        "    prefix: /admin/api",
+                        "",
+                        "sulu_route_api:",
+                        "    resource: \"@SuluRouteBundle/Resources/config/routing_api.yaml\"",
+                        "    prefix: /admin/api",
+                        "",
                         "sulu_preview:",
                         "    resource: \"@SuluPreviewBundle/Resources/config/routing.yaml\"",
                         "    prefix: /admin/preview",
@@ -894,6 +988,10 @@
                         "sulu_preview_public:",
                         "    resource: \"@SuluPreviewBundle/Resources/config/routing_public.yaml\"",
                         "    prefix: /admin/p",
+                        "",
+                        "sulu_search:",
+                        "    resource: \"@SuluSearchBundle/Resources/config/routing.yaml\"",
+                        "    prefix: /admin/search",
                         "",
                         "sulu_activity_api:",
                         "    resource: \"@SuluActivityBundle/Resources/config/routing_api.yaml\"",
@@ -907,15 +1005,7 @@
                         "    resource: \"@SuluReferenceBundle/Resources/config/routing_api.yaml\"",
                         "    prefix: /admin/api",
                         "",
-                        "sulu_article_api:",
-                        "    resource: \"@SuluArticleBundle/config/routing_admin_api.yaml\"",
-                        "    prefix: /admin/api",
-                        "",
-                        "sulu_custom_url_api:",
-                        "    resource: \"@SuluCustomUrlBundle/config/routing_admin_api.yaml\"",
-                        "    prefix: /admin/api",
-                        "",
-                        "# to enable audience targeting see: https://docs.sulu.io/3.x/bundles/audience_targeting.html",
+                        "# to enable audience targeting see: https://docs.sulu.io/en/2.6/bundles/audience_targeting.html",
                         "#sulu_audience_targeting_api:",
                         "#    resource: \"@SuluAudienceTargetingBundle/Resources/config/routing_api.yaml\"",
                         "#    prefix: /admin/api",
@@ -928,14 +1018,14 @@
                         "sulu_media:",
                         "    resource: \"@SuluMediaBundle/Resources/config/routing_website.yaml\"",
                         "",
+                        "sulu_search:",
+                        "    type: portal",
+                        "    resource: \"@SuluSearchBundle/Resources/config/routing_website.yaml\"",
+                        "",
                         "sulu_website:",
                         "    resource: \"@SuluWebsiteBundle/Resources/config/routing_website.yaml\"",
                         "",
-                        "sulu_search:",
-                        "    type: portal",
-                        "    resource: \"@SuluSearchBundle/config/routing_website.yaml\"",
-                        "",
-                        "# to enable audience targeting see: https://docs.sulu.io/3.x/bundles/audience_targeting.html",
+                        "# to enable audience targeting see: https://docs.sulu.io/en/2.6/bundles/audience_targeting.html",
                         "#sulu_audience_targeting:",
                         "#    resource: \"@SuluAudienceTargetingBundle/Resources/config/routing_website.yaml\"",
                         "",
@@ -954,56 +1044,6 @@
                     ],
                     "executable": false
                 },
-                "config/templates/articles/article.xml": {
-                    "contents": [
-                        "<?xml version=\"1.0\" ?>",
-                        "<template xmlns=\"http://schemas.sulu.io/template/template\"",
-                        "          xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"",
-                        "          xsi:schemaLocation=\"http://schemas.sulu.io/template/template http://schemas.sulu.io/template/template-1.0.xsd\">",
-                        "",
-                        "    <key>article</key>",
-                        "",
-                        "    <view>articles/article</view>",
-                        "    <controller>Sulu\\Content\\UserInterface\\Controller\\Website\\ContentController::indexAction</controller>",
-                        "    <cacheLifetime>604800</cacheLifetime>",
-                        "",
-                        "    <meta>",
-                        "        <title lang=\"en\">Article</title>",
-                        "        <title lang=\"de\">Artikel</title>",
-                        "    </meta>",
-                        "",
-                        "    <properties>",
-                        "        <property name=\"title\" type=\"text_line\" mandatory=\"true\">",
-                        "            <meta>",
-                        "                <title lang=\"en\">Title</title>",
-                        "                <title lang=\"de\">Titel</title>",
-                        "            </meta>",
-                        "            <params>",
-                        "                <param name=\"headline\" value=\"true\"/>",
-                        "            </params>",
-                        "",
-                        "            <tag name=\"sulu.rlp.part\"/>",
-                        "        </property>",
-                        "",
-                        "        <property name=\"url\" type=\"page_tree_route\">",
-                        "            <meta>",
-                        "                <title lang=\"en\">Resourcelocator</title>",
-                        "                <title lang=\"de\">Adresse</title>",
-                        "            </meta>",
-                        "        </property>",
-                        "",
-                        "        <property name=\"article\" type=\"text_editor\">",
-                        "            <meta>",
-                        "                <title lang=\"en\">Article</title>",
-                        "                <title lang=\"de\">Artikel</title>",
-                        "            </meta>",
-                        "        </property>",
-                        "    </properties>",
-                        "</template>",
-                        ""
-                    ],
-                    "executable": false
-                },
                 "config/templates/pages/default.xml": {
                     "contents": [
                         "<?xml version=\"1.0\" ?>",
@@ -1014,7 +1054,7 @@
                         "    <key>default</key>",
                         "",
                         "    <view>pages/default</view>",
-                        "    <controller>Sulu\\Content\\UserInterface\\Controller\\Website\\ContentController::indexAction</controller>",
+                        "    <controller>Sulu\\Bundle\\WebsiteBundle\\Controller\\DefaultController::indexAction</controller>",
                         "    <cacheLifetime>604800</cacheLifetime>",
                         "",
                         "    <meta>",
@@ -1035,7 +1075,7 @@
                         "            <tag name=\"sulu.rlp.part\"/>",
                         "        </property>",
                         "",
-                        "        <property name=\"url\" type=\"route\" mandatory=\"true\">",
+                        "        <property name=\"url\" type=\"resource_locator\" mandatory=\"true\">",
                         "            <meta>",
                         "                <title lang=\"en\">Resourcelocator</title>",
                         "                <title lang=\"de\">Adresse</title>",
@@ -1066,7 +1106,7 @@
                         "    <key>homepage</key>",
                         "",
                         "    <view>pages/homepage</view>",
-                        "    <controller>Sulu\\Content\\UserInterface\\Controller\\Website\\ContentController::indexAction</controller>",
+                        "    <controller>Sulu\\Bundle\\WebsiteBundle\\Controller\\DefaultController::indexAction</controller>",
                         "    <cacheLifetime>86400</cacheLifetime>",
                         "",
                         "    <meta>",
@@ -1087,7 +1127,7 @@
                         "            <tag name=\"sulu.rlp.part\"/>",
                         "        </property>",
                         "",
-                        "        <property name=\"url\" type=\"route\" mandatory=\"true\">",
+                        "        <property name=\"url\" type=\"resource_locator\" mandatory=\"true\">",
                         "            <meta>",
                         "                <title lang=\"en\">Resourcelocator</title>",
                         "                <title lang=\"de\">Adresse</title>",
@@ -1122,15 +1162,6 @@
                         "        <title lang=\"de\">Standard</title>",
                         "    </meta>",
                         "",
-                        "    <areas>",
-                        "        <area key=\"default\">",
-                        "            <meta>",
-                        "                <title lang=\"en\">Default</title>",
-                        "                <title lang=\"de\">Standard</title>",
-                        "            </meta>",
-                        "        </area>",
-                        "    </areas>",
-                        "",
                         "    <properties>",
                         "        <property name=\"title\" type=\"text_line\" mandatory=\"true\">",
                         "            <meta>",
@@ -1159,13 +1190,13 @@
                         "<webspace xmlns=\"http://schemas.sulu.io/webspace/webspace\"",
                         "          xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"",
                         "          xsi:schemaLocation=\"http://schemas.sulu.io/webspace/webspace http://schemas.sulu.io/webspace/webspace-1.1.xsd\">",
-                        "    <!-- See: https://docs.sulu.io/3.x/book/webspaces.html how to configure your webspace-->",
+                        "    <!-- See: http://docs.sulu.io/en/latest/book/webspaces.html how to configure your webspace-->",
                         "",
                         "    <name>Website</name>",
                         "    <key>website</key>",
                         "",
                         "    <localizations>",
-                        "        <!-- See: https://docs.sulu.io/3.x/book/localization.html how to add new localizations -->",
+                        "        <!-- See: http://docs.sulu.io/en/latest/book/localization.html how to add new localizations -->",
                         "        <localization language=\"en\" default=\"true\"/>",
                         "    </localizations>",
                         "",
@@ -1174,7 +1205,7 @@
                         "        <default-template type=\"home\">homepage</default-template>",
                         "    </default-templates>",
                         "",
-                        "    <!-- See: https://docs.sulu.io/3.x/book/webspaces.html#excluded-templates-optional",
+                        "    <!-- See: https://docs.sulu.io/en/2.6/book/webspaces.html#excluded-templates-optional",
                         "    <excluded-templates>",
                         "        <excluded-template>other</excluded-template>",
                         "    </excluded-templates>",
@@ -1182,7 +1213,7 @@
                         "",
                         "    <templates>",
                         "        <template type=\"search\">search/search</template>",
-                        "        <!-- See: https://docs.sulu.io/3.x/cookbook/custom-error-page.html how to create a custom error page -->",
+                        "        <!-- See: http://docs.sulu.io/en/latest/cookbook/custom-error-page.html how to create a custom error page -->",
                         "        <template type=\"error\">error/error</template>",
                         "    </templates>",
                         "",
@@ -1523,19 +1554,6 @@
                     ],
                     "executable": false
                 },
-                "templates/articles/article.html.twig": {
-                    "contents": [
-                        "{% extends 'base.html.twig' %}",
-                        "",
-                        "{% block content %}",
-                        "    <h1>{{ content.title }}</h1>",
-                        "",
-                        "    {{ content.article|raw }}",
-                        "{% endblock %}",
-                        ""
-                    ],
-                    "executable": false
-                },
                 "templates/base.html.twig": {
                     "contents": [
                         "<!DOCTYPE html>",
@@ -1565,12 +1583,9 @@
                         "                        <a href=\"{{ sulu_content_root_path() }}\">Homepage</a>",
                         "                    </li>",
                         "",
-                        "                    {% for item in sulu_page_navigation_root_tree('main', 1, {",
-                        "                        title: 'title',",
-                        "                        url: 'url',",
-                        "                    }) %}",
+                        "                    {% for item in sulu_navigation_root_tree('main') %}",
                         "                        <li>",
-                        "                            <a href=\"{{ sulu_content_path(item.url) }}\"",
+                        "                            <a href=\"{{ sulu_content_path(item.url, item.webspaceKey) }}\"",
                         "                               title=\"{{ item.title }}\">{{ item.title }}</a>",
                         "                        </li>",
                         "                    {% endfor %}",
@@ -1579,12 +1594,10 @@
                         "        {% endblock %}",
                         "    </header>",
                         "",
-                        "    {#",
                         "    <form action=\"{{ path('sulu_search.website_search') }}\" method=\"GET\">",
                         "        <input name=\"q\" type=\"text\" placeholder=\"Search\"/>",
                         "        <input type=\"submit\" value=\"Go\"/>",
                         "    </form>",
-                        "    #}",
                         "",
                         "    <main>",
                         "        {% block content %}{% endblock %}",
@@ -1650,8 +1663,8 @@
                         "    <ul>",
                         "        {% for i, hit in hits %}",
                         "            <li>",
-                        "                <a href=\"{{ sulu_content_path(hit.url) }}\">",
-                        "                    {{- hit.title -}}",
+                        "                <a href=\"{{ hit.document.url }}\">",
+                        "                    {{- hit.document.title -}}",
                         "                </a>",
                         "            </li>",
                         "        {% endfor %}",
@@ -1692,7 +1705,7 @@
                     "executable": false
                 }
             },
-            "ref": "0d77813faf6d49c9995ca5fd4838e746aa5213e6"
+            "ref": "3a3b9a22f2e12c39708bdab0738b1a2f0fda9bdc"
         }
     }
 }
