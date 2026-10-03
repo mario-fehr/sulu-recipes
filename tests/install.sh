@@ -23,7 +23,7 @@ composer update --no-interaction
 update_build_guarded
 
 for pkg in $SUPERSEDED symfony-cmf/routing-bundle; do
-  installed "$pkg" || continue
+  case "$pkg" in doctrine/phpcr-bundle|symfony/form) installed "$pkg" || continue ;; esac
   check "lock $pkg from this repo" lock_repo "$pkg" "$OUR_REPO"
 done
 check "lock symfony/mailer official" lock_repo symfony/mailer github.com/symfony/recipes
