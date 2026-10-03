@@ -163,6 +163,15 @@ new_symfony_project() {
   composer install --working-dir="$dir" --no-interaction
 }
 
+# /admin/login answers 302 whether the password is right or not; the API call tells them apart.
+admin_api_after_login() {
+  local password="$1" expected="$2" jar="$WORK/admin-login.cookies"
+  rm -f "$jar"
+  curl -s -o /dev/null -c "$jar" -H 'Content-Type: application/json' \
+    -d "{\"username\":\"admin\",\"password\":\"$password\"}" http://127.0.0.1:8001/admin/login
+  [ "$(curl -s -o /dev/null -b "$jar" -w '%{http_code}' http://127.0.0.1:8001/admin/api/users)" = "$expected" ]
+}
+
 runtime_checks() {
   local db=sulu-recipes-mysql mysql="${SULU_MYSQL_VERSION:-8.4}" platform=()
   # mysql:5.7 has no arm64 image.
@@ -183,5 +192,7 @@ runtime_checks() {
   check "sulu:build dev" bin/adminconsole sulu:build dev --no-interaction
   serve web 8001 public config/router.php
   check "/admin answers 200 with the Sulu admin" sh -c 'curl -fsL http://127.0.0.1:8001/admin | grep -qi sulu'
+  check "admin login grants the admin API" admin_api_after_login admin 200
+  check "wrong admin password is denied" admin_api_after_login wrong 401
   check "homepage renders the content block" sh -c 'curl -fs http://127.0.0.1:8001/ | grep -q "<h1>"'
 }
