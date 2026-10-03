@@ -1,0 +1,13 @@
+Reason: (f) The email and trusted_device options exist only with scheb/2fa-email and scheb/2fa-trusted-device, whose recipes add them, so scheb/2fa-bundle alone boots.
+Evidence: scheb/2fa-bundle v8.6.1 alone fails cache:clear with: Unrecognized options "email, trusted_device" under "scheb_two_factor".
+
+--- a/config/packages/scheb_2fa.yaml
++++ b/config/packages/scheb_2fa.yaml
+@@ -3,7 +3,3 @@
+     security_tokens:
+         - Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken
+         - Symfony\Component\Security\Http\Authenticator\Token\PostAuthenticationToken
+-    email:
+-        enabled: true
+-    trusted_device:
+-        enabled: true

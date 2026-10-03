@@ -39,7 +39,7 @@ for pkg in $SUPERSEDED $OWN_RECIPES; do
   installed "$pkg" || continue
   check "lock $pkg from this repo" lock_repo "$pkg" "$OUR_REPO"
 done
-for pkg in scheb/2fa-bundle symfony/web-profiler-bundle; do check "no lock entry $pkg" no_lock_entry "$pkg"; done
+for pkg in scheb/2fa-bundle scheb/2fa-email scheb/2fa-trusted-device symfony/web-profiler-bundle; do check "no lock entry $pkg" no_lock_entry "$pkg"; done
 lock_recipes > "$WORK/bare-lock.actual"
 check "recipes match $(basename "$BARE_LOCK")" diff "$BARE_LOCK" "$WORK/bare-lock.actual"
 check "security.yaml has no two_factor" sh -c '! grep -q two_factor config/packages/security.yaml'
@@ -60,15 +60,34 @@ esac
 check "lock symfony/web-profiler-bundle from this repo" lock_repo symfony/web-profiler-bundle "$OUR_REPO"
 check "lock symfony/web-profiler-bundle recipe $profiler_recipe" lock_version symfony/web-profiler-bundle "$profiler_recipe"
 check "admin profiler routes under /admin" sh -c 'APP_ENV=dev bin/adminconsole debug:router _wdt | grep -q "/admin/_wdt/{token}"'
-check "late require scheb 2fa packages" composer require scheb/2fa-bundle scheb/2fa-email scheb/2fa-trusted-device --no-interaction
+check "late require scheb/2fa-bundle alone" composer require scheb/2fa-bundle --no-interaction
+for console in adminconsole websiteconsole; do
+  for env in dev prod test; do
+    check "$console boots in $env with scheb/2fa-bundle alone" env APP_ENV="$env" "bin/$console" cache:clear
+  done
+done
+check "late require scheb 2fa email and trusted device" composer require scheb/2fa-email scheb/2fa-trusted-device --no-interaction
+for pkg in scheb/2fa-email scheb/2fa-trusted-device; do
+  check "lock $pkg from this repo" lock_repo "$pkg" "$OUR_REPO"
+  check "lock $pkg recipe 6.10" lock_version "$pkg" 6.10
+done
+for f in config/packages/scheb_2fa_email.yaml config/packages/scheb_2fa_trusted_device.yaml; do check "$f exists" test -f "$f"; done
 check "lock scheb/2fa-bundle from this repo" lock_repo scheb/2fa-bundle "$OUR_REPO"
 check "lock scheb/2fa-bundle recipe 6.10" lock_version scheb/2fa-bundle 6.10
 check "security.yaml matches sulu/skeleton after scheb" same_as_skeleton config/packages/security.yaml
 rerun_scheb_recipe() {
   composer recipes:install scheb/2fa-bundle --force --no-interaction || return 1
+  test -f config/packages/scheb_2fa_email.yaml || return 1
+  test -f config/packages/scheb_2fa_trusted_device.yaml || return 1
   same_as_skeleton config/packages/security.yaml
 }
-check "security.yaml matches sulu/skeleton after scheb recipe rerun" rerun_scheb_recipe
+check "scheb recipe rerun keeps 2FA files and security.yaml" rerun_scheb_recipe
 check "adminconsole boots in dev with 2FA" env APP_ENV=dev bin/adminconsole cache:clear
+remove_scheb_email() {
+  composer remove scheb/2fa-email --no-interaction || return 1
+  test ! -e config/packages/scheb_2fa_email.yaml || return 1
+  APP_ENV=dev bin/adminconsole cache:clear
+}
+check "remove scheb/2fa-email drops its file and boots" remove_scheb_email
 
 finish
