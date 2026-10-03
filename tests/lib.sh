@@ -23,6 +23,7 @@ if [ ! -f "$LINE_FILE" ]; then
   echo "no pin file $LINE_FILE for SULU_LINE=$SULU_LINE" >&2
   exit 1
 fi
+unset SULU_BARE_REQUIRE SULU_BARE_REQUIRE_DEV SULU_BARE_LOWEST_FLOOR SULU_PARITY_CONFIG
 # shellcheck source=/dev/null
 source "$LINE_FILE"
 if [ -n "${SULU_PHP:-}" ]; then

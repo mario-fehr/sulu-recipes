@@ -36,6 +36,10 @@ for f in src/Kernel.php public/index.php config/preload.php config/services.yaml
          config/packages/doctrine.yaml config/webspaces/website.xml bin/adminconsole config/packages/sulu_admin.yaml .env.stage; do
   check "file $f matches sulu/skeleton" same_as_skeleton "$f"
 done
+for f in config/packages/doctrine_phpcr.yaml config/packages/csrf.yaml; do
+  skel_show "$f" >/dev/null 2>&1 || continue
+  check "file $f matches sulu/skeleton" same_as_skeleton "$f"
+done
 
 check "admin route 2fa_login_check_admin" bin/adminconsole debug:router 2fa_login_check_admin
 check "no website route fos_js_routing_js" sh -c 'bin/websiteconsole debug:router >/dev/null && ! bin/websiteconsole debug:router fos_js_routing_js'
