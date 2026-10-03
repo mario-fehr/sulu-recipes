@@ -19,6 +19,9 @@
         "webprofilerbundle": "symfony/web-profiler-bundle"
     },
     "recipes": {
+        "cmsig/seal-memory-adapter": [
+            "0.12"
+        ],
         "doctrine/doctrine-bundle": [
             "2.10",
             "2.12",
@@ -45,6 +48,9 @@
         ],
         "phpstan/phpstan-symfony": [
             "2.0"
+        ],
+        "phpunit/phpunit": [
+            "11.1"
         ],
         "rector/rector": [
             "2.0"

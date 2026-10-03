@@ -4,6 +4,7 @@ Additional recipes can be found on the [Contrib Recipes Repository](https://gith
 
 | Package | Latest Recipe | Aliases |
 | --- | --- | --- |
+| [cmsig/seal-memory-adapter](https://packagist.org/packages/cmsig/seal-memory-adapter) | [0.12](../../../tree/main/cmsig/seal-memory-adapter/0.12) |  |
 | [doctrine/doctrine-bundle](https://packagist.org/packages/doctrine/doctrine-bundle) | [3.0](../../../tree/main/doctrine/doctrine-bundle/3.0) |  |
 | [doctrine/phpcr-bundle](https://packagist.org/packages/doctrine/phpcr-bundle) | [2.0](../../../tree/main/doctrine/phpcr-bundle/2.0) |  |
 | [friendsofsymfony/jsrouting-bundle](https://packagist.org/packages/friendsofsymfony/jsrouting-bundle) | [3.0](../../../tree/main/friendsofsymfony/jsrouting-bundle/3.0) |  |
@@ -12,6 +13,7 @@ Additional recipes can be found on the [Contrib Recipes Repository](https://gith
 | [phpstan/phpstan](https://packagist.org/packages/phpstan/phpstan) | [1.0](../../../tree/main/phpstan/phpstan/1.0) |  |
 | [phpstan/phpstan-doctrine](https://packagist.org/packages/phpstan/phpstan-doctrine) | [2.0](../../../tree/main/phpstan/phpstan-doctrine/2.0) |  |
 | [phpstan/phpstan-symfony](https://packagist.org/packages/phpstan/phpstan-symfony) | [2.0](../../../tree/main/phpstan/phpstan-symfony/2.0) |  |
+| [phpunit/phpunit](https://packagist.org/packages/phpunit/phpunit) | [11.1](../../../tree/main/phpunit/phpunit/11.1) |  |
 | [rector/rector](https://packagist.org/packages/rector/rector) | [2.0](../../../tree/main/rector/rector/2.0) |  |
 | [scheb/2fa-bundle](https://packagist.org/packages/scheb/2fa-bundle) | [6.10](../../../tree/main/scheb/2fa-bundle/6.10) | `2fa` |
 | [scheb/2fa-email](https://packagist.org/packages/scheb/2fa-email) | [6.10](../../../tree/main/scheb/2fa-email/6.10) |  |

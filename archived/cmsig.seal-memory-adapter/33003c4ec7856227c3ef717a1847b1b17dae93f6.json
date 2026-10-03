@@ -1,0 +1,18 @@
+{
+    "manifests": {
+        "cmsig/seal-memory-adapter": {
+            "manifest": {
+                "add-lines": [
+                    {
+                        "file": ".env.test",
+                        "content": "SEAL_DSN=memory://",
+                        "position": "after_target",
+                        "target": "APP_SECRET="
+                    }
+                ]
+            },
+            "files": [],
+            "ref": "33003c4ec7856227c3ef717a1847b1b17dae93f6"
+        }
+    }
+}
