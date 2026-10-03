@@ -11,12 +11,6 @@ return RectorConfig::configure()
         __DIR__ . '/tests',
     ])
     ->withRootFiles()
-    ->withPHPStanConfigs([
-        __DIR__ . '/phpstan.dist.neon',
-        // rector does not load phpstan extension automatically so require them manually here:
-        __DIR__ . '/vendor/phpstan/phpstan-doctrine/extension.neon',
-        __DIR__ . '/vendor/phpstan/phpstan-symfony/extension.neon',
-    ])
     ->withImportNames(importShortClasses: false)
     ->withPreparedSets(codeQuality: true, doctrineCodeQuality: true)
     ->withPhpSets()

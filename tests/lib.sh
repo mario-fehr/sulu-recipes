@@ -39,8 +39,8 @@ fi
 # shellcheck source=/dev/null
 source "$REPO_ROOT/tests/pins.env"
 
-RECIPE_VENDORS="symfony scheb friendsofsymfony symfony-cmf doctrine sulu"
-SUPERSEDED="symfony/framework-bundle symfony/security-bundle symfony/console symfony/twig-bundle scheb/2fa-bundle friendsofsymfony/jsrouting-bundle doctrine/doctrine-bundle symfony/web-profiler-bundle doctrine/phpcr-bundle symfony/form"
+RECIPE_VENDORS="symfony scheb friendsofsymfony symfony-cmf doctrine sulu phpstan rector php-cs-fixer vincentlanglet"
+SUPERSEDED="symfony/framework-bundle symfony/security-bundle symfony/console symfony/twig-bundle scheb/2fa-bundle friendsofsymfony/jsrouting-bundle doctrine/doctrine-bundle symfony/web-profiler-bundle doctrine/phpcr-bundle symfony/form phpstan/phpstan php-cs-fixer/shim vincentlanglet/twig-cs-fixer"
 SULU_YAML_PACKAGES="friendsofsymfony/rest-bundle jms/serializer-bundle league/flysystem-bundle stof/doctrine-extensions-bundle symfony/mailer symfony/messenger symfony/monolog-bundle symfony/routing symfony/translation"
 
 mkdir -p "$WORK"

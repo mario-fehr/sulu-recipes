@@ -1,0 +1,27 @@
+{
+    "copy-from-recipe": {
+        "rector.php": "rector.php",
+        "tests/": "tests/"
+    },
+    "add-lines": [
+        {
+            "file": "rector.php",
+            "position": "after_target",
+            "target": "    ->withRootFiles()",
+            "content": [
+                "    ->withPHPStanConfigs([",
+                "        __DIR__ . '/phpstan.dist.neon',",
+                "        // rector does not load phpstan extension automatically so require them manually here:",
+                "        __DIR__ . '/vendor/phpstan/phpstan-doctrine/extension.neon',",
+                "        __DIR__ . '/vendor/phpstan/phpstan-symfony/extension.neon',",
+                "    ])"
+            ],
+            "requires": [
+                "rector/rector",
+                "phpstan/phpstan",
+                "phpstan/phpstan-doctrine:>=2.0",
+                "phpstan/phpstan-symfony:>=2.0"
+            ]
+        }
+    ]
+}

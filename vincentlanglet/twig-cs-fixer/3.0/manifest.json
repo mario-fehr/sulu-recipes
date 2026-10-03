@@ -1,0 +1,9 @@
+{
+    "copy-from-recipe": {
+        ".twig-cs-fixer.dist.php": ".twig-cs-fixer.dist.php"
+    },
+    "gitignore": [
+        "/.twig-cs-fixer.php",
+        "/.twig-cs-fixer.cache"
+    ]
+}

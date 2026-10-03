@@ -1,0 +1,14 @@
+Reason: (f) add-lines adds the doctrine and symfony parameters once phpstan-doctrine, phpstan-symfony and extension-installer are installed; without those packages phpstan rejects the file.
+Evidence: Without the extensions, phpstan reports "Unexpected item 'parameters › doctrine'". tests/install.sh compares the assembled file with sulu/skeleton.
+
+--- a/phpstan.dist.neon
++++ b/phpstan.dist.neon
+@@ -6,8 +6,3 @@
+         - src/
+         - tests/
+     level: max
+-    doctrine:
+-        objectManagerLoader: tests/phpstan/object-manager.php
+-    symfony:
+-        containerXmlPath: %currentWorkingDirectory%/var/cache/website/dev/App_KernelDevDebugContainer.xml
+-        consoleApplicationLoader: tests/phpstan/console-application.php

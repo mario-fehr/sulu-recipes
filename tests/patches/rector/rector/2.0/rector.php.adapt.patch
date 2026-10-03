@@ -1,0 +1,18 @@
+Reason: (f) add-lines adds the withPHPStanConfigs call once phpstan, phpstan-doctrine and phpstan-symfony are installed, because the call loads files those packages provide.
+Evidence: tests/install.sh compares the assembled file with sulu/skeleton.
+
+--- a/rector.php
++++ b/rector.php
+@@ -11,12 +11,6 @@
+         __DIR__ . '/tests',
+     ])
+     ->withRootFiles()
+-    ->withPHPStanConfigs([
+-        __DIR__ . '/phpstan.dist.neon',
+-        // rector does not load phpstan extension automatically so require them manually here:
+-        __DIR__ . '/vendor/phpstan/phpstan-doctrine/extension.neon',
+-        __DIR__ . '/vendor/phpstan/phpstan-symfony/extension.neon',
+-    ])
+     ->withImportNames(importShortClasses: false)
+     ->withPreparedSets(codeQuality: true, doctrineCodeQuality: true)
+     ->withPhpSets()
