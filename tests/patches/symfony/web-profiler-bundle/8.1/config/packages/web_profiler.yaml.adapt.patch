@@ -1,0 +1,18 @@
+Reason: (f) Recipe version for symfony/web-profiler-bundle 8.1 and later, as the official 8.1 recipe.
+Evidence: Equal to symfony/recipes symfony/web-profiler-bundle/8.1 at SYMFONY_RECIPES_SHA (git archive); the bare install on Symfony 8.1 passes.
+
+--- a/config/packages/web_profiler.yaml
++++ b/config/packages/web_profiler.yaml
+@@ -3,11 +3,9 @@
+         toolbar: true
+ 
+     framework:
+-        profiler:
+-            collect_serializer_data: true
++        profiler: true
+ 
+ when@test:
+     framework:
+         profiler:
+             collect: false
+-            collect_serializer_data: true
