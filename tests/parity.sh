@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 source "$(dirname "$0")/lib.sh"
-SKELETON_DIR="${SKELETON_DIR:-$HOME/Projects/private/sulu-flex-skeleton}"
+: "${SKELETON_DIR:?set SKELETON_DIR to a clean sulu-flex-skeleton checkout}"
 A="$WORK/flex"; B="$WORK/upstream"
 SRC="$WORK/skeleton-src"
 REPORT="$WORK/parity-report.txt"
@@ -21,6 +21,10 @@ mkdir -p "$COMPOSER_HOME"
 echo '{"config":{"secure-http":false}}' > "$COMPOSER_HOME/config.json"
 
 if [ "${SULU_RECIPES_REUSE:-0}" = 1 ] && [ -d "$A/vendor" ] && [ -d "$B/vendor" ]; then
+  if [ ! -f "$WORK/endpoint.tree" ]; then
+    echo "no install recorded endpoint.tree; rerun without SULU_RECIPES_REUSE" >&2
+    exit 1
+  fi
   if ! cmp -s "$WORK/endpoint.tree" "$WORK/endpoint.tree.current"; then
     echo "recipes changed since install; rerun without SULU_RECIPES_REUSE" >&2
     exit 1
@@ -35,12 +39,13 @@ else
     echo "$SKELETON_DIR has been installed into; use a clean checkout" >&2
     exit 1
   fi
+  skeleton_name="$(jq -er .name "$SKELETON_DIR/composer.json")" || { echo "no package name in $SKELETON_DIR/composer.json" >&2; exit 1; }
   rm -rf "$A" "$B" "$SRC" "$WORK/endpoint.tree" "$WORK/parity.line"
   mkdir -p "$SRC"
   # Flex keeps the skeleton's own endpoints after SYMFONY_ENDPOINT, so a recipe removed here would still come from flex/main.
   (cd "$SKELETON_DIR" && tar -cf - --exclude=.git --exclude=vendor .) | tar -xf - -C "$SRC"
   composer config --working-dir="$SRC" extra.symfony.endpoint --json "[\"$ENDPOINT_URL\", \"flex://defaults\"]"
-  composer create-project 'mario-fehr/sulu-flex-skeleton:*@dev' "$A" --no-interaction \
+  composer create-project "$skeleton_name:*@dev" "$A" --no-interaction \
     --repository="{\"type\":\"path\",\"url\":\"$SRC\",\"options\":{\"symlink\":false}}"
   composer create-project "sulu/skeleton:$SULU_SKELETON_VERSION" "$B" --no-interaction
   (cd "$A" && update_build_guarded)
@@ -67,9 +72,23 @@ compare() {
   [ "$failed" = 0 ] || return 0
   diff <(norm <"$WORK/side-flex.out") <(norm <"$WORK/side-upstream.out") >"$out" || echo "$label differs"
 }
+present() { [ -e "$1" ] || [ -L "$1" ]; }
+tree_diff() {
+  local name
+  while IFS= read -r name; do
+    case "$name" in .git|vendor|var|composer.lock) continue ;; esac
+    if present "$A/$name" && present "$B/$name"; then
+      diff -rq "$A/$name" "$B/$name" 2>&1 || true
+    elif present "$A/$name"; then
+      echo "Only in $A: $name"
+    else
+      echo "Only in $B: $name"
+    fi
+  done < <( (ls -A "$A"; ls -A "$B") | sort -u)
+}
 
 {
-  { diff -rq "$A" "$B" -x .git -x vendor -x var -x composer.lock 2>&1 || true; } | sed -e "s|$A|<flex>|g" -e "s|$B|<upstream>|g"
+  tree_diff | sed -e "s|$A|<flex>|g" -e "s|$B|<upstream>|g"
   for f in .env .env.dev .env.test .env.stage .gitignore; do
     { [ -f "$A/$f" ] && [ -f "$B/$f" ]; } || continue
     diff <(blocks "$A/$f") <(blocks "$B/$f") | grep '^[<>]' | sed "s|^|$f |" || true
