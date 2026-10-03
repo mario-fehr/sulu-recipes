@@ -34,7 +34,7 @@ Checks that every script in `tests/` and `bin/` has a header comment with a `# U
 
 `tests/patches.sh [<dir>]`
 
-Checks that every recipe file equals its `sulu/skeleton` file at the pin of every line plus its patches in `tests/patches/`. A superseded recipe takes some files from its official recipe (its `manifest.json`, its `post-install.txt` and any file no line of `sulu/skeleton` has). Each of those must equal the official file at the pin in `tests/pins.env` plus its patches. Every patch needs a target, a `Reason:` and an `Evidence:` line. The official recipe is the highest folder of the package in `symfony/recipes` or `symfony/recipes-contrib` that is not above the folder version here, as Flex picks it. It also inserts the `add-lines` blocks of all manifests into their base file the way Flex does: in manifest order, with every `requires` taken as installed. The result must equal `sulu/skeleton` at the pin of each line whose `sulu/skeleton` has the file, plus the base file's fix patch. The check fails for a block Flex would skip (no content, unknown position, missing target, a placeholder other than `%CONFIG_DIR%`) and for a target file that more than one recipe folder ships. It also fails for blocks of different recipes whose result depends on the install order: the same position, the same content, or one block containing another's target.
+Checks that every recipe file equals its `sulu/skeleton` file at the pin of every line plus its patches in `tests/patches/`. A superseded recipe takes some files from its official recipe (its `manifest.json`, its `post-install.txt` and any file no line of `sulu/skeleton` has). Each of those must equal the official file at the pin in `tests/pins.env` plus its patches. Every patch needs a target, a `Reason:` and an `Evidence:` line. A patch whose header has a `Lines:` line (for example `Lines: 3.0`) applies only to the release lines it lists; for the other lines the file must equal that line's `sulu/skeleton` file without the patch. A `Lines:` value without a `tests/lines/<line>.env` fails the check, and so does a header with more than one `Lines:` line or one without a value. The official recipe is the highest folder of the package in `symfony/recipes` or `symfony/recipes-contrib` that is not above the folder version here, as Flex picks it. It also inserts the `add-lines` blocks of all manifests into their base file the way Flex does: in manifest order. A block counts for a line only if its recipe's package is in that line's `sulu/skeleton` `composer.json` (`require` or `require-dev`), and so is every package in its `requires` that has a recipe in this repository; other `requires` count as installed. A target file is checked for a line only if the package of the recipe that ships it is in that `composer.json` too. The result must equal `sulu/skeleton` at the pin of each line whose `sulu/skeleton` has the file, plus the base file's fix patch. The check fails for a block Flex would skip (no content, unknown position, missing target, a placeholder other than `%CONFIG_DIR%`) and for a target file that more than one recipe folder ships. It also fails for blocks of different recipes whose result depends on the install order: the same position, the same content, or one block containing another's target.
 
 ### tests/install.sh
 
@@ -72,9 +72,9 @@ Sourced by the other scripts, never run directly. Loads `tests/lines/$SULU_LINE.
 
 ### bin/make-patch.sh
 
-`bin/make-patch.sh fix|adapt <recipe-file> [--reason <text> --evidence <text>]`
+`bin/make-patch.sh fix|adapt <recipe-file> [--reason <text> --evidence <text>] [--lines "<line> ..."]`
 
-Writes the patch of an edited recipe file into `tests/patches/`. The patch is made against `sulu/skeleton` or, for files that come from the official recipe, against the official file. A `fix` patch is a deliberate fix, written against upstream. An `adapt` patch fits a file to an older package version or to content another recipe adds, and is written against upstream plus the fix.
+Writes the patch of an edited recipe file into `tests/patches/`. The patch is made against `sulu/skeleton` or, for files that come from the official recipe, against the official file. A `fix` patch is a deliberate fix, written against upstream. An `adapt` patch fits a file to an older package version or to content another recipe adds, and is written against upstream plus the fix. `--lines` writes a `Lines:` header so the patch applies only to those release lines, for a recipe that both lines share while their `sulu/skeleton` files differ; `SULU_LINE` must be one of them, and a later run keeps the header; `--lines ""` removes it.
 
 ### bin/sync-upstream.sh
 
@@ -132,7 +132,7 @@ Read by one script:
 - `tests/lines/<line>.bare-lock.txt`, `tests/lines/<line>.bare-lock.<name>.txt`: the recipe set a bare install must end up with.
 - `tests/lines/<line>.parity-expected.txt`: the differences parity accepts.
 - `tests/style-exceptions.txt`: style check exceptions, each with a reason.
-- `tests/patches/<recipe-dir>/<file>.fix.patch`, `.adapt.patch`: the patches of a recipe file; each starts with a `Reason:` and an `Evidence:` line.
+- `tests/patches/<recipe-dir>/<file>.fix.patch`, `.adapt.patch`: the patches of a recipe file; each starts with a `Reason:` and an `Evidence:` line and an optional `Lines:` line.
 
 ## Internal names
 

@@ -22,6 +22,14 @@ if [ -d "$PATCH_ROOT" ]; then
     case "$path" in assets/admin/*) fail "$rel: assets/admin/ must stay identical to sulu/skeleton for sulu:admin:update-build" ;; esac
     grep -q "^Reason: ($letter) ." "$p" || fail "$rel: no 'Reason: ($letter) ...' line"
     grep -q '^Evidence: .' "$p" || fail "$rel: no 'Evidence: ...' line"
+    header_lines="$(sed -n '/^--- a\//q; /^Lines:/p' "$p")"
+    if [ -n "$header_lines" ] && { [ "$(grep -c . <<<"$header_lines")" != 1 ] || ! grep -q '^Lines: [^ ]' <<<"$header_lines"; }; then
+      fail "$rel: the header needs at most one 'Lines: <line> ...' line"
+    fi
+    read -ra scoped <<<"$(sed -n '/^--- a\//q; s/^Lines: //p' "$p")"
+    for l in ${scoped[@]+"${scoped[@]}"}; do
+      [ -f "$ROOT/tests/lines/$l.env" ] || fail "$rel: Lines: names $l, which has no tests/lines/$l.env"
+    done
   done < <(find "$PATCH_ROOT" -type f | sort)
 fi
 
@@ -30,11 +38,12 @@ for line_file in "$ROOT"/tests/lines/*.env; do
   sha="$(sed -n 's/^SULU_SKELETON_SHA=//p' "$line_file")"
   [ -n "$sha" ] || { fail "$line: no SULU_SKELETON_SHA"; continue; }
   upstream sulu-skeleton sulu/skeleton "$sha"
+  PATCH_LINE="$line"
   while IFS= read -r recipe; do
     case "$recipe" in sulu/sulu/*) [ "$recipe" = "sulu/sulu/$line" ] || continue ;; esac
     while IFS= read -r path; do
       if ! git -C "$WORK/clones/sulu-skeleton" cat-file -e "$sha:$path" 2>/dev/null; then
-        if [ -f "$PATCH_ROOT/$recipe/$path.fix.patch" ] || [ -f "$PATCH_ROOT/$recipe/$path.adapt.patch" ]; then
+        if patched_in_line "$PATCH_ROOT/$recipe/$path" "$line"; then
           fail "$line $recipe/$path: patched, but sulu/skeleton has no $path"
         fi
         continue
@@ -47,6 +56,7 @@ for line_file in "$ROOT"/tests/lines/*.env; do
     done < <(recipe_files "$ROOT" "$recipe")
   done < <(recipe_dirs "$ROOT")
 done
+unset PATCH_LINE
 
 official_clones
 while IFS= read -r recipe; do
@@ -72,11 +82,14 @@ while IFS= read -r bad; do
   if [ -n "$bad" ]; then fail "$bad: Flex skips this add-lines block (no file or content, unknown position, after_target without target, or an unexpanded placeholder)"; fi
 done < <(jq -r 'select(.file == "" or .content == null or (.position | IN("top", "bottom", "after_target") | not) or (.position == "after_target" and .target == "") or (.file | test("%"))) | "\(.recipe) add-lines[\(.index)]"' <<<"$entries")
 valid='select(.file != "" and .content != null and (.position | IN("top", "bottom", "after_target")) and (.position != "after_target" or .target != "") and (.file | test("%") | not))'
+# A block counts for a line only if its package and every required package with a recipe here are in that line's sulu/skeleton composer.json.
+recipe_packages="$(recipe_dirs "$ROOT" | sed 's|/[^/]*$||' | sort -u | jq -R . | jq -sc .)"
 add_lines_tmp="$(mktemp -d)"
 for line_file in "$ROOT"/tests/lines/*.env; do
   line="$(basename "$line_file" .env)"
   sha="$(sed -n 's/^SULU_SKELETON_SHA=//p' "$line_file")"
-  line_entries="$(jq -c --arg l "sulu/sulu/$line" "$valid | select((.recipe | startswith(\"sulu/sulu/\") | not) or .recipe == \$l)" <<<"$entries")"
+  present="$(git -C "$WORK/clones/sulu-skeleton" show "$sha:composer.json" | jq -c '[.require, ."require-dev"] | add | keys')"
+  line_entries="$(jq -c --arg l "sulu/sulu/$line" --argjson present "$present" --argjson own "$recipe_packages" "$valid | select(.recipe == \$l or ((.recipe | startswith(\"sulu/sulu/\") | not) and ((.recipe | sub(\"/[^/]*\$\"; \"\")) | IN(\$present[])) and all(.requires[]; (IN(\$own[]) | not) or IN(\$present[]))))" <<<"$entries")"
   while IFS= read -r file; do
     [ -n "$file" ] || continue
     git -C "$WORK/clones/sulu-skeleton" cat-file -e "$sha:$file" 2>/dev/null || continue
@@ -87,6 +100,7 @@ for line_file in "$ROOT"/tests/lines/*.env; do
     done < <(recipe_dirs "$ROOT")
     if [ "$(grep -c . <<<"$base")" != 1 ]; then fail "$line $file: add-lines target must come from exactly one recipe folder, found: ${base//$'\n'/ }"; continue; fi
     base="${base%$'\n'}"
+    case "$base" in sulu/sulu/*) ;; *) jq -e --arg p "${base%/*}" 'index($p)' <<<"$present" >/dev/null || continue ;; esac
     conflicts="$(jq -s -r --arg f "$file" '
       [.[] | select(.file == $f)]
       | group_by([.position, .target, .content])
@@ -108,7 +122,7 @@ for line_file in "$ROOT"/tests/lines/*.env; do
     done < <(jq -c --arg f "$file" 'select(.file == $f) | {position, target, content}' <<<"$line_entries" | awk '!seen[$0]++')
     mkdir -p "$add_lines_tmp/expected/$(dirname "$file")"
     git -C "$WORK/clones/sulu-skeleton" show "$sha:$file" >"$add_lines_tmp/expected/$file"
-    if [ -f "$PATCH_ROOT/$base/$file.fix.patch" ] && ! (cd "$add_lines_tmp/expected" && git apply "$PATCH_ROOT/$base/$file.fix.patch"); then
+    if [ -f "$PATCH_ROOT/$base/$file.fix.patch" ] && patch_in_line "$PATCH_ROOT/$base/$file.fix.patch" "$line" && ! (cd "$add_lines_tmp/expected" && git apply "$PATCH_ROOT/$base/$file.fix.patch"); then
       fail "$line $file: the fix patch of $base/$file does not apply"; continue
     fi
     cmp -s "$add_lines_tmp/assembled" "$add_lines_tmp/expected/$file" || fail "$line $file: $base/$file plus the add-lines blocks differs from sulu/skeleton plus its fix patch"

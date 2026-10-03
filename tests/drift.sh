@@ -31,6 +31,7 @@ for line in $lines; do
   pin_sha="$(sed -n 's/^SULU_SKELETON_SHA=//p' "$REPO_ROOT/tests/lines/$line.env")"
   pin_version="$(sed -n 's/^SULU_SKELETON_VERSION=//p' "$REPO_ROOT/tests/lines/$line.env")"
   upstream sulu-skeleton sulu/skeleton "$pin_sha"
+  PATCH_LINE="$line"
   latest="$(git -C "$SKEL" tag -l "$line.*" | grep -E "^${line//./\\.}\.[0-9]+$" | sort -V | tail -n 1 || true)"
   [ -n "$latest" ] || continue
   newer "$pin_version" "$latest" || continue
@@ -43,13 +44,17 @@ for line in $lines; do
     for recipe in $(recipe_dirs "$REPO_ROOT"); do
       case "$recipe" in sulu/sulu/*) [ "$recipe" = "sulu/sulu/$line" ] || continue ;; esac
       [ -f "$PATCH_ROOT/$recipe/$path.fix.patch" ] || [ -f "$PATCH_ROOT/$recipe/$path.adapt.patch" ] || continue
-      rc=0; rebuild_file "$recipe" "$path" "$latest" >/dev/null 2>&1 || rc=$?
-      case "$rc" in
-        0) status="applies" ;;
-        1) status="removed upstream" ;;
-        2) status="does not apply (fix)" ;;
-        *) status="does not apply (adapt)" ;;
-      esac
+      if ! patched_in_line "$PATCH_ROOT/$recipe/$path" "$line"; then
+        status="no patch for $line (Lines:)"
+      else
+        rc=0; rebuild_file "$recipe" "$path" "$latest" >/dev/null 2>&1 || rc=$?
+        case "$rc" in
+          0) status="applies" ;;
+          1) status="removed upstream" ;;
+          2) status="does not apply (fix)" ;;
+          *) status="does not apply (adapt)" ;;
+        esac
+      fi
       patched="$patched- \`$recipe/$path\`: $status"$'\n'
     done
   done <<<"$ours"
@@ -71,6 +76,7 @@ for line in $lines; do
     list "$others"
   } > "$OUT/skeleton-$line.md"
 done
+unset PATCH_LINE
 
 highest="$(tail -n 1 <<<"$lines")"
 for minor in $(git -C "$SKEL" tag -l | grep -E '^[0-9]+\.[0-9]+\.0$' | sed 's/\.0$//' | sort -V); do
