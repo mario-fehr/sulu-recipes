@@ -20,7 +20,6 @@ Deferred ideas without a spec, one line each. Research starts when an item is pi
 
 ## CI and drift
 
-- A functional smoke test in CI (boot, build, admin login).
 - Move `qa.yml` and `drift.yml` from `ubuntu-24.04` to Ubuntu 26 once `setup-php` supports PHP 8.5 there; `ubuntu-latest` moves to Ubuntu 26 from 19 October 2026.
 
 ## Content
