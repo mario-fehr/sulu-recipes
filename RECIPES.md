@@ -22,7 +22,7 @@ Additional recipes can be found on the [Contrib Recipes Repository](https://gith
 | [symfony-cmf/routing-bundle](https://packagist.org/packages/symfony-cmf/routing-bundle) | [3.0](../../../tree/main/symfony-cmf/routing-bundle/3.0) |  |
 | [symfony/console](https://packagist.org/packages/symfony/console) | [6.4](../../../tree/main/symfony/console/6.4) | `cli`, `console` |
 | [symfony/form](https://packagist.org/packages/symfony/form) | [7.2](../../../tree/main/symfony/form/7.2) | `form` |
-| [symfony/framework-bundle](https://packagist.org/packages/symfony/framework-bundle) | [6.4](../../../tree/main/symfony/framework-bundle/6.4) | `framework-bundle`, `frameworkbundle` |
+| [symfony/framework-bundle](https://packagist.org/packages/symfony/framework-bundle) | [8.2](../../../tree/main/symfony/framework-bundle/8.2) | `framework-bundle`, `frameworkbundle` |
 | [symfony/security-bundle](https://packagist.org/packages/symfony/security-bundle) | [6.4](../../../tree/main/symfony/security-bundle/6.4) | `security`, `security-bundle`, `securitybundle` |
 | [symfony/twig-bundle](https://packagist.org/packages/symfony/twig-bundle) | [6.4](../../../tree/main/symfony/twig-bundle/6.4) | `twig-bundle`, `twigbundle` |
 | [symfony/web-profiler-bundle](https://packagist.org/packages/symfony/web-profiler-bundle) | [8.1](../../../tree/main/symfony/web-profiler-bundle/8.1) | `web-profiler-bundle`, `webprofilerbundle` |

@@ -78,7 +78,8 @@
             "7.2"
         ],
         "symfony/framework-bundle": [
-            "6.4"
+            "6.4",
+            "8.2"
         ],
         "symfony/security-bundle": [
             "6.4"
