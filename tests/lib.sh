@@ -179,7 +179,22 @@ lock_recipes() {
   jq -r 'to_entries[] | select(.value.recipe) | "\(.key) \(.value.recipe.version) \(.value.recipe.repo)"' symfony.lock \
     | sed "s|$OUR_REPO|<this repo>|" | sort
 }
-same_as_skeleton() { skel_show "$1" | cmp -s - "$1"; }
+skeleton_with_fixes() {
+  local path="$1" tmp p recipe pkg
+  tmp="$(mktemp -d)"
+  mkdir -p "$tmp/$(dirname "$path")"
+  skel_show "$path" >"$tmp/$path" 2>/dev/null || { rm -rf "$tmp"; return 1; }
+  while IFS= read -r p; do
+    recipe="$(cut -d/ -f1-3 <<<"${p#"$PATCH_ROOT"/}")"
+    [ "${p#"$PATCH_ROOT/$recipe"/}" = "$path.fix.patch" ] || continue
+    pkg="${recipe%/*}"
+    [ "$(jq -r --arg p "$pkg" '"\(.[$p].recipe.repo // "")/\(.[$p].recipe.version // "")"' symfony.lock)" = "$OUR_REPO/${recipe##*/}" ] || continue
+    (cd "$tmp" && git apply "$p") || { rm -rf "$tmp"; return 1; }
+  done < <(find "$PATCH_ROOT" -path "*/$path.fix.patch" 2>/dev/null)
+  cat "$tmp/$path"
+  rm -rf "$tmp"
+}
+same_as_skeleton() { skeleton_with_fixes "$1" | cmp -s - "$1"; }
 
 # --no-install: framework-bundle and console must get their recipes from this endpoint, so it is set before the first install.
 new_symfony_project() {
