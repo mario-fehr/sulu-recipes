@@ -35,6 +35,22 @@ for line in $lines; do
   changed="$(git -C "$SKEL" diff --name-only --no-renames "$pin_sha" "$latest")"
   ours="$(grep -Fx -f <(echo "$shipped") <<<"$changed" || true)"
   others="$(grep -Fxv -f <(echo "$shipped") <<<"$changed" || true)"
+  patched=""
+  while IFS= read -r path; do
+    [ -n "$path" ] || continue
+    for recipe in $(recipe_dirs "$REPO_ROOT"); do
+      case "$recipe" in sulu/sulu/*) [ "$recipe" = "sulu/sulu/$line" ] || continue ;; esac
+      [ -f "$PATCH_ROOT/$recipe/$path.fix.patch" ] || [ -f "$PATCH_ROOT/$recipe/$path.adapt.patch" ] || continue
+      rc=0; rebuild_file "$recipe" "$path" "$latest" >/dev/null 2>&1 || rc=$?
+      case "$rc" in
+        0) status="applies" ;;
+        1) status="removed upstream" ;;
+        2) status="does not apply (fix)" ;;
+        *) status="does not apply (adapt)" ;;
+      esac
+      patched="$patched- \`$recipe/$path\`: $status"$'\n'
+    done
+  done <<<"$ours"
   {
     echo "sulu/skeleton $line: $latest released"
     echo
@@ -43,6 +59,10 @@ for line in $lines; do
     echo "Changed files the recipes ship:"
     echo
     list "$ours"
+    echo
+    echo "Patches against $latest:"
+    echo
+    if [ -n "$patched" ]; then printf '%s' "$patched"; else echo "- none"; fi
     echo
     echo "Other changed files:"
     echo
