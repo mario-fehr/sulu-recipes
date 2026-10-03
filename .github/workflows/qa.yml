@@ -77,7 +77,7 @@ jobs:
                     tools: 'composer:v2'
                     coverage: none
             -
-                run: shellcheck -x -P tests tests/build-endpoint.sh tests/install.sh tests/install-bare.sh tests/parity.sh tests/setup-tools.sh tests/drift.sh tests/style.sh bin/supersede.sh
+                run: shellcheck -x -P tests tests/build-endpoint.sh tests/install.sh tests/install-bare.sh tests/parity.sh tests/setup-tools.sh tests/drift.sh tests/style.sh tests/matrix.sh bin/supersede.sh
             -
                 run: tests/style.sh
             -
@@ -93,6 +93,8 @@ jobs:
         timeout-minutes: 5
         outputs:
             lines: ${{ steps.lines.outputs.lines }}
+            install: ${{ steps.lines.outputs.install }}
+            install_push: ${{ steps.lines.outputs.install_push }}
             bare: ${{ steps.lines.outputs.bare }}
         steps:
             -
@@ -105,34 +107,21 @@ jobs:
                 id: lines
                 env:
                     LINE: ${{ inputs.line }}
-                run: |
-                    if [ -n "$LINE" ]; then
-                        if [ ! -f "tests/lines/$LINE.env" ]; then
-                            echo "no pin file tests/lines/$LINE.env for line $LINE" >&2
-                            exit 1
-                        fi
-                        lines=$(jq -cn --arg l "$LINE" '[$l]')
-                    else
-                        lines=$(find tests/lines -maxdepth 1 -name '*.env' | sort | jq -R -s -c 'split("\n") | map(select(. != "") | sub("^.*/"; "") | rtrimstr(".env"))')
-                    fi
-                    echo "lines=$lines" >> "$GITHUB_OUTPUT"
-                    bare=$(for l in $(jq -r '.[]' <<<"$lines"); do
-                        # shellcheck source=/dev/null
-                        ( . "tests/lines/$l.env"; for s in ${SULU_BARE_SYMFONY_VERSIONS:-}; do jq -cn --arg line "$l" --arg symfony "$s" '{line: $line, symfony: $symfony}'; done )
-                    done | jq -s -c .)
-                    echo "bare=$bare" >> "$GITHUB_OUTPUT"
+                run: tests/matrix.sh "$LINE" >> "$GITHUB_OUTPUT"
 
     install:
-        name: install (${{ matrix.line }})
+        name: install (${{ matrix.line }}, PHP ${{ matrix.php }}, MySQL ${{ matrix.mysql }})
         needs: [lint, lines]
         runs-on: ubuntu-24.04
         timeout-minutes: 30
         strategy:
             fail-fast: false
             matrix:
-                line: ${{ fromJSON(needs.lines.outputs.lines) }}
+                include: ${{ fromJSON(github.event_name == 'push' && needs.lines.outputs.install_push || needs.lines.outputs.install) }}
         env:
             SULU_LINE: ${{ matrix.line }}
+            SULU_PHP: ${{ matrix.php }}
+            SULU_MYSQL_VERSION: ${{ matrix.mysql }}
         steps:
             -
                 run: echo "SULU_RECIPES_WORKDIR=$RUNNER_TEMP/sulu-recipes" >> "$GITHUB_ENV"
@@ -145,7 +134,7 @@ jobs:
             -
                 uses: shivammathur/setup-php@v2
                 with:
-                    php-version: '8.5'
+                    php-version: ${{ matrix.php }}
                     extensions: 'ctype, iconv, mysql, gd'
                     tools: 'composer:v2'
                     coverage: none
@@ -156,8 +145,8 @@ jobs:
                 uses: actions/cache@v6
                 with:
                     path: ${{ steps.composer-cache.outputs.dir }}
-                    key: composer-${{ runner.os }}-${{ github.job }}-${{ matrix.line }}-${{ github.run_id }}
-                    restore-keys: composer-${{ runner.os }}-${{ github.job }}-${{ matrix.line }}-
+                    key: composer-${{ runner.os }}-${{ github.job }}-${{ matrix.line }}-${{ matrix.php }}-${{ github.run_id }}
+                    restore-keys: composer-${{ runner.os }}-${{ github.job }}-${{ matrix.line }}-${{ matrix.php }}-
             -
                 run: tests/setup-tools.sh
             -
@@ -166,12 +155,12 @@ jobs:
                 if: failure() || cancelled()
                 uses: actions/upload-artifact@v7
                 with:
-                    name: install-logs-${{ matrix.line }}
+                    name: install-logs-${{ matrix.line }}-${{ matrix.php }}
                     path: ${{ env.SULU_RECIPES_WORKDIR }}/*.log
                     retention-days: 7
 
     install-bare:
-        name: install-bare (${{ matrix.line }}, ${{ matrix.symfony }})
+        name: install-bare (${{ matrix.line }}, PHP ${{ matrix.php }}, Symfony ${{ matrix.symfony }}, ${{ matrix.deps }})
         needs: [lint, lines]
         # Not when flex-update.yml calls this workflow on push: an upstream release would block publishing without protecting anyone.
         if: needs.lines.outputs.bare != '[]' && github.event_name != 'push'
@@ -183,7 +172,11 @@ jobs:
                 include: ${{ fromJSON(needs.lines.outputs.bare) }}
         env:
             SULU_LINE: ${{ matrix.line }}
+            SULU_PHP: ${{ matrix.php }}
+            SULU_MYSQL_VERSION: ${{ matrix.mysql }}
             SULU_BARE_SYMFONY: ${{ matrix.symfony }}
+            SULU_BARE_DEPS: ${{ matrix.deps }}
+            SULU_BARE_LOCK: ${{ matrix.lock }}
         steps:
             -
                 run: echo "SULU_RECIPES_WORKDIR=$RUNNER_TEMP/sulu-recipes" >> "$GITHUB_ENV"
@@ -196,7 +189,7 @@ jobs:
             -
                 uses: shivammathur/setup-php@v2
                 with:
-                    php-version: '8.5'
+                    php-version: ${{ matrix.php }}
                     extensions: 'ctype, iconv, mysql, gd'
                     tools: 'composer:v2'
                     coverage: none
@@ -207,8 +200,8 @@ jobs:
                 uses: actions/cache@v6
                 with:
                     path: ${{ steps.composer-cache.outputs.dir }}
-                    key: composer-${{ runner.os }}-${{ github.job }}-${{ matrix.line }}-${{ matrix.symfony }}-${{ github.run_id }}
-                    restore-keys: composer-${{ runner.os }}-${{ github.job }}-${{ matrix.line }}-${{ matrix.symfony }}-
+                    key: composer-${{ runner.os }}-${{ github.job }}-${{ matrix.line }}-${{ matrix.php }}-${{ matrix.symfony }}-${{ matrix.deps }}-${{ github.run_id }}
+                    restore-keys: composer-${{ runner.os }}-${{ github.job }}-${{ matrix.line }}-${{ matrix.php }}-${{ matrix.symfony }}-${{ matrix.deps }}-
             -
                 run: tests/setup-tools.sh
             -
@@ -217,7 +210,7 @@ jobs:
                 if: failure() || cancelled()
                 uses: actions/upload-artifact@v7
                 with:
-                    name: install-bare-logs-${{ matrix.line }}-${{ matrix.symfony }}
+                    name: install-bare-logs-${{ matrix.line }}-${{ matrix.php }}-${{ matrix.symfony }}-${{ matrix.deps }}
                     path: ${{ env.SULU_RECIPES_WORKDIR }}/*.log
                     retention-days: 7
 
