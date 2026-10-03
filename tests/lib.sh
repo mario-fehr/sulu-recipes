@@ -82,6 +82,19 @@ recipe_dirs() {
   done
 }
 recipe_files() { (cd "$1/$2" && find . -type f ! -name manifest.json ! -name post-install.txt | sed 's|^\./||' | sort); }
+# A patch with a "Lines:" header applies only to the release lines it lists.
+patch_in_line() {
+  local lines
+  lines="$(sed -n '/^--- a\//q; s/^Lines: //p' "$1")"
+  [ -z "$lines" ] || [[ " $lines " == *" $2 "* ]]
+}
+patched_in_line() {
+  local p
+  for p in "$1.fix.patch" "$1.adapt.patch"; do
+    if [ -f "$p" ] && patch_in_line "$p" "$2"; then return 0; fi
+  done
+  return 1
+}
 rebuild_file() {
   local recipe="$1" path="$2" ref="$3" tmp kind err rc=0 n=1
   tmp="$(mktemp -d)"
@@ -94,6 +107,7 @@ rebuild_file() {
   for kind in fix adapt; do
     n=$((n + 1))
     [ -f "$PATCH_ROOT/$recipe/$path.$kind.patch" ] || continue
+    patch_in_line "$PATCH_ROOT/$recipe/$path.$kind.patch" "${PATCH_LINE:-$SULU_LINE}" || continue
     if ! err="$(cd "$tmp" && git apply "$PATCH_ROOT/$recipe/$path.$kind.patch" 2>&1)"; then
       echo "$kind patch of $recipe/$path does not apply at $ref: ${err//$'\n'/; }" >&2
       rc=$n
@@ -160,7 +174,7 @@ official_files() {
 add_lines_entries() {
   local r
   for r in $(recipe_dirs "$1"); do
-    jq -c --arg r "$r" '(."add-lines" // []) | to_entries[] | {recipe: $r, index: .key, file: (.value.file // "" | sub("^%CONFIG_DIR%"; "config")), position: (.value.position // ""), target: (.value.target // ""), content: (.value.content | if type == "array" then join("\n") elif type == "string" then . else null end)}' "$1/$r/manifest.json"
+    jq -c --arg r "$r" '(."add-lines" // []) | to_entries[] | {recipe: $r, index: .key, requires: (.value.requires // [] | if type == "string" then [.] else . end | map(split(":")[0])), file: (.value.file // "" | sub("^%CONFIG_DIR%"; "config")), position: (.value.position // ""), target: (.value.target // ""), content: (.value.content | if type == "array" then join("\n") elif type == "string" then . else null end)}' "$1/$r/manifest.json"
   done
 }
 apply_add_line() {
