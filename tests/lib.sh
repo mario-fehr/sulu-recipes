@@ -61,10 +61,10 @@ upstream() {
 
 skel_show() { git -C "$WORK/clones/sulu-skeleton" show "$SULU_SKELETON_SHA:$1"; }
 
-SERVER_PIDS=""
+SERVERS=""
 CONTAINERS=""
 cleanup() {
-  for pid in $SERVER_PIDS; do kill "$pid" 2>/dev/null || true; done
+  for s in $SERVERS; do kill "${s%%:*}" 2>/dev/null || true; done
   for c in $CONTAINERS; do docker rm -f "$c" >/dev/null 2>&1 || true; done
 }
 trap cleanup EXIT
@@ -87,9 +87,11 @@ serve() {
   else
     php -S "127.0.0.1:$port" -t "$docroot" >"$WORK/$name.log" 2>&1 &
   fi
-  SERVER_PIDS="$SERVER_PIDS $!"
+  local pid=$!
+  SERVERS="$SERVERS $pid:$name"
   for _ in $(seq 1 60); do
     curl -s -m 10 -o /dev/null "http://127.0.0.1:$port/" && return 0
+    kill -0 "$pid" 2>/dev/null || break
     sleep 0.5
   done
   echo "$name server did not start, see $WORK/$name.log" >&2
@@ -113,10 +115,21 @@ update_build_guarded() {
 FAILURES=0
 check() {
   local name="$1"; shift
+  echo "=== $name" >>"$WORK/checks.log"
   if "$@" >>"$WORK/checks.log" 2>&1; then echo "PASS $name"; else echo "FAIL $name"; FAILURES=$((FAILURES + 1)); fi
 }
 
+check_servers() {
+  local s
+  for s in $SERVERS; do
+    kill -0 "${s%%:*}" 2>/dev/null && continue
+    echo "FAIL ${s#*:} server exited during the run, see $WORK/${s#*:}.log"
+    FAILURES=$((FAILURES + 1))
+  done
+}
+
 finish() {
+  check_servers
   echo "$FAILURES failure(s); details in $WORK/checks.log"
   [ "$FAILURES" -eq 0 ]
 }
