@@ -10,6 +10,23 @@ find "$DIFFS" -name '*.diff' -delete
 EXPECTED="$REPO_ROOT/tests/lines/$SULU_LINE.parity-expected.txt"
 : >"$WORK/checks.log"
 require_free_port "$ENDPOINT_PORT"
+patches_sum() { if [ -d "$PATCH_ROOT" ]; then (cd "$PATCH_ROOT" && find . -type f | sort | xargs shasum); fi | shasum; }
+apply_fixes() {
+  local d pkg repo version p
+  [ -d "$PATCH_ROOT" ] || return 0
+  for d in "$PATCH_ROOT"/*/*; do
+    [ -d "$d" ] || continue
+    pkg="${d#"$PATCH_ROOT"/}"
+    [ "$(jq -r --arg p "$pkg" 'has($p)' "$A/symfony.lock")" = true ] || continue
+    repo="$(jq -r --arg p "$pkg" '.[$p].recipe.repo // ""' "$A/symfony.lock")"
+    if [ "$repo" != "$OUR_REPO" ]; then echo "$pkg has patches, but its recipe came from '$repo'" >&2; return 1; fi
+    version="$(jq -r --arg p "$pkg" '.[$p].recipe.version' "$A/symfony.lock")"
+    [ -d "$d/$version" ] || continue
+    while IFS= read -r p; do
+      (cd "$B" && git apply "$p") || { echo "$p does not apply to $B" >&2; return 1; }
+    done < <(find "$d/$version" -name '*.fix.patch' | sort)
+  done
+}
 
 "$REPO_ROOT/tests/build-endpoint.sh"
 serve endpoint "$ENDPOINT_PORT" "$OUTPUT"
@@ -33,6 +50,10 @@ if [ "${SULU_RECIPES_REUSE:-0}" = 1 ] && [ -d "$A/vendor" ] && [ -d "$B/vendor" 
     echo "projects were installed for another line; rerun without SULU_RECIPES_REUSE" >&2
     exit 1
   fi
+  if [ "$(patches_sum)" != "$(cat "$WORK/patches.sum" 2>/dev/null)" ]; then
+    echo "tests/patches changed since install; rerun without SULU_RECIPES_REUSE" >&2
+    exit 1
+  fi
   echo "SULU_RECIPES_REUSE=1: reusing $A and $B"
 else
   if [ -e "$SKELETON_DIR/composer.lock" ] || [ -e "$SKELETON_DIR/symfony.lock" ]; then
@@ -40,7 +61,7 @@ else
     exit 1
   fi
   skeleton_name="$(jq -er .name "$SKELETON_DIR/composer.json")" || { echo "no package name in $SKELETON_DIR/composer.json" >&2; exit 1; }
-  rm -rf "$A" "$B" "$SRC" "$WORK/endpoint.tree" "$WORK/parity.line"
+  rm -rf "$A" "$B" "$SRC" "$WORK/endpoint.tree" "$WORK/parity.line" "$WORK/patches.sum"
   mkdir -p "$SRC"
   # Flex keeps the skeleton's own endpoints after SYMFONY_ENDPOINT, so a recipe removed here would still come from flex/main.
   (cd "$SKELETON_DIR" && tar -cf - --exclude=.git --exclude=vendor .) | tar -xf - -C "$SRC"
@@ -49,6 +70,8 @@ else
     --repository="{\"type\":\"path\",\"url\":\"$SRC\",\"options\":{\"symlink\":false}}"
   composer create-project "sulu/skeleton:$SULU_SKELETON_VERSION" "$B" --no-interaction
   (cd "$A" && update_build_guarded)
+  apply_fixes || exit 1
+  patches_sum > "$WORK/patches.sum"
   cp "$WORK/endpoint.tree.current" "$WORK/endpoint.tree"
   echo "$SULU_LINE" > "$WORK/parity.line"
 fi
