@@ -49,3 +49,4 @@ Files <flex>/tests/bootstrap.php and <upstream>/tests/bootstrap.php differ  #rea
 Only in <flex>/config/packages: sulu.yaml  #reason: (d) carries Sulu values for non-superseded packages
 Only in <upstream>: .env.local  #reason: (b) APP_ENV=dev comes from the official .env instead of a generated .env.local
 Only in <upstream>/tests: phpstan  #reason: (c) stubs only used by Sulu phpstan.dist.neon, which is not shipped
+.gitignore < sulu/sulu	/public/uploads/|  #reason: (d) /public/uploads/ in a sulu/sulu block as well as in sulu-flex-skeleton's own lines
