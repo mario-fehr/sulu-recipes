@@ -61,6 +61,9 @@ The harness clones the upstream repositories it reads into its work directory on
 - `tests/install.sh` installs `sulu/sulu` into a fresh `symfony/skeleton` from that local endpoint.
 - `tests/install-bare.sh` installs `sulu/sulu` alone into a fresh `symfony/skeleton`, the version from `SULU_BARE_SYMFONY` (default `7.4`).
 - `tests/parity.sh` compares a `sulu-flex-skeleton` install with a `sulu/skeleton` install. It needs `SKELETON_DIR`, a clean `sulu-flex-skeleton` checkout.
+- `tests/style.sh` runs the style checks of `symfony/recipes` over the recipes; exceptions are listed with a reason in `tests/style-exceptions.txt`.
+
+Every pull request against `main` gets a preview endpoint on the branch `flex/pull-<number>`, linked in a comment on the pull request.
 
 The harness takes the repository name for the endpoint and the lock checks from the `origin` remote; `SULU_RECIPES_REPO=<owner>/<repo>` overrides it.
 
