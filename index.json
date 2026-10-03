@@ -9,11 +9,14 @@
         "security-bundle": "symfony/security-bundle",
         "securitybundle": "symfony/security-bundle",
         "twig-bundle": "symfony/twig-bundle",
-        "twigbundle": "symfony/twig-bundle"
+        "twigbundle": "symfony/twig-bundle",
+        "web-profiler-bundle": "symfony/web-profiler-bundle",
+        "webprofilerbundle": "symfony/web-profiler-bundle"
     },
     "recipes": {
         "doctrine/doctrine-bundle": [
-            "2.13"
+            "2.13",
+            "3.0"
         ],
         "friendsofsymfony/jsrouting-bundle": [
             "3.6"
@@ -38,17 +41,36 @@
         ],
         "symfony/twig-bundle": [
             "6.4"
+        ],
+        "symfony/web-profiler-bundle": [
+            "6.1",
+            "7.3",
+            "8.1"
         ]
     },
     "recipe-conflicts": {
         "doctrine/doctrine-bundle": {
             "2.13": {
                 "symfony/framework-bundle": "<7.1"
+            },
+            "3.0": {
+                "symfony/framework-bundle": "<6.4"
             }
         },
         "symfony/twig-bundle": {
             "6.4": {
                 "symfony/framework-bundle": "<5.3"
+            }
+        },
+        "symfony/web-profiler-bundle": {
+            "6.1": {
+                "symfony/framework-bundle": "<6.1"
+            },
+            "7.3": {
+                "symfony/framework-bundle": "<6.1"
+            },
+            "8.1": {
+                "symfony/framework-bundle": "<6.1"
             }
         }
     },

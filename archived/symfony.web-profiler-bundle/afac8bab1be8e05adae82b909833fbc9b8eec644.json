@@ -1,0 +1,66 @@
+{
+    "manifests": {
+        "symfony/web-profiler-bundle": {
+            "manifest": {
+                "bundles": {
+                    "Symfony\\Bundle\\WebProfilerBundle\\WebProfilerBundle": [
+                        "dev",
+                        "test"
+                    ]
+                },
+                "copy-from-recipe": {
+                    "config/": "%CONFIG_DIR%/"
+                },
+                "conflict": {
+                    "symfony/framework-bundle": "<6.1"
+                }
+            },
+            "files": {
+                "config/packages/web_profiler.yaml": {
+                    "contents": [
+                        "when@dev:",
+                        "    web_profiler:",
+                        "        toolbar: true",
+                        "",
+                        "    framework:",
+                        "        profiler:",
+                        "            collect_serializer_data: true",
+                        "",
+                        "when@test:",
+                        "    framework:",
+                        "        profiler:",
+                        "            collect: false",
+                        "            collect_serializer_data: true",
+                        ""
+                    ],
+                    "executable": false
+                },
+                "config/routes/web_profiler.yaml": {
+                    "contents": [
+                        "when@dev:",
+                        "    web_profiler_wdt:",
+                        "        resource: '@WebProfilerBundle/Resources/config/routing/wdt.php'",
+                        "        prefix: /_wdt",
+                        "",
+                        "    web_profiler_profiler:",
+                        "        resource: '@WebProfilerBundle/Resources/config/routing/profiler.php'",
+                        "        prefix: /_profiler",
+                        ""
+                    ],
+                    "executable": false
+                },
+                "config/routes/web_profiler_admin.yaml": {
+                    "contents": [
+                        "when@dev:",
+                        "    web_profiler_admin:",
+                        "        resource: \"web_profiler.yaml\"",
+                        "        prefix: /admin",
+                        ""
+                    ],
+                    "executable": false
+                }
+            },
+            "ref": "afac8bab1be8e05adae82b909833fbc9b8eec644"
+        }
+    }
+}
