@@ -77,7 +77,9 @@ jobs:
                     tools: 'composer:v2'
                     coverage: none
             -
-                run: shellcheck -x -P tests tests/build-endpoint.sh tests/install.sh tests/install-bare.sh tests/parity.sh tests/setup-tools.sh tests/drift.sh bin/supersede.sh
+                run: shellcheck -x -P tests tests/build-endpoint.sh tests/install.sh tests/install-bare.sh tests/parity.sh tests/setup-tools.sh tests/drift.sh tests/style.sh bin/supersede.sh
+            -
+                run: tests/style.sh
             -
                 run: echo "SULU_RECIPES_WORKDIR=$RUNNER_TEMP/sulu-recipes" >> "$GITHUB_ENV"
             -
