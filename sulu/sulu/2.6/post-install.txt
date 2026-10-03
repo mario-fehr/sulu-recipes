@@ -4,5 +4,5 @@
   * Install the search library for the default zend_lucene adapter (skip if the project already has it):
     <fg=green>composer require handcraftedinthealps/zendsearch</>
 
-  * Optional, to get log files in var/log/:
+  * Install the Monolog bundle (the stage environment needs it, and it writes log files to var/log/):
     <fg=green>composer require symfony/monolog-bundle</>

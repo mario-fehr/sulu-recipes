@@ -7,7 +7,7 @@
   * Install the in-memory adapter for tests:
     <fg=green>composer require --dev cmsig/seal-memory-adapter</>
 
-  * Optional, to get log files in var/log/:
+  * Install the Monolog bundle (the stage environment needs it, and it writes log files to var/log/):
     <fg=green>composer require symfony/monolog-bundle</>
 
   * Requirement: doctrine/doctrine-bundle 2.13 or newer. An older version installed together with sulu/sulu gets no Doctrine recipe from this endpoint.
