@@ -46,7 +46,7 @@ Installs `sulu/sulu` into a fresh `symfony/skeleton` from the local endpoint and
 
 `tests/install-bare.sh`
 
-Installs `sulu/sulu` alone into a fresh `symfony/skeleton` from the local endpoint, plus `SULU_BARE_REQUIRE` and, as dev requirements, `SULU_BARE_REQUIRE_DEV` of the line. It runs the checks and compares the recipe set with `tests/lines/<line>.bare-lock.txt`, or `tests/lines/<line>.bare-lock.<SULU_BARE_LOCK>.txt` when `SULU_BARE_LOCK` is set.
+Installs `sulu/sulu` alone into a fresh `symfony/skeleton` from the local endpoint, plus `SULU_BARE_REQUIRE` and, as dev requirements, `SULU_BARE_REQUIRE_DEV` of the line. It runs the checks and compares the recipe set with `tests/lines/<line>.bare-lock.txt`, or `tests/lines/<line>.bare-lock.<SULU_BARE_LOCK>.txt` when `SULU_BARE_LOCK` is set. It also checks that no `AGENTS.md` or `CLAUDE.md` is created, and that `.symfony.local.yaml` exists exactly when `symfony/framework-bundle` is not locked at recipe `6.4`.
 
 ### tests/parity.sh
 
@@ -104,7 +104,7 @@ Read by one script:
 
 | Variable | Script | Default | Purpose |
 |---|---|---|---|
-| `SULU_BARE_SYMFONY` | `tests/install-bare.sh` | `7.4` | `symfony/skeleton` version of the bare install. |
+| `SULU_BARE_SYMFONY` | `tests/install-bare.sh` | `7.4` | `symfony/skeleton` version of the bare install. A value ending in `-dev`, such as `8.2-dev`, creates the project from `symfony/skeleton:<version>.x-dev`. |
 | `SULU_BARE_DEPS` | `tests/install-bare.sh` | `highest` | `lowest` adds `--prefer-lowest` to `composer require sulu/sulu`. Only the packages that command adds drop to their lowest versions, while the packages of the fresh `symfony/skeleton` keep theirs. |
 | `SULU_BARE_LOCK` | `tests/install-bare.sh` | unset | Suffix of the bare-lock file to compare with. |
 | `SKELETON_DIR` | `tests/parity.sh` | required | A clean `sulu-flex-skeleton` checkout. |
@@ -120,7 +120,7 @@ Read by one script:
 | `SULU_SKELETON_VERSION` | Tag of that commit. |
 | `SULU_FLEX_SKELETON_REF` | `sulu-flex-skeleton` branch that parity checks out. |
 | `SULU_PHP_MYSQL` | `php:mysql` pairs, one `install` job per pair, using the versions `sulu/skeleton` tests in its own CI. |
-| `SULU_BARE_RUNS` | `php:symfony:deps:lock` entries, one `install-bare` job each; `lock` is the `SULU_BARE_LOCK` of the run and may be empty. |
+| `SULU_BARE_RUNS` | `php:symfony:deps:lock` entries, one `install-bare` job each; `lock` is the `SULU_BARE_LOCK` of the run and may be empty. The `symfony` field may end in `-dev`; the branch protection runbook leaves such runs out. |
 | `SULU_BARE_REQUIRE` | Extra packages of the bare install. |
 | `SULU_BARE_REQUIRE_DEV` | Extra dev packages of the bare install. |
 | `SULU_BARE_LOWEST_FLOOR` | `package:constraint` entries that raise the lowest run above upstream versions that do not boot. |

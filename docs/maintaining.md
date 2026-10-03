@@ -54,12 +54,12 @@ Files: `tests/lines/<line>.*`, `sulu/sulu/<line>/`, the skeleton branch.
 
 ## Branch protection
 
-When: a new line, or a changed `SULU_PHP_MYSQL` or `SULU_BARE_RUNS`, changes the names of the `qa.yml` jobs. Branch protection requires every job by name, so a pull request stays blocked on a job name that no longer exists.
+When: a new line, or a changed `SULU_PHP_MYSQL` or `SULU_BARE_RUNS`, changes the names of the `qa.yml` jobs. Branch protection requires every job by name, so a pull request stays blocked on a job name that no longer exists. Runs whose Symfony version ends in `-dev` are left out, so a break in an unreleased Symfony version blocks no pull request.
 
 Print the job names from the line files:
 
 ```bash
-tests/matrix.sh | jq -Rrn '[inputs | capture("^(?<k>[a-z_]+)=(?<v>.*)$") | {(.k): (.v | fromjson)}] | add | ["lint", "lines"] + [.install[] | "install (\(.line), PHP \(.php), MySQL \(.mysql))"] + [.bare[] | "install-bare (\(.line), PHP \(.php), Symfony \(.symfony), \(.deps))"] + [.lines[] | "parity (\(.))"] | .[]'
+tests/matrix.sh | jq -Rrn '[inputs | capture("^(?<k>[a-z_]+)=(?<v>.*)$") | {(.k): (.v | fromjson)}] | add | ["lint", "lines"] + [.install[] | "install (\(.line), PHP \(.php), MySQL \(.mysql))"] + [.bare[] | select(.symfony | endswith("-dev") | not) | "install-bare (\(.line), PHP \(.php), Symfony \(.symfony), \(.deps))"] + [.lines[] | "parity (\(.))"] | .[]'
 ```
 
 Set them on `main` of this repository. For a branch of `sulu-flex-skeleton`, take `lint`, `lines` and the jobs of that branch's line, each prefixed with `qa / `:
@@ -75,6 +75,16 @@ Check the result:
 ```bash
 gh api repos/<owner>/<repo>/branches/<branch>/protection --jq '[.required_status_checks.checks[].context]'
 ```
+
+## New Symfony minor
+
+When: a new Symfony minor is announced and `symfony/skeleton` has a `<version>.x-dev` branch.
+
+1. If `SYMFONY_RECIPES_SHA` in `tests/pins.env` does not contain the new official folders yet, bump it first ("Pin bump"). Compare the official `symfony/recipes` folders of the superseded packages at the pin with the folders here. For each file the new official folder changes, check whether `sulu/skeleton` has that file: if it does, nothing changes; if not, supersede the new official folder with `bin/supersede.sh` (see "Superseding an official recipe"), unless the result would equal the folder below it (a folder that only changes files `sulu/skeleton` owns, or only adds files this repository leaves out, adds nothing).
+2. Add a bare run `<php>:<version>-dev:highest:<lock>` to the line file, with its own lock list `tests/lines/<line>.bare-lock.<lock>.txt` if a recipe version changes, and extend the web profiler case in `tests/install-bare.sh`. A `-dev` run is not a required check.
+3. On the release, change `<version>-dev` to `<version>` in the line file and update branch protection with its runbook. The bare install section of `README.md` names the tested `symfony/skeleton` versions ("tested with `symfony/skeleton` 7.4 and 8.1" and the `# or 8.1.*` comment); add the new version there.
+
+Files: the line file, its lock lists, `tests/install-bare.sh`, new recipe folders and their patches.
 
 ## Publishing
 

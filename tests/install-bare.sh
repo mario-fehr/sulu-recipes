@@ -20,7 +20,11 @@ require_free_port 8001
 "$REPO_ROOT/tests/build-endpoint.sh"
 serve endpoint "$ENDPOINT_PORT" "$OUTPUT"
 
-new_symfony_project "$SULU_BARE_SYMFONY.*" "$P"
+case "$SULU_BARE_SYMFONY" in
+  *-dev) skeleton_constraint="${SULU_BARE_SYMFONY%-dev}.x-dev" ;;
+  *) skeleton_constraint="$SULU_BARE_SYMFONY.*" ;;
+esac
+new_symfony_project "$skeleton_constraint" "$P"
 cd "$P"
 echo "symfony/framework-bundle $(composer show symfony/framework-bundle --format=json | jq -r '.versions[0]')"
 
@@ -45,6 +49,12 @@ check "recipes match $(basename "$BARE_LOCK")" diff "$BARE_LOCK" "$WORK/bare-loc
 check "security.yaml has no two_factor" sh -c '! grep -q two_factor config/packages/security.yaml'
 check "no config/routes/web_profiler_admin.yaml" test ! -e config/routes/web_profiler_admin.yaml
 check "no .env.test" test ! -e .env.test
+for f in AGENTS.md CLAUDE.md; do check "no $f" test ! -e "$f"; done
+if [ "$(jq -r '."symfony/framework-bundle".recipe.version' symfony.lock)" = 6.4 ]; then
+  check "no .symfony.local.yaml" test ! -e .symfony.local.yaml
+else
+  check ".symfony.local.yaml exists" test -f .symfony.local.yaml
+fi
 for f in $TOOLING_FILES; do check "no $f" test ! -e "$f"; done
 for d in tests/phpstan tests/rector; do check "no $d/" test ! -e "$d"; done
 check ".gitignore ignores /public/uploads/" grep -qx '/public/uploads/' .gitignore
@@ -67,7 +77,7 @@ fi
 check "late require symfony/web-profiler-bundle" composer require --dev symfony/web-profiler-bundle --no-interaction
 case "$SULU_BARE_SYMFONY" in
   7.4) profiler_recipe=7.3 ;;
-  8.1) profiler_recipe=8.1 ;;
+  8.1|8.2|8.2-dev) profiler_recipe=8.1 ;;
   *) profiler_recipe=unknown ;;
 esac
 check "lock symfony/web-profiler-bundle from this repo" lock_repo symfony/web-profiler-bundle "$OUR_REPO"
