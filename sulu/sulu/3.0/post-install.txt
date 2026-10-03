@@ -1,2 +1,13 @@
   * Download the administration build for your Sulu version:
     <fg=green>bin/adminconsole sulu:admin:update-build</>
+
+  * Install a search adapter, Loupe for a start (skip what the project already has):
+    <fg=green>composer require cmsig/seal-loupe-adapter</>
+
+  * Install the in-memory adapter for tests:
+    <fg=green>composer require --dev cmsig/seal-memory-adapter</>
+
+  * Optional, to get log files in var/log/:
+    <fg=green>composer require symfony/monolog-bundle</>
+
+  * Requirement: doctrine/doctrine-bundle 2.13 or newer. An older version installed together with sulu/sulu gets no Doctrine recipe from this endpoint.

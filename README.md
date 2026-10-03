@@ -1,6 +1,6 @@
 # sulu-recipes
 
-Symfony Flex recipes for Sulu. `sulu/sulu` has no official Flex recipe, so this repo adds one for `sulu/sulu` 3.0. It also adds a recipe for `symfony-cmf/routing-bundle`, which has none, and supersedes the official recipes of seven packages whose files Sulu must own: `symfony/framework-bundle`, `symfony/security-bundle`, `symfony/console`, `symfony/twig-bundle`, `scheb/2fa-bundle`, `friendsofsymfony/jsrouting-bundle` and `doctrine/doctrine-bundle`.
+Symfony Flex recipes for Sulu. `sulu/sulu` has no official Flex recipe, so this repo adds one for `sulu/sulu` 3.0. It also adds a recipe for `symfony-cmf/routing-bundle`, which has none, and supersedes the official recipes of eight packages whose files Sulu must own: `symfony/framework-bundle`, `symfony/security-bundle`, `symfony/console`, `symfony/twig-bundle`, `symfony/web-profiler-bundle`, `scheb/2fa-bundle`, `friendsofsymfony/jsrouting-bundle` and `doctrine/doctrine-bundle`.
 
 ## Usage
 
@@ -14,7 +14,34 @@ The skeleton points Flex at this endpoint via `extra.symfony.endpoint` in `compo
 "extra": { "symfony": { "endpoint": ["https://raw.githubusercontent.com/mario-fehr/sulu-recipes/flex/main/index.json", "flex://defaults"] } }
 ```
 
-The recipes assume the package set of `sulu/skeleton`. A bare `composer require sulu/sulu` in another project is not supported yet.
+### Bare install
+
+You can also start from a plain `symfony/skeleton` instead of `sulu-flex-skeleton`. This is tested with `symfony/skeleton` 7.4 and 8.1.
+
+```bash
+composer create-project symfony/skeleton:7.4.* my-project --no-install   # or 8.1.*
+cd my-project
+composer config extra.symfony.endpoint --json '["https://raw.githubusercontent.com/mario-fehr/sulu-recipes/flex/main/index.json", "flex://defaults"]'
+composer config extra.symfony.allow-contrib true
+composer install
+composer require sulu/sulu:~3.0.0 cmsig/seal-loupe-adapter
+composer require --dev cmsig/seal-memory-adapter
+bin/adminconsole sulu:admin:update-build
+```
+
+`--no-install` matters: Flex applies a recipe only when it installs the package, and `symfony/skeleton` already contains `symfony/framework-bundle` and `symfony/console`. Their recipes (Sulu's kernel, `bin/console`) must come from this endpoint, so the endpoint has to be set before the first `composer install`. For the same reason the bare install does not work for an existing project.
+
+It needs `doctrine/doctrine-bundle` 2.13 or newer. A fresh project gets the newest version. A `doctrine/doctrine-bundle` below 2.13 installed together with `sulu/sulu` gets no Doctrine recipe from this endpoint.
+
+### Updating recipes
+
+Projects installed before the 2FA config moved have the `two_factor` firewall block and the `^/admin/2fa` access rule in `config/packages/security.yaml` from the `symfony/security-bundle` recipe. They now come from the `scheb/2fa-bundle` recipe, so `composer recipes:update symfony/security-bundle` removes them and admin 2FA is off without any error. In the same way, `config/routes/web_profiler_admin.yaml` moved from the `sulu/sulu` recipe to the `symfony/web-profiler-bundle` recipe, so `composer recipes:update sulu/sulu` removes the admin profiler routes.
+
+After updating either recipe, run the command below. `--force` rewrites those packages' recipe files, so review the diff afterwards.
+
+```bash
+composer recipes:install scheb/2fa-bundle symfony/web-profiler-bundle --force
+```
 
 ## Publishing
 
@@ -29,6 +56,7 @@ The harness clones the upstream repositories it reads into its work directory on
 - `tests/setup-tools.sh` installs the recipe checker.
 - `tests/build-endpoint.sh` lints the recipes and compiles the endpoint into `output/`.
 - `tests/install.sh` installs `sulu/sulu` into a fresh `symfony/skeleton` from that local endpoint.
+- `tests/install-bare.sh` installs `sulu/sulu` alone into a fresh `symfony/skeleton`, the version from `SULU_BARE_SYMFONY` (default `7.4`).
 - `tests/parity.sh` compares a `sulu-flex-skeleton` install with a `sulu/skeleton` install.
 
 CI runs all of them in `.github/workflows/qa.yml`.
