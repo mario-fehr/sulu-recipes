@@ -3,6 +3,7 @@ source "$(dirname "$0")/lib.sh"
 upstream sulu-skeleton sulu/skeleton "$SULU_SKELETON_SHA"
 P="$WORK/project-a"
 : >"$WORK/checks.log"
+require_free_port "$ENDPOINT_PORT"
 require_free_port 8001
 
 "$REPO_ROOT/tests/build-endpoint.sh"
