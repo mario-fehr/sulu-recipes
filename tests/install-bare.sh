@@ -35,7 +35,7 @@ check "admin build downloaded" update_build_guarded
 
 no_lock_entry() { ! jq -e --arg p "$1" 'has($p)' symfony.lock >/dev/null; }
 
-for pkg in $SUPERSEDED symfony-cmf/routing-bundle; do
+for pkg in $SUPERSEDED $OWN_RECIPES; do
   installed "$pkg" || continue
   check "lock $pkg from this repo" lock_repo "$pkg" "$OUR_REPO"
 done
@@ -44,6 +44,8 @@ lock_recipes > "$WORK/bare-lock.actual"
 check "recipes match $(basename "$BARE_LOCK")" diff "$BARE_LOCK" "$WORK/bare-lock.actual"
 check "security.yaml has no two_factor" sh -c '! grep -q two_factor config/packages/security.yaml'
 check "no config/routes/web_profiler_admin.yaml" test ! -e config/routes/web_profiler_admin.yaml
+for f in $TOOLING_FILES; do check "no $f" test ! -e "$f"; done
+for d in tests/phpstan tests/rector; do check "no $d/" test ! -e "$d"; done
 check ".gitignore ignores /public/uploads/" grep -qx '/public/uploads/' .gitignore
 
 runtime_checks
