@@ -1,0 +1,50 @@
+Reason: (f) add-lines inserts the extension settings into phpstan.dist.neon and the withPHPStanConfigs call into rector.php once the packages they need are installed.
+Evidence: tests/install.sh compares the assembled phpstan.dist.neon and rector.php with sulu/skeleton.
+
+--- a/manifest.json
++++ b/manifest.json
+@@ -4,5 +4,44 @@
+     },
+     "gitignore": [
+         "phpstan.neon"
++    ],
++    "add-lines": [
++        {
++            "file": "phpstan.dist.neon",
++            "position": "after_target",
++            "target": "    level: max",
++            "content": [
++                "    doctrine:",
++                "        objectManagerLoader: tests/phpstan/object-manager.php",
++                "    symfony:",
++                "        containerXmlPath: %currentWorkingDirectory%/var/cache/website/dev/App_KernelDevDebugContainer.xml",
++                "        consoleApplicationLoader: tests/phpstan/console-application.php"
++            ],
++            "requires": [
++                "phpstan/phpstan",
++                "phpstan/phpstan-doctrine:>=2.0",
++                "phpstan/phpstan-symfony:>=2.0",
++                "phpstan/extension-installer"
++            ]
++        },
++        {
++            "file": "rector.php",
++            "position": "after_target",
++            "target": "    ->withRootFiles()",
++            "content": [
++                "    ->withPHPStanConfigs([",
++                "        __DIR__ . '/phpstan.dist.neon',",
++                "        // rector does not load phpstan extension automatically so require them manually here:",
++                "        __DIR__ . '/vendor/phpstan/phpstan-doctrine/extension.neon',",
++                "        __DIR__ . '/vendor/phpstan/phpstan-symfony/extension.neon',",
++                "    ])"
++            ],
++            "requires": [
++                "rector/rector",
++                "phpstan/phpstan",
++                "phpstan/phpstan-doctrine:>=2.0",
++                "phpstan/phpstan-symfony:>=2.0"
++            ]
++        }
+     ]
+ }

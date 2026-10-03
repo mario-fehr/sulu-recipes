@@ -1,0 +1,16 @@
+Reason: (e) Sulu configures PHPCR through sulu_document_manager, so the PHPCR_* variables are not used.
+Evidence: sulu/skeleton config/packages/doctrine_phpcr.yaml and .env at the pin in tests/lines/2.6.env; the .env has no PHPCR_* variable.
+
+--- a/manifest.json
++++ b/manifest.json
+@@ -4,10 +4,5 @@
+     },
+     "copy-from-recipe": {
+         "config/": "%CONFIG_DIR%/"
+-    },
+-    "env": {
+-        "PHPCR_USER": "admin",
+-        "PHPCR_PASSWORD": "admin",
+-        "PHPCR_WORKSPACE": "default"
+     }
+ }

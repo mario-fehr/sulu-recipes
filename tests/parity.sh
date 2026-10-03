@@ -16,7 +16,8 @@ EXPECTED="$REPO_ROOT/tests/lines/$SULU_LINE.parity-expected.txt"
 require_free_port "$ENDPOINT_PORT"
 patches_sum() { if [ -d "$PATCH_ROOT" ]; then (cd "$PATCH_ROOT" && find . -type f | sort | xargs shasum); fi | shasum; }
 apply_fixes() {
-  local d pkg repo version p
+  local d pkg repo version p path
+  skeleton_pins
   [ -d "$PATCH_ROOT" ] || return 0
   for d in "$PATCH_ROOT"/*/*; do
     [ -d "$d" ] || continue
@@ -27,6 +28,9 @@ apply_fixes() {
     version="$(jq -r --arg p "$pkg" '.[$p].recipe.version' "$A/symfony.lock")"
     [ -d "$d/$version" ] || continue
     while IFS= read -r p; do
+      path="${p#"$d/$version"/}"; path="${path%.fix.patch}"
+      case "$path" in manifest.json|post-install.txt) continue ;; esac
+      skeleton_has "$path" || continue
       (cd "$B" && git apply "$p") || { echo "$p does not apply to $B" >&2; return 1; }
     done < <(find "$d/$version" -name '*.fix.patch' | sort)
   done

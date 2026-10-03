@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Checks that every recipe file equals sulu/skeleton at the pin of every line plus its patches.
+# Checks that every recipe file equals sulu/skeleton at the pin of every line, or its official recipe at the pin, plus its patches.
 # Usage: tests/patches.sh [<dir>]
 source "$(dirname "$0")/lib.sh"
 ROOT="$(cd "${1:-$REPO_ROOT}" && pwd -P)"
@@ -47,4 +47,23 @@ for line_file in "$ROOT"/tests/lines/*.env; do
     done < <(recipe_files "$ROOT" "$recipe")
   done < <(recipe_dirs "$ROOT")
 done
+
+official_clones
+while IFS= read -r recipe; do
+  origin="$(official_origin "$recipe")" || { fail "$recipe: no official origin"; continue; }
+  [ -n "$origin" ] || continue
+  read -r clone sha folder <<<"$origin"
+  while IFS= read -r path; do
+    rc=0; err="$(rebuild_file "$recipe" "$path" "$sha" "$clone" "$folder/$path" 2>&1 >"$WORK/rebuilt")" || rc=$?
+    if [ "$rc" = 1 ]; then
+      if [ -f "$PATCH_ROOT/$recipe/$path.fix.patch" ] || [ -f "$PATCH_ROOT/$recipe/$path.adapt.patch" ]; then
+        fail "$recipe/$path: patched, but the official recipe has no $path"
+      fi
+    elif [ "$rc" != 0 ]; then
+      fail "$recipe/$path: $err"
+    elif ! cmp -s "$WORK/rebuilt" "$ROOT/$recipe/$path"; then
+      fail "$recipe/$path: differs from the official recipe plus its patches"
+    fi
+  done < <(official_files "$ROOT" "$recipe")
+done < <(recipe_dirs "$ROOT")
 finish

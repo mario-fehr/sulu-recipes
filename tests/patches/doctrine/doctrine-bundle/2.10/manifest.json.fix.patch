@@ -1,0 +1,52 @@
+Reason: (e) Sulu defaults to MySQL, as sulu/skeleton does, so DATABASE_URL, the Docker image extension and the compose service follow it.
+Evidence: sulu/skeleton .env (DATABASE_URL), compose.yaml and compose.override.yaml at the pin in tests/lines/3.0.env.
+
+--- a/manifest.json
++++ b/manifest.json
+@@ -11,27 +11,27 @@
+         "#2": "IMPORTANT: You MUST configure your server version, either here or in config/packages/doctrine.yaml",
+         "#3": "",
+         "#4": "DATABASE_URL=\"sqlite:///%kernel.project_dir%/var/data_%kernel.environment%.db\"",
+-        "#5": "DATABASE_URL=\"mysql://app:!ChangeMe!@127.0.0.1:3306/app?serverVersion=8.0.32&charset=utf8mb4\"",
+-        "#6": "DATABASE_URL=\"mysql://app:!ChangeMe!@127.0.0.1:3306/app?serverVersion=10.11.2-MariaDB&charset=utf8mb4\"",
+-        "DATABASE_URL": "postgresql://app:!ChangeMe!@127.0.0.1:5432/app?serverVersion=16&charset=utf8"
++        "DATABASE_URL": "mysql://root:ChangeMe@127.0.0.1:3306/su_myapp?serverVersion=8.4.7&charset=utf8mb4",
++        "#5": "DATABASE_URL=\"mysql://app:!ChangeMe!@127.0.0.1:3306/app?serverVersion=10.11.2-MariaDB&charset=utf8mb4\"",
++        "#6": "DATABASE_URL=\"postgresql://app:!ChangeMe!@127.0.0.1:5432/app?serverVersion=16&charset=utf8\""
+     },
+     "dockerfile": [
+-        "RUN install-php-extensions pdo_pgsql"
++        "RUN install-php-extensions pdo_mysql"
+     ],
+     "docker-compose": {
+         "docker-compose.yml": {
+             "services": [
+                 "database:",
+-                "  image: postgres:${POSTGRES_VERSION:-16}-alpine",
++                "  image: mysql:${MYSQL_VERSION:-8.4}",
+                 "  environment:",
+-                "    POSTGRES_DB: ${POSTGRES_DB:-app}",
++                "    MYSQL_DATABASE: ${MYSQL_DATABASE:-su_myapp}",
+                 "    # You should definitely change the password in production",
+-                "    POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-!ChangeMe!}",
+-                "    POSTGRES_USER: ${POSTGRES_USER:-app}",
++                "    MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-ChangeMe}",
++                "    MYSQL_ROOT_HOST: '%'",
+                 "  volumes:",
+-                "    - database_data:/var/lib/postgresql/data:rw",
++                "    - database_data:/var/lib/mysql",
+                 "    # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!",
+-                "    # - ./docker/db/data:/var/lib/postgresql/data:rw"
++                "    # - ./docker/db/data:/var/lib/mysql:rw"
+             ],
+             "volumes": ["database_data:"]
+         },
+@@ -39,7 +39,7 @@
+             "services": [
+                 "database:",
+                 "  ports:",
+-                "    - \"5432\""
++                "    - \"3306:3306\""
+             ]
+         }
+     },

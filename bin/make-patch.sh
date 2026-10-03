@@ -22,19 +22,31 @@ if [ ! -f "$REPO_ROOT/$recipe/manifest.json" ] || [ ! -f "$REPO_ROOT/$file" ]; t
 case "$path" in assets/admin/*) echo "assets/admin/ must stay identical to sulu/skeleton for sulu:admin:update-build" >&2; exit 1 ;; esac
 grep -qI '' "$REPO_ROOT/$file" || { echo "$file is binary; binary patches are not supported" >&2; exit 1; }
 upstream sulu-skeleton sulu/skeleton "$SULU_SKELETON_SHA"
-skel_show "$path" >/dev/null 2>&1 || { echo "sulu/skeleton has no $path at the pin" >&2; exit 1; }
+official_clones
+skeleton_pins
+if skeleton_has "$path"; then
+  skel_show "$path" >/dev/null 2>&1 || { echo "sulu/skeleton has $path only for another line; run with that SULU_LINE" >&2; exit 1; }
+  base_show() { skel_show "$path"; }
+else
+  origin="$(official_origin "$recipe")" || exit 1
+  read -r o_clone o_sha o_folder <<<"$origin"
+  if [ -z "$origin" ] || ! git -C "$WORK/clones/$o_clone" cat-file -e "$o_sha:$o_folder/$path" 2>/dev/null; then
+    echo "no upstream file for $path: neither sulu/skeleton nor an official recipe has it" >&2; exit 1
+  fi
+  base_show() { git -C "$WORK/clones/$o_clone" show "$o_sha:$o_folder/$path"; }
+fi
 
 out="$PATCH_ROOT/$recipe/$path.$kind.patch"
 other_patch="$PATCH_ROOT/$recipe/$path.$other.patch"
 tmp="$(mktemp -d)"; trap 'rm -rf "$tmp"; cleanup' EXIT
 mkdir -p "$tmp/base/$(dirname "$path")" "$tmp/target/$(dirname "$path")"
-skel_show "$path" >"$tmp/base/$path"
+base_show >"$tmp/base/$path"
 cp "$REPO_ROOT/$file" "$tmp/target/$path"
 if [ "$kind" = fix ] && [ -f "$other_patch" ]; then
   (cd "$tmp/target" && git apply -R "$other_patch") || { echo "the adapt patch does not reverse-apply to $file; update it first" >&2; exit 1; }
 fi
 if [ "$kind" = adapt ] && [ -f "$other_patch" ]; then
-  (cd "$tmp/base" && git apply "$other_patch") || { echo "the fix patch does not apply to sulu/skeleton's $path" >&2; exit 1; }
+  (cd "$tmp/base" && git apply "$other_patch") || { echo "the fix patch does not apply to the upstream $path" >&2; exit 1; }
 fi
 
 rc=0
