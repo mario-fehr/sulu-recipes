@@ -21,11 +21,14 @@ cd "$P"
 echo "symfony/framework-bundle $(composer show symfony/framework-bundle --format=json | jq -r '.versions[0]')"
 
 # The documented bare install, with sulu/sulu at the pinned sulu/skeleton version; no other package from sulu/skeleton's set.
-check "composer require sulu/sulu" composer require "sulu/sulu:~$SULU_SKELETON_VERSION" cmsig/seal-loupe-adapter ${deps[@]+"${deps[@]}"} --no-interaction
-check "composer require --dev cmsig/seal-memory-adapter" composer require --dev cmsig/seal-memory-adapter --no-interaction
+read -ra bare_require <<<"${SULU_BARE_REQUIRE:-}"
+read -ra bare_require_dev <<<"${SULU_BARE_REQUIRE_DEV:-}"
+check "composer require sulu/sulu" composer require "sulu/sulu:~$SULU_SKELETON_VERSION" ${bare_require[@]+"${bare_require[@]}"} ${deps[@]+"${deps[@]}"} --no-interaction
+if [ "${#bare_require_dev[@]}" -gt 0 ]; then
+  check "composer require --dev ${bare_require_dev[*]}" composer require --dev "${bare_require_dev[@]}" --no-interaction
+fi
 check "admin build downloaded" update_build_guarded
 
-installed() { composer show "$1" >/dev/null 2>&1; }
 no_lock_entry() { ! jq -e --arg p "$1" 'has($p)' symfony.lock >/dev/null; }
 
 for pkg in $SUPERSEDED symfony-cmf/routing-bundle; do

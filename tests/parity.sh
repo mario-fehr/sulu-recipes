@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 source "$(dirname "$0")/lib.sh"
 : "${SKELETON_DIR:?set SKELETON_DIR to a clean sulu-flex-skeleton checkout}"
+[ -n "${SULU_PARITY_CONFIG:-}" ] || { echo "no SULU_PARITY_CONFIG in tests/lines/$SULU_LINE.env" >&2; exit 1; }
 A="$WORK/flex"; B="$WORK/upstream"
 SRC="$WORK/skeleton-src"
 REPORT="$WORK/parity-report.txt"
@@ -120,7 +121,7 @@ tree_diff() {
        <(grep -oE '[A-Za-z\\]+::class => \[[^]]*\]' "$B/config/bundles.php" | sort) | grep '^[<>]' | sed 's|^|bundles.php |' || true
   for console in adminconsole websiteconsole; do
     for env in dev prod stage; do
-      for ext in framework doctrine flysystem fos_rest jms_serializer monolog stof_doctrine_extensions; do
+      for ext in $SULU_PARITY_CONFIG; do
         compare "debug:config $console $env $ext" "$DIFFS/$console-$env-$ext.diff" env APP_ENV="$env" "bin/$console" debug:config "$ext"
       done
       compare "debug:router $console $env" "$DIFFS/$console-$env-router.diff" env APP_ENV="$env" "bin/$console" debug:router

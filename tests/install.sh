@@ -22,7 +22,10 @@ composer update --no-interaction
 # sulu/skeleton commits public/build/admin; recipes cannot ship it sensibly, Sulu downloads the matching build instead.
 update_build_guarded
 
-for pkg in $SUPERSEDED symfony-cmf/routing-bundle; do check "lock $pkg from this repo" lock_repo "$pkg" "$OUR_REPO"; done
+for pkg in $SUPERSEDED symfony-cmf/routing-bundle; do
+  installed "$pkg" || continue
+  check "lock $pkg from this repo" lock_repo "$pkg" "$OUR_REPO"
+done
 check "lock symfony/mailer official" lock_repo symfony/mailer github.com/symfony/recipes
 check "lock doctrine/doctrine-bundle recipe 2.13" lock_version doctrine/doctrine-bundle 2.13
 
