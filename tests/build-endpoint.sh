@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 source "$(dirname "$0")/lib.sh"
+require_repo_name
 CHECKER="php $TOOLS/recipes-checker/run"
 BUILD="$WORK/build"
 
@@ -26,5 +27,5 @@ $CHECKER lint:manifests
 find . -type f \( -name '*.yaml' -o -name '*.yml' \) | sed 's|^\./||' | grep -vx 'sulu/sulu/[^/]*/config/packages/sulu_article.yaml' | $CHECKER lint:yaml
 $CHECKER lint:packages
 recipe_dirs=(*/*/*)
-git -C "$REPO_ROOT" ls-tree "$TREE" "${recipe_dirs[@]}" |$CHECKER generate:flex-endpoint mario-fehr/sulu-recipes main flex/main "$OUTPUT"
+git -C "$REPO_ROOT" ls-tree "$TREE" "${recipe_dirs[@]}" |$CHECKER generate:flex-endpoint "$SULU_RECIPES_REPO" main flex/main "$OUTPUT"
 echo "endpoint compiled into $OUTPUT"

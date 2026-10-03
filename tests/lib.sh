@@ -7,7 +7,16 @@ OUTPUT="$REPO_ROOT/output"
 WORK="${SULU_RECIPES_WORKDIR:-${TMPDIR:-/tmp}/sulu-recipes}"
 ENDPOINT_PORT=8000
 ENDPOINT_URL="http://127.0.0.1:$ENDPOINT_PORT/index.json"
-OUR_REPO="github.com/mario-fehr/sulu-recipes"
+if [ -z "${SULU_RECIPES_REPO:-}" ]; then
+  SULU_RECIPES_REPO="$({ git -C "$REPO_ROOT" remote get-url origin 2>/dev/null || true; } | sed -E 's#^(https://github\.com/|ssh://git@github\.com/|git@github\.com:)##; s#\.git$##')"
+fi
+OUR_REPO="github.com/$SULU_RECIPES_REPO"
+require_repo_name() {
+  if ! [[ "$SULU_RECIPES_REPO" =~ ^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$ ]]; then
+    echo "cannot derive owner/repo from origin; set SULU_RECIPES_REPO" >&2
+    exit 1
+  fi
+}
 SULU_LINE="${SULU_LINE:-3.0}"
 LINE_FILE="$REPO_ROOT/tests/lines/$SULU_LINE.env"
 if [ ! -f "$LINE_FILE" ]; then
