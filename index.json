@@ -3,9 +3,13 @@
         "2fa": "scheb/2fa-bundle",
         "cli": "symfony/console",
         "console": "symfony/console",
+        "cs-fixer-shim": "php-cs-fixer/shim",
+        "csfixershim": "php-cs-fixer/shim",
         "form": "symfony/form",
         "framework-bundle": "symfony/framework-bundle",
         "frameworkbundle": "symfony/framework-bundle",
+        "php-cs-fixer-shim": "php-cs-fixer/shim",
+        "phpcsfixershim": "php-cs-fixer/shim",
         "security": "symfony/security-bundle",
         "security-bundle": "symfony/security-bundle",
         "securitybundle": "symfony/security-bundle",
@@ -26,6 +30,24 @@
         ],
         "friendsofsymfony/jsrouting-bundle": [
             "3.0"
+        ],
+        "php-cs-fixer/shim": [
+            "3.0"
+        ],
+        "phpstan/extension-installer": [
+            "1.0"
+        ],
+        "phpstan/phpstan": [
+            "1.0"
+        ],
+        "phpstan/phpstan-doctrine": [
+            "2.0"
+        ],
+        "phpstan/phpstan-symfony": [
+            "2.0"
+        ],
+        "rector/rector": [
+            "2.0"
         ],
         "scheb/2fa-bundle": [
             "6.10"
@@ -56,6 +78,9 @@
             "6.1",
             "7.3",
             "8.1"
+        ],
+        "vincentlanglet/twig-cs-fixer": [
+            "3.0"
         ]
     },
     "recipe-conflicts": {

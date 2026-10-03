@@ -1,0 +1,85 @@
+{
+    "manifests": {
+        "rector/rector": {
+            "manifest": {
+                "copy-from-recipe": {
+                    "rector.php": "rector.php",
+                    "tests/": "tests/"
+                },
+                "add-lines": [
+                    {
+                        "file": "rector.php",
+                        "position": "after_target",
+                        "target": "    ->withRootFiles()",
+                        "content": "    ->withPHPStanConfigs([\n        __DIR__ . '/phpstan.dist.neon',\n        // rector does not load phpstan extension automatically so require them manually here:\n        __DIR__ . '/vendor/phpstan/phpstan-doctrine/extension.neon',\n        __DIR__ . '/vendor/phpstan/phpstan-symfony/extension.neon',\n    ])",
+                        "requires": [
+                            "rector/rector",
+                            "phpstan/phpstan",
+                            "phpstan/phpstan-doctrine:>=2.0",
+                            "phpstan/phpstan-symfony:>=2.0"
+                        ]
+                    }
+                ]
+            },
+            "files": {
+                "rector.php": {
+                    "contents": [
+                        "<?php",
+                        "",
+                        "declare(strict_types=1);",
+                        "",
+                        "use Rector\\Config\\RectorConfig;",
+                        "use Rector\\Symfony\\Set\\SymfonySetList;",
+                        "",
+                        "return RectorConfig::configure()",
+                        "    ->withPaths([",
+                        "        __DIR__ . '/src',",
+                        "        __DIR__ . '/tests',",
+                        "    ])",
+                        "    ->withRootFiles()",
+                        "    ->withImportNames(importShortClasses: false)",
+                        "    ->withPreparedSets(codeQuality: true, doctrineCodeQuality: true)",
+                        "    ->withPhpSets()",
+                        "",
+                        "    // symfony rules",
+                        "    ->withSymfonyContainerXml(__DIR__ . '/var/cache/website/dev/App_KernelDevDebugContainer.xml')",
+                        "    ->withSymfonyContainerPhp(__DIR__ . '/tests/rector/symfony-container.php')",
+                        "    ->withSets([",
+                        "        SymfonySetList::SYMFONY_CODE_QUALITY,",
+                        "        SymfonySetList::SYMFONY_CONSTRUCTOR_INJECTION,",
+                        "        // activate when doing updates:",
+                        "        // SymfonyLevelSetList::UP_TO_SYMFONY_63,",
+                        "        // activate when doing updates:",
+                        "        // PHPUnitLevelSetList::UP_TO_PHPUNIT_90,",
+                        "        // PHPUnitSetList::PHPUNIT_91,",
+                        "        // sulu rules",
+                        "        // activate for updates when doing updates:",
+                        "        // SuluLevelSetList::UP_TO_SULU_25,",
+                        "    ]);",
+                        ""
+                    ],
+                    "executable": false
+                },
+                "tests/rector/symfony-container.php": {
+                    "contents": [
+                        "<?php",
+                        "",
+                        "declare(strict_types=1);",
+                        "",
+                        "use App\\Kernel;",
+                        "",
+                        "require __DIR__ . '/../bootstrap.php';",
+                        "",
+                        "$appKernel = new Kernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']); // @phpstan-ignore-line argument.type",
+                        "$appKernel->boot();",
+                        "",
+                        "return $appKernel->getContainer();",
+                        ""
+                    ],
+                    "executable": false
+                }
+            },
+            "ref": "a43ea03c5d9d65e0e215216007778dca1d96c80a"
+        }
+    }
+}

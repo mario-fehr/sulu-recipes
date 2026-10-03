@@ -1,0 +1,63 @@
+{
+    "manifests": {
+        "phpstan/phpstan": {
+            "manifest": {
+                "copy-from-recipe": {
+                    "phpstan.dist.neon": "phpstan.dist.neon"
+                },
+                "gitignore": [
+                    "phpstan.neon"
+                ],
+                "add-lines": [
+                    {
+                        "file": "phpstan.dist.neon",
+                        "position": "after_target",
+                        "target": "    level: max",
+                        "content": "    doctrine:\n        objectManagerLoader: tests/phpstan/object-manager.php\n    symfony:\n        containerXmlPath: %currentWorkingDirectory%/var/cache/website/dev/App_KernelDevDebugContainer.xml\n        consoleApplicationLoader: tests/phpstan/console-application.php",
+                        "requires": [
+                            "phpstan/phpstan",
+                            "phpstan/phpstan-doctrine:>=2.0",
+                            "phpstan/phpstan-symfony:>=2.0",
+                            "phpstan/extension-installer"
+                        ]
+                    },
+                    {
+                        "file": "rector.php",
+                        "position": "after_target",
+                        "target": "    ->withRootFiles()",
+                        "content": "    ->withPHPStanConfigs([\n        __DIR__ . '/phpstan.dist.neon',\n        // rector does not load phpstan extension automatically so require them manually here:\n        __DIR__ . '/vendor/phpstan/phpstan-doctrine/extension.neon',\n        __DIR__ . '/vendor/phpstan/phpstan-symfony/extension.neon',\n    ])",
+                        "requires": [
+                            "rector/rector",
+                            "phpstan/phpstan",
+                            "phpstan/phpstan-doctrine:>=2.0",
+                            "phpstan/phpstan-symfony:>=2.0"
+                        ]
+                    }
+                ],
+                "post-install-output": [
+                    "  * Edit the <comment>phpstan.dist.neon</comment> file to configure PHPStan.",
+                    "",
+                    "  * For the full options, see",
+                    "    <comment>https://phpstan.org/user-guide/getting-started</comment>"
+                ]
+            },
+            "files": {
+                "phpstan.dist.neon": {
+                    "contents": [
+                        "parameters:",
+                        "    paths:",
+                        "        - bin/",
+                        "        - config/",
+                        "        - public/",
+                        "        - src/",
+                        "        - tests/",
+                        "    level: max",
+                        ""
+                    ],
+                    "executable": false
+                }
+            },
+            "ref": "2584e6ed86e14c518d5a1eba135e4441c034f756"
+        }
+    }
+}
