@@ -66,27 +66,7 @@ composer recipes:install scheb/2fa-bundle symfony/web-profiler-bundle --force
 
 ## Development
 
-You need PHP 8.5, Composer, Docker and `jq`.
-
-The harness clones the upstream repositories it reads into its work directory on first use and reads them only at the pinned commits.
-
-- `tests/setup-tools.sh` installs the recipe checker.
-- `tests/build-endpoint.sh` lints the recipes and compiles the endpoint into `output/`.
-- `tests/install.sh` installs `sulu/sulu` into a fresh `symfony/skeleton` from that local endpoint.
-- `tests/install-bare.sh` installs `sulu/sulu` alone into a fresh `symfony/skeleton`, the version from `SULU_BARE_SYMFONY` (default `7.4`). `SULU_BARE_DEPS=lowest` adds `--prefer-lowest` to `composer require sulu/sulu`, so only the packages that require adds drop to their lowest versions; the Symfony packages already in the fresh `symfony/skeleton` keep theirs; `SULU_BARE_LOCK=<name>` checks the recipe set against `tests/lines/<line>.bare-lock.<name>.txt`.
-- `tests/parity.sh` compares a `sulu-flex-skeleton` install with a `sulu/skeleton` install. It needs `SKELETON_DIR`, a clean `sulu-flex-skeleton` checkout.
-- `tests/patches.sh` checks that every recipe file equals its `sulu/skeleton` file plus the patches in `tests/patches/`. A recipe file differs from `sulu/skeleton` only through such a patch: a `.fix.patch` for a deliberate fix, an `.adapt.patch` for an older package version or content another recipe adds. Each patch starts with a `Reason:` and an `Evidence:` line.
-- `bin/make-patch.sh fix|adapt <recipe-file>` writes the patch for an edited recipe file, and `bin/sync-skeleton.sh` rebuilds the recipe files from `sulu/skeleton` and the patches after a pin bump.
-- A recipe folder outside `sulu/sulu/` serves every line, so its files must equal `sulu/skeleton` plus the same patches for every line in `tests/lines/` and fit each line. Line-specific files live in `sulu/sulu/<line>/`. `tests/lines/<line>.env` also sets the extra bare-install packages (`SULU_BARE_REQUIRE`, `SULU_BARE_REQUIRE_DEV`), a lowest-run floor for upstream versions that do not boot (`SULU_BARE_LOWEST_FLOOR`) and the `debug:config` extensions parity compares (`SULU_PARITY_CONFIG`).
-- `tests/style.sh` runs the style checks of `symfony/recipes` over the recipes; exceptions are listed with a reason in `tests/style-exceptions.txt`.
-
-Every pull request against `main` gets a preview endpoint on the branch `flex/pull-<number>`, linked in a comment on the pull request.
-
-The harness takes the repository name for the endpoint and the lock checks from the `origin` remote; `SULU_RECIPES_REPO=<owner>/<repo>` overrides it.
-
-CI runs the install on the PHP and MySQL versions `sulu/skeleton` tests, set per line in `tests/lines/<line>.env`; locally `SULU_MYSQL_VERSION` selects the MySQL image.
-
-CI runs all of them in `.github/workflows/qa.yml`.
+You need PHP 8.5, Composer, Docker and `jq`. `CONTRIBUTING.md` shows how to change a recipe and check it locally. `docs/scripts.md` describes every script, variable and file of the harness, and `docs/maintaining.md` has the maintainer runbooks. CI runs the checks in `.github/workflows/qa.yml`.
 
 ## License
 

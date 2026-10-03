@@ -99,7 +99,7 @@ Read by one script:
 | Variable | Script | Default | Purpose |
 |---|---|---|---|
 | `SULU_BARE_SYMFONY` | `tests/install-bare.sh` | `7.4` | `symfony/skeleton` version of the bare install. |
-| `SULU_BARE_DEPS` | `tests/install-bare.sh` | `highest` | `lowest` adds `--prefer-lowest` to `composer require sulu/sulu`. |
+| `SULU_BARE_DEPS` | `tests/install-bare.sh` | `highest` | `lowest` adds `--prefer-lowest` to `composer require sulu/sulu`. Only the packages that command adds drop to their lowest versions, while the packages of the fresh `symfony/skeleton` keep theirs. |
 | `SULU_BARE_LOCK` | `tests/install-bare.sh` | unset | Suffix of the bare-lock file to compare with. |
 | `SKELETON_DIR` | `tests/parity.sh` | required | A clean `sulu-flex-skeleton` checkout. |
 | `SULU_RECIPES_REUSE` | `tests/parity.sh` | `0` | `1` reuses both projects if the recipes, the patches and the line have not changed since they were installed. |
@@ -113,7 +113,7 @@ Read by one script:
 | `SULU_SKELETON_SHA` | Pinned `sulu/skeleton` commit. |
 | `SULU_SKELETON_VERSION` | Tag of that commit. |
 | `SULU_FLEX_SKELETON_REF` | `sulu-flex-skeleton` branch that parity checks out. |
-| `SULU_PHP_MYSQL` | `php:mysql` pairs, one `install` job each. |
+| `SULU_PHP_MYSQL` | `php:mysql` pairs, one `install` job per pair, using the versions `sulu/skeleton` tests in its own CI. |
 | `SULU_BARE_RUNS` | `php:symfony:deps:lock` entries, one `install-bare` job each; `lock` is the `SULU_BARE_LOCK` of the run and may be empty. |
 | `SULU_BARE_REQUIRE` | Extra packages of the bare install. |
 | `SULU_BARE_REQUIRE_DEV` | Extra dev packages of the bare install. |
