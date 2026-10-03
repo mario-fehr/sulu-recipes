@@ -16,8 +16,8 @@ pkgs() { skel_show composer.json | jq -r --arg k "$1" '.[$k] | to_entries[] | se
 require=(); require_dev=()
 while IFS= read -r p; do require+=("$p"); done < <(pkgs require)
 while IFS= read -r p; do require_dev+=("$p"); done < <(pkgs require-dev)
-composer require "${require[@]}" --no-update --no-interaction
-composer require --dev "${require_dev[@]}" --no-update --no-interaction
+[ "${#require[@]}" -eq 0 ] || composer require "${require[@]}" --no-update --no-interaction
+[ "${#require_dev[@]}" -eq 0 ] || composer require --dev "${require_dev[@]}" --no-update --no-interaction
 composer update --no-interaction
 # sulu/skeleton commits public/build/admin; recipes cannot ship it sensibly, Sulu downloads the matching build instead.
 update_build_guarded
