@@ -10,7 +10,7 @@ On first use, the harness clones `sulu/skeleton` and the official recipe reposit
 
 ## Changing a recipe file
 
-A recipe file that `sulu/skeleton` also has must equal that file at the pinned commit. It may differ only through a patch in `tests/patches/`, and the patch must start with a `Reason:` and an `Evidence:` line. Files that `sulu/skeleton` does not have, such as `config/packages/sulu.yaml` in `sulu/sulu/<line>/` or a file kept from an official recipe, are edited directly, without a patch.
+A recipe file that `sulu/skeleton` also has must equal that file at the pinned commit. It may differ only through a patch in `tests/patches/`, and the patch must start with a `Reason:` and an `Evidence:` line. A file that a superseded recipe takes from its official recipe (its `manifest.json`, its `post-install.txt`) follows the same rule, measured against the official file at the pin in `tests/pins.env`. Files with neither source, such as `config/packages/sulu.yaml` in `sulu/sulu/<line>/`, are edited directly, without a patch.
 
 To change a file, edit it in place and write the patch:
 
