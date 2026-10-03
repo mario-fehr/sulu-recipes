@@ -5,6 +5,7 @@ SULU_BARE_SYMFONY="${SULU_BARE_SYMFONY:-7.4}"
 P="$WORK/project-bare"
 BARE_LOCK="$REPO_ROOT/tests/lines/$SULU_LINE.bare-lock.txt"
 : >"$WORK/checks.log"
+require_free_port "$ENDPOINT_PORT"
 require_free_port 8001
 
 "$REPO_ROOT/tests/build-endpoint.sh"

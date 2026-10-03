@@ -9,6 +9,7 @@ mkdir -p "$DIFFS"
 find "$DIFFS" -name '*.diff' -delete
 EXPECTED="$REPO_ROOT/tests/lines/$SULU_LINE.parity-expected.txt"
 : >"$WORK/checks.log"
+require_free_port "$ENDPOINT_PORT"
 
 "$REPO_ROOT/tests/build-endpoint.sh"
 serve endpoint "$ENDPOINT_PORT" "$OUTPUT"
