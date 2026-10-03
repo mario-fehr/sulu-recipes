@@ -1,0 +1,27 @@
+cmsig/seal-symfony-bundle 0.8 github.com/symfony/recipes-contrib
+doctrine/deprecations 1.0 github.com/symfony/recipes
+doctrine/doctrine-bundle 3.0 <this repo>
+doctrine/doctrine-fixtures-bundle 3.0 github.com/symfony/recipes
+doctrine/doctrine-migrations-bundle 3.1 github.com/symfony/recipes
+friendsofsymfony/jsrouting-bundle 3.6 <this repo>
+friendsofsymfony/rest-bundle 3.0 github.com/symfony/recipes-contrib
+jms/serializer-bundle 4.0 github.com/symfony/recipes-contrib
+league/flysystem-bundle 1.0 github.com/symfony/recipes
+php-http/discovery 1.18 github.com/symfony/recipes
+stof/doctrine-extensions-bundle 1.2 github.com/symfony/recipes-contrib
+sulu/sulu 3.0 <this repo>
+symfony-cmf/routing-bundle 3.0 <this repo>
+symfony/console 6.4 <this repo>
+symfony/flex 2.4 github.com/symfony/recipes
+symfony/framework-bundle 6.4 <this repo>
+symfony/lock 5.2 github.com/symfony/recipes
+symfony/mailer 4.3 github.com/symfony/recipes
+symfony/messenger 6.0 github.com/symfony/recipes
+symfony/property-info 7.3 github.com/symfony/recipes
+symfony/routing 7.4 github.com/symfony/recipes
+symfony/security-bundle 6.4 <this repo>
+symfony/translation 6.3 github.com/symfony/recipes
+symfony/twig-bundle 6.4 <this repo>
+symfony/uid 7.0 github.com/symfony/recipes
+symfony/validator 7.0 github.com/symfony/recipes
+symfony/workflow 3.3 github.com/symfony/recipes
