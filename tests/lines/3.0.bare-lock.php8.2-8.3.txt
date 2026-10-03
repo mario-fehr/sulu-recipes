@@ -3,7 +3,7 @@ doctrine/deprecations 1.0 github.com/symfony/recipes
 doctrine/doctrine-bundle 2.13 <this repo>
 doctrine/doctrine-fixtures-bundle 3.0 github.com/symfony/recipes
 doctrine/doctrine-migrations-bundle 3.1 github.com/symfony/recipes
-friendsofsymfony/jsrouting-bundle 3.6 <this repo>
+friendsofsymfony/jsrouting-bundle 3.0 <this repo>
 friendsofsymfony/rest-bundle 3.0 github.com/symfony/recipes-contrib
 jms/serializer-bundle 4.0 github.com/symfony/recipes-contrib
 league/flysystem-bundle 1.0 github.com/symfony/recipes
