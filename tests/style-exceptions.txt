@@ -1,0 +1,2 @@
+indent symfony/security-bundle/6.4/config/packages/security.yaml  #reason: byte-identical with sulu/skeleton at SULU_SKELETON_SHA
+underscore sulu/sulu/3.0/config/image-formats.xml  #reason: byte-identical with sulu/skeleton at SULU_SKELETON_SHA
