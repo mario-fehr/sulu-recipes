@@ -43,11 +43,6 @@
         "#1": "Email address that will receive system notifications and might be used as universal fallback value by bundles",
         "SULU_ADMIN_EMAIL": "example@localhost"
     },
-    "dotenv": {
-        "test": {
-            "SEAL_DSN": "memory://"
-        }
-    },
     "gitignore": [
         "/%PUBLIC_DIR%/uploads/"
     ]

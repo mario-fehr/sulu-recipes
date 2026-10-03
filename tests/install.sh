@@ -25,7 +25,7 @@ composer update --no-interaction
 update_build_guarded
 
 for pkg in $SUPERSEDED $OWN_RECIPES; do
-  case "$pkg" in doctrine/phpcr-bundle|symfony/form) installed "$pkg" || continue ;; esac
+  case "$pkg" in doctrine/phpcr-bundle|symfony/form|cmsig/seal-memory-adapter) installed "$pkg" || continue ;; esac
   check "lock $pkg from this repo" lock_repo "$pkg" "$OUR_REPO"
 done
 check "lock symfony/mailer official" lock_repo symfony/mailer github.com/symfony/recipes

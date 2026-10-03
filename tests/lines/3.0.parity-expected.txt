@@ -3,8 +3,6 @@
 .env > symfony/framework-bundle	APP_ENV=prod|APP_SECRET=<secret>|APP_SHARE_DIR=var/share|#TRUSTED_PROXIES=127.0.0.1,127.0.0.2|#TRUSTED_HOSTS=localhost,example.com|  #reason: (b) official framework-bundle env: APP_ENV=dev, empty APP_SECRET, no TRUSTED_* comments
 .env > symfony/lock	# Choose one of the stores below|# postgresql+advisory://db_user:db_password@localhost/db_name|# flock is using the filesystem and is therefore supported by most operating systems, for Unix based systems you may want to use semaphore|LOCK_DSN=flock|  #reason: (b) official symfony/lock env block comments
 .env.dev < symfony/framework-bundle	APP_SECRET=<secret>|  #reason: (b) official dotenv.dev generates APP_SECRET into .env.dev
-.env.test < sulu/sulu	SEAL_DSN=memory://|  #reason: (d) SEAL_DSN=memory:// in a sulu/sulu block instead of outside any block
-.env.test > _outside	SEAL_DSN=memory://  #reason: (d) SEAL_DSN=memory:// in a sulu/sulu block instead of outside any block
 .gitignore > friendsofphp/php-cs-fixer	/.php-cs-fixer.php|/.php-cs-fixer.cache|  #reason: (c) dead block, absent from sulu/skeleton symfony.lock
 bundles.php < Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle::class => ['dev' => true, 'test' => true]  #reason: (b) official doctrine-fixtures-bundle recipe registers dev and test
 bundles.php < Symfony\Bundle\DebugBundle\DebugBundle::class => ['dev' => true]  #reason: (b) official debug-bundle recipe registers dev only
@@ -22,9 +20,7 @@ debug:config websiteconsole stage framework differs  #reason: (b) official messe
 debug:config websiteconsole stage monolog differs  #reason: (b) official monolog prod deprecation handler; stage mirrors prod as sulu/skeleton's when@stage: *prod does
 Files <flex>/.env and <upstream>/.env differ  #reason: (-) see the block lines for this file
 Files <flex>/.env.dev and <upstream>/.env.dev differ  #reason: (-) see the block lines for this file
-Files <flex>/.env.test and <upstream>/.env.test differ  #reason: (-) see the block lines for this file
 Files <flex>/.gitignore and <upstream>/.gitignore differ  #reason: (-) see the block lines for this file
-Files <flex>/bin/phpunit and <upstream>/bin/phpunit differ  #reason: (b) official tooling and test file
 Files <flex>/compose.override.yaml and <upstream>/compose.override.yaml differ  #reason: (c) obsolete compose version key absent; services identical
 Files <flex>/compose.yaml and <upstream>/compose.yaml differ  #reason: (c) obsolete compose version key absent; services identical
 Files <flex>/composer.json and <upstream>/composer.json differ  #reason: (a) identity keys and endpoint; (c) post-root-package-install
@@ -42,7 +38,6 @@ Files <flex>/config/routes.yaml and <upstream>/config/routes.yaml differ  #reaso
 Files <flex>/README.md and <upstream>/README.md differ  #reason: (a) project identity
 Files <flex>/src/DataFixtures/AppFixtures.php and <upstream>/src/DataFixtures/AppFixtures.php differ  #reason: (b) official tooling and test file
 Files <flex>/symfony.lock and <upstream>/symfony.lock differ  #reason: (a) recipe repo, ref and version metadata only
-Files <flex>/tests/bootstrap.php and <upstream>/tests/bootstrap.php differ  #reason: (b) official tooling and test file
 Only in <flex>/config/packages: scheb_2fa_email.yaml  #reason: (d) email and trusted_device come from the scheb/2fa-email and scheb/2fa-trusted-device recipes; effective config checked by debug:config
 Only in <flex>/config/packages: scheb_2fa_trusted_device.yaml  #reason: (d) email and trusted_device come from the scheb/2fa-email and scheb/2fa-trusted-device recipes; effective config checked by debug:config
 Only in <flex>/config/packages: sulu.yaml  #reason: (d) carries Sulu values for non-superseded packages

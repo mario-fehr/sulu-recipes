@@ -1,0 +1,10 @@
+{
+    "add-lines": [
+        {
+            "file": ".env.test",
+            "content": "SEAL_DSN=memory://",
+            "position": "after_target",
+            "target": "APP_SECRET="
+        }
+    ]
+}

@@ -1,0 +1,19 @@
+Reason: (f) Writes SEAL_DSN=memory:// into .env.test when cmsig/seal-memory-adapter is installed before phpunit/phpunit; dotenv skips a .env.test that does not exist yet.
+Evidence: A bare install with the adapter, then composer require --dev phpunit/phpunit, gave a .env.test without SEAL_DSN (.references/symfony-flex/src/Configurator/EnvConfigurator.php:72-75).
+
+--- a/manifest.json
++++ b/manifest.json
+@@ -9,6 +9,13 @@
+             "position": "after_target",
+             "target": "<deprecationTrigger>",
+             "requires": ["doctrine/deprecations"]
++        },
++        {
++            "file": ".env.test",
++            "content": "SEAL_DSN=memory://",
++            "position": "after_target",
++            "target": "APP_SECRET=",
++            "requires": ["cmsig/seal-memory-adapter"]
+         }
+     ],
+     "copy-from-recipe": {

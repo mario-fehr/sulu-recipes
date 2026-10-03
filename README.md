@@ -3,7 +3,7 @@
 > [!WARNING]
 > This project is in heavy development. The recipes, the file layout and the behavior may still change without notice, and it is not ready for production use.
 
-Symfony Flex recipes for Sulu. `sulu/sulu` has no official Flex recipe, so this repo adds recipes for `sulu/sulu` 2.6 and 3.0. It also adds recipes for `symfony-cmf/routing-bundle`, `phpstan/phpstan-doctrine`, `phpstan/phpstan-symfony`, `phpstan/extension-installer`, `rector/rector`, `scheb/2fa-email` and `scheb/2fa-trusted-device`, which have none, and supersedes the official recipes of thirteen packages whose files Sulu must own: `symfony/framework-bundle`, `symfony/security-bundle`, `symfony/console`, `symfony/twig-bundle`, `symfony/web-profiler-bundle`, `scheb/2fa-bundle`, `friendsofsymfony/jsrouting-bundle`, `doctrine/doctrine-bundle`, `doctrine/phpcr-bundle`, `symfony/form`, `phpstan/phpstan`, `php-cs-fixer/shim` and `vincentlanglet/twig-cs-fixer`.
+Symfony Flex recipes for Sulu. `sulu/sulu` has no official Flex recipe, so this repo adds recipes for `sulu/sulu` 2.6 and 3.0. It also adds recipes for `symfony-cmf/routing-bundle`, `phpstan/phpstan-doctrine`, `phpstan/phpstan-symfony`, `phpstan/extension-installer`, `rector/rector`, `cmsig/seal-memory-adapter`, `scheb/2fa-email` and `scheb/2fa-trusted-device`, which have none, and supersedes the official recipes of fourteen packages whose files Sulu must own: `symfony/framework-bundle`, `symfony/security-bundle`, `symfony/console`, `symfony/twig-bundle`, `symfony/web-profiler-bundle`, `scheb/2fa-bundle`, `friendsofsymfony/jsrouting-bundle`, `doctrine/doctrine-bundle`, `doctrine/phpcr-bundle`, `symfony/form`, `phpstan/phpstan`, `php-cs-fixer/shim`, `vincentlanglet/twig-cs-fixer` and `phpunit/phpunit`.
 
 ## Usage
 
@@ -77,6 +77,8 @@ composer recipes:install phpstan/phpstan php-cs-fixer/shim vincentlanglet/twig-c
 ```
 
 The recipes add the phpstan settings in `phpstan.dist.neon` and the `withPHPStanConfigs` call in `rector.php` as blocks. If you change a line inside one of these blocks, a later `recipes:install` or `recipes:update` of the phpstan or rector packages adds the block a second time; remove the duplicate.
+
+In an existing 3.0 project, `composer recipes:update sulu/sulu` leaves `.env.test` and its `###> sulu/sulu ###` block with `SEAL_DSN=memory://` as they are, and tests keep working. `composer recipes:install phpunit/phpunit --force` switches to this repository's `phpunit/phpunit` recipe and rewrites `.env.test` (as in `sulu/skeleton`), `bin/phpunit` and `tests/bootstrap.php`; review the diff. `composer recipes:update phpunit/phpunit` does not work for this switch.
 
 ## Publishing
 

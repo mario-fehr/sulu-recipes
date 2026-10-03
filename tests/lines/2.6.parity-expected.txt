@@ -22,7 +22,6 @@ debug:config websiteconsole stage monolog differs  #reason: (b) official monolog
 Files <flex>/.env and <upstream>/.env differ  #reason: (-) see the block lines for this file
 Files <flex>/.env.dev and <upstream>/.env.dev differ  #reason: (-) see the block lines for this file
 Files <flex>/.gitignore and <upstream>/.gitignore differ  #reason: (-) see the block lines for this file
-Files <flex>/bin/phpunit and <upstream>/bin/phpunit differ  #reason: (b) official tooling and test file
 Files <flex>/compose.override.yaml and <upstream>/compose.override.yaml differ  #reason: (c) obsolete compose version key absent; services identical
 Files <flex>/compose.yaml and <upstream>/compose.yaml differ  #reason: (c) obsolete compose version key absent; services identical
 Files <flex>/composer.json and <upstream>/composer.json differ  #reason: (a) identity keys and endpoint; (c) post-root-package-install
@@ -39,7 +38,6 @@ Files <flex>/config/routes.yaml and <upstream>/config/routes.yaml differ  #reaso
 Files <flex>/README.md and <upstream>/README.md differ  #reason: (a) project identity
 Files <flex>/src/DataFixtures/AppFixtures.php and <upstream>/src/DataFixtures/AppFixtures.php differ  #reason: (b) official tooling and test file
 Files <flex>/symfony.lock and <upstream>/symfony.lock differ  #reason: (a) recipe repo, ref and version metadata only
-Files <flex>/tests/bootstrap.php and <upstream>/tests/bootstrap.php differ  #reason: (b) official tooling and test file
 Only in <flex>/config/packages: scheb_2fa_email.yaml  #reason: (d) email and trusted_device come from the scheb/2fa-email and scheb/2fa-trusted-device recipes; effective config checked by debug:config
 Only in <flex>/config/packages: scheb_2fa_trusted_device.yaml  #reason: (d) email and trusted_device come from the scheb/2fa-email and scheb/2fa-trusted-device recipes; effective config checked by debug:config
 Only in <flex>/config/packages: sulu.yaml  #reason: (d) carries Sulu values for non-superseded packages
