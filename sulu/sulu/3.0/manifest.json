@@ -49,5 +49,8 @@
         "test": {
             "SEAL_DSN": "memory://"
         }
-    }
+    },
+    "gitignore": [
+        "/%PUBLIC_DIR%/uploads/"
+    ]
 }
