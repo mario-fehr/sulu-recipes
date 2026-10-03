@@ -4,9 +4,7 @@
 .env > doctrine/phpcr-bundle	  #reason: (c) sulu/skeleton keeps an empty doctrine/phpcr-bundle env block after removing the official PHPCR_* values; this repository's recipe has no env, so no block
 .env > symfony/lock	# Choose one of the stores below|# postgresql+advisory://db_user:db_password@localhost/db_name|# flock is using the filesystem and is therefore supported by most operating systems, for Unix based systems you may want to use semaphore|LOCK_DSN=flock|  #reason: (b) official symfony/lock env block comments
 .env.dev < symfony/framework-bundle	APP_SECRET=<secret>|  #reason: (b) official dotenv.dev generates APP_SECRET into .env.dev
-.gitignore < vincentlanglet/twig-cs-fixer	/.twig-cs-fixer.cache|  #reason: (b) official twig-cs-fixer gitignore block
 .gitignore > friendsofphp/php-cs-fixer	/.php-cs-fixer.php|/.php-cs-fixer.cache|  #reason: (c) dead block, absent from sulu/skeleton symfony.lock
-.gitignore > vincentlanglet/twig-cs-fixer	/.twig-cs-fixer.php|/.twig-cs-fixer.cache|  #reason: (b) official twig-cs-fixer gitignore block
 bundles.php < Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle::class => ['dev' => true, 'test' => true]  #reason: (b) official doctrine-fixtures-bundle recipe registers dev and test
 bundles.php < Symfony\Bundle\DebugBundle\DebugBundle::class => ['dev' => true]  #reason: (b) official debug-bundle recipe registers dev only
 bundles.php > Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle::class => ['all' => true]  #reason: (b) official doctrine-fixtures-bundle recipe registers dev and test
@@ -24,7 +22,6 @@ debug:config websiteconsole stage monolog differs  #reason: (b) official monolog
 Files <flex>/.env and <upstream>/.env differ  #reason: (-) see the block lines for this file
 Files <flex>/.env.dev and <upstream>/.env.dev differ  #reason: (-) see the block lines for this file
 Files <flex>/.gitignore and <upstream>/.gitignore differ  #reason: (-) see the block lines for this file
-Files <flex>/.php-cs-fixer.dist.php and <upstream>/.php-cs-fixer.dist.php differ  #reason: (b) official tooling and test file
 Files <flex>/bin/phpunit and <upstream>/bin/phpunit differ  #reason: (b) official tooling and test file
 Files <flex>/compose.override.yaml and <upstream>/compose.override.yaml differ  #reason: (c) obsolete compose version key absent; services identical
 Files <flex>/compose.yaml and <upstream>/compose.yaml differ  #reason: (c) obsolete compose version key absent; services identical
@@ -38,12 +35,10 @@ Files <flex>/config/packages/routing.yaml and <upstream>/config/packages/routing
 Files <flex>/config/packages/stof_doctrine_extensions.yaml and <upstream>/config/packages/stof_doctrine_extensions.yaml differ  #reason: (d) official file plus sulu.yaml; effective config checked by debug:config
 Files <flex>/config/packages/translation.yaml and <upstream>/config/packages/translation.yaml differ  #reason: (d) official file plus sulu.yaml; effective config checked by debug:config
 Files <flex>/config/routes.yaml and <upstream>/config/routes.yaml differ  #reason: (d) only a commented login example differs; debug:router identical
-Files <flex>/phpstan.dist.neon and <upstream>/phpstan.dist.neon differ  #reason: (b) official tooling and test file
 Files <flex>/README.md and <upstream>/README.md differ  #reason: (a) project identity
 Files <flex>/src/DataFixtures/AppFixtures.php and <upstream>/src/DataFixtures/AppFixtures.php differ  #reason: (b) official tooling and test file
 Files <flex>/symfony.lock and <upstream>/symfony.lock differ  #reason: (a) recipe repo, ref and version metadata only
 Files <flex>/tests/bootstrap.php and <upstream>/tests/bootstrap.php differ  #reason: (b) official tooling and test file
 Only in <flex>/config/packages: sulu.yaml  #reason: (d) carries Sulu values for non-superseded packages
 Only in <upstream>: .env.local  #reason: (b) APP_ENV=dev comes from the official .env instead of a generated .env.local
-Only in <upstream>/tests: phpstan  #reason: (c) stubs only used by Sulu phpstan.dist.neon, which is not shipped
 .gitignore < sulu/sulu	/public/uploads/|  #reason: (d) /public/uploads/ in a sulu/sulu block as well as in sulu-flex-skeleton's own lines

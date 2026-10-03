@@ -1,0 +1,8 @@
+parameters:
+    paths:
+        - bin/
+        - config/
+        - public/
+        - src/
+        - tests/
+    level: max

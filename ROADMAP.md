@@ -20,12 +20,11 @@ Deferred ideas without a spec, one line each. Research starts when an item is pi
 
 - Move `qa.yml` and `drift.yml` from `ubuntu-24.04` to Ubuntu 26 once `setup-php` supports PHP 8.5 there; `ubuntu-latest` moves to Ubuntu 26 from 19 October 2026.
 - Patches for files that come only from an official recipe (`symfony/recipes`, `symfony/recipes-contrib`). `tests/patches.sh` covers only files shared with `sulu/skeleton`; the others are checked by `tests/drift.sh` against the pins in `tests/pins.env`, and there is no way to patch them.
+- Make `tests/patches.sh` check that each `add-lines` block of the tool recipes, once inserted into its base file, equals the `sulu/skeleton` file. After a pin bump, an outdated block then fails in the `lint` job instead of in the install harnesses.
 
 ## Content
 
-- Ship Sulu's stricter tooling configs (`phpstan.dist.neon` at level `max` with its `tests/phpstan/*` stubs, Sulu's `.php-cs-fixer.dist.php`).
 - Decide how `sulu-flex-skeleton` tracks `sulu/skeleton`'s `composer.json` `conflict` key over time.
 - Trimming `sulu-flex-skeleton`'s `require` to non-transitive packages is not planned: the created project's `src/Kernel.php` uses `symfony/config` and FOS HttpCache directly, and Composer's convention is to require what your own code uses.
 - Spike: minimal recipes, accepted by effective config (`debug:config`, `debug:router`) instead of file parity.
 - Send the documentation fixes in `tests/patches/` upstream to `sulu/skeleton`; drift then reports them as no longer applying, and they can be dropped.
-- Move skeleton tooling configs (`rector.php`, `tests/rector/`, `.twig-cs-fixer.dist.php`) from the `sulu/sulu` recipe into recipes of the tool packages, so they only land in projects that install the tool.

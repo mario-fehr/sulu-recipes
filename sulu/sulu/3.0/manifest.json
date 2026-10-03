@@ -31,8 +31,6 @@
     },
     "copy-from-recipe": {
         ".env.stage": ".env.stage",
-        ".twig-cs-fixer.dist.php": ".twig-cs-fixer.dist.php",
-        "rector.php": "rector.php",
         "assets/": "assets/",
         "bin/": "%BIN_DIR%/",
         "config/": "%CONFIG_DIR%/",
