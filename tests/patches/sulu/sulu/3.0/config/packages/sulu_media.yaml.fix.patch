@@ -1,0 +1,14 @@
+Reason: (e) sulu/skeleton 3.0 links the Sulu 2.6 or unversioned docs, or the scheb 6.x docs.
+Evidence: Each new URL answers 200 without a redirect (curl, 2026-10-03); the anchor excluded-templates-optional exists on the 3.x webspaces page.
+
+--- a/config/packages/sulu_media.yaml
++++ b/config/packages/sulu_media.yaml
+@@ -2,7 +2,7 @@
+     format_manager:
+         default_imagine_options:
+             # a value between 95 and 75 is recommended
+-            # see also: https://docs.sulu.io/en/2.6/book/image-formats.html
++            # see also: https://docs.sulu.io/3.x/book/image-formats.html
+             jpeg_quality: 90
+             webp_quality: 90
+             avif_quality: 90

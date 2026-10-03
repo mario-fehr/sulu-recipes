@@ -1,0 +1,14 @@
+Reason: (e) sulu/skeleton 3.0 links the Sulu 2.6 or unversioned docs, or the scheb 6.x docs.
+Evidence: Each new URL answers 200 without a redirect (curl, 2026-10-03); the anchor excluded-templates-optional exists on the 3.x webspaces page.
+
+--- a/config/packages/security.yaml
++++ b/config/packages/security.yaml
+@@ -44,7 +44,7 @@
+        #    # For an advanced user management with registration and opt-in emails have a look at the:
+        #    # https://github.com/sulu/SuluCommunityBundle
+        #    # Also have a look at the user context based caching when you output user role specific data
+-       #    # https://docs.sulu.io/en/2.6/cookbook/user-context-caching.html
++       #    # https://docs.sulu.io/3.x/cookbook/user-context-caching.html
+        #    form_login:
+        #        login_path: login
+        #        check_path: login

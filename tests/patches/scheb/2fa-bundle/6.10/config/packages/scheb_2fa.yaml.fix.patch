@@ -1,0 +1,11 @@
+Reason: (e) sulu/skeleton 3.0 links the Sulu 2.6 or unversioned docs, or the scheb 6.x docs.
+Evidence: Each new URL answers 200 without a redirect (curl, 2026-10-03); the anchor excluded-templates-optional exists on the 3.x webspaces page.
+
+--- a/config/packages/scheb_2fa.yaml
++++ b/config/packages/scheb_2fa.yaml
+@@ -1,4 +1,4 @@
+-# See the configuration reference at https://symfony.com/bundles/SchebTwoFactorBundle/6.x/configuration.html
++# See the configuration reference at https://symfony.com/bundles/SchebTwoFactorBundle/7.x/configuration.html
+ scheb_two_factor:
+     security_tokens:
+         - Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken
