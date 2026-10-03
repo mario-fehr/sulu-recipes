@@ -7,8 +7,8 @@ Runbooks for the recurring maintainer tasks. `docs/scripts.md` describes every s
 When: a drift issue reports a new `sulu/skeleton` tag of a line, or an official recipe that moved.
 
 1. Set `SULU_SKELETON_SHA` and `SULU_SKELETON_VERSION` in `tests/lines/<line>.env`, or `SYMFONY_RECIPES_SHA` or `SYMFONY_RECIPES_CONTRIB_SHA` in `tests/pins.env`.
-2. For a `sulu/skeleton` pin, run `SULU_LINE=<line> bin/sync-skeleton.sh`. It rewrites the recipe files from the new pin plus their patches. For a pin in `tests/pins.env`, port the change of the official recipe by hand, because `bin/sync-skeleton.sh` reads only `sulu/skeleton`.
-3. A file reported as `kept` has a patch that no longer applies. Edit the file and rewrite the patch with `bin/make-patch.sh`, or delete the patch if upstream took the change. `kept (removed upstream)` means `sulu/skeleton` no longer has the file; delete the patch and decide whether the recipe keeps the file.
+2. Run `SULU_LINE=<line> bin/sync-upstream.sh`. It rewrites the recipe files from the new pins in `tests/lines/<line>.env` and `tests/pins.env` and applies their patches. Files that a new upstream version adds are not picked up; copy those by hand.
+3. A file reported as `kept` has a patch that no longer applies. Edit the file and rewrite the patch with `bin/make-patch.sh`, or delete the patch if upstream took the change. `kept (removed upstream)` means `sulu/skeleton` or the official recipe no longer has the file: delete the patch and decide whether the recipe keeps the file.
 4. Run `tests/patches.sh` and the install harnesses of the line (`tests/install.sh`, `tests/install-bare.sh`, `tests/parity.sh`).
 5. Update `tests/lines/<line>.parity-expected.txt` and the bare-lock files only for differences you can explain.
 
@@ -21,7 +21,7 @@ When: `.github/workflows/drift.yml` runs `tests/drift.sh` every Monday at 06:00 
 The issue title tells you what moved:
 
 - `sulu/skeleton <line>: <tag> released`: a new tag of a line. The issue lists the changed files the recipes ship and whether each patch still applies to the new tag. Do a pin bump.
-- `Official recipe changed: <package>`: the official recipe of a package moved past `tests/pins.env`. If this repository supersedes the package, port the change to its recipe or record why not, then bump the pin. If the package is in `SULU_YAML_PACKAGES`, check whether `config/packages/sulu.yaml` of the `sulu/sulu` recipe still fits, then bump the pin.
+- `Official recipe changed: <package>`: the official recipe of a package moved past `tests/pins.env`. If this repository supersedes the package, the issue says whether each of its patches still applies on `origin/main`. Do a pin bump, or record why the change does not fit. If the package is in `SULU_YAML_PACKAGES`, check that `config/packages/sulu.yaml` of the `sulu/sulu` recipe still fits, then bump the pin.
 - `sulu/skeleton: new line <minor>`: a new minor of `sulu/skeleton` has no line yet. Add a release line.
 
 Close the issue with the commit that resolves it.
@@ -30,9 +30,9 @@ Close the issue with the commit that resolves it.
 
 When: Sulu needs to own a file that an official recipe installs.
 
-1. Run `bin/supersede.sh recipes|contrib <package>/<version> <package>/<version>`. The first path is the folder in the official repository, the second the target folder here. It prints `sulu:` for every file taken from `sulu/skeleton` and `official:` for every file kept from the official recipe.
-2. Review the files, and write a patch with `bin/make-patch.sh` for every change you make.
-3. Add the package to `SUPERSEDED` in `tests/lib.sh`, so drift watches its official recipe and the install checks expect this repository's recipe. If its vendor is new, add the vendor to `RECIPE_VENDORS` there too, or `tests/build-endpoint.sh` leaves the recipe out. If not every line installs the package, add it to the `installed` case in `tests/install.sh`.
+1. First add the package to `SUPERSEDED` in `tests/lib.sh`. That tells the harness about its official recipe, makes drift watch it and makes the install checks expect this repository's recipe. If its vendor is new, add the vendor to `RECIPE_VENDORS` there too, otherwise `tests/build-endpoint.sh` leaves the recipe out. If not every line installs the package, add it to the `installed` case in `tests/install.sh`.
+2. Run `bin/supersede.sh recipes|contrib <package>/<version> <package>/<version>`. The first path is the folder in the official repository, the second the target folder here. It prints `sulu:` for every file taken from `sulu/skeleton` and `official:` for every file kept from the official recipe.
+3. Review the files. Every change you make needs a patch from `bin/make-patch.sh`, including changes to `manifest.json` and `post-install.txt`.
 4. Run `tests/style.sh`, `tests/patches.sh` and parity for every line, and update `tests/lines/<line>.parity-expected.txt`.
 
 Files: the new recipe folder, `tests/lib.sh`, `tests/install.sh`, `tests/patches/`, the parity expectations.

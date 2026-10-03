@@ -25,4 +25,4 @@ cp -R "$WORK/$official/." "$target/"
     echo "official: $f"
   fi
 done
-"$REPO_ROOT/bin/sync-skeleton.sh" "$target"
+"$REPO_ROOT/bin/sync-upstream.sh" "$target"

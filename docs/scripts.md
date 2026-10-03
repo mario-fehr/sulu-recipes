@@ -2,7 +2,7 @@
 
 This is the reference for the scripts in `tests/` and `bin/`, the environment variables they read and the files they use. `CONTRIBUTING.md` explains how to use them when you change a recipe; `docs/maintaining.md` covers maintainer tasks.
 
-Every script except `tests/matrix.sh` sources `tests/lib.sh`. Path arguments of `bin/make-patch.sh` and `bin/sync-skeleton.sh` are relative to the repository root. The work directory holds the upstream clones (`$WORK/clones/`), the endpoint build, the test projects and the logs.
+Every script except `tests/matrix.sh` sources `tests/lib.sh`. Path arguments of `bin/make-patch.sh` and `bin/sync-upstream.sh` are relative to the repository root. The work directory holds the upstream clones (`$WORK/clones/`), the endpoint build, the test projects and the logs.
 
 ## Scripts
 
@@ -34,7 +34,7 @@ Checks that every script in `tests/` and `bin/` has a header comment with a `# U
 
 `tests/patches.sh [<dir>]`
 
-Checks that every recipe file equals its `sulu/skeleton` file at the pin of every line plus its patches in `tests/patches/`, and that every patch has a target, a `Reason:` and an `Evidence:` line.
+Checks that every recipe file equals its `sulu/skeleton` file at the pin of every line plus its patches in `tests/patches/`. A superseded recipe takes some files from its official recipe (its `manifest.json`, its `post-install.txt` and any file no line of `sulu/skeleton` has). Each of those must equal the official file at the pin in `tests/pins.env` plus its patches. Every patch needs a target, a `Reason:` and an `Evidence:` line. The official recipe is the highest folder of the package in `symfony/recipes` or `symfony/recipes-contrib` that is not above the folder version here, as Flex picks it.
 
 ### tests/install.sh
 
@@ -74,19 +74,19 @@ Sourced by the other scripts, never run directly. Loads `tests/lines/$SULU_LINE.
 
 `bin/make-patch.sh fix|adapt <recipe-file> [--reason <text> --evidence <text>]`
 
-Writes the patch of an edited recipe file into `tests/patches/`. A `fix` patch is a deliberate fix, written against upstream. An `adapt` patch fits a file to an older package version or to content another recipe adds, written against upstream plus the fix.
+Writes the patch of an edited recipe file into `tests/patches/`. The patch is made against `sulu/skeleton` or, for files that come from the official recipe, against the official file. A `fix` patch is a deliberate fix, written against upstream. An `adapt` patch fits a file to an older package version or to content another recipe adds, and is written against upstream plus the fix.
 
-### bin/sync-skeleton.sh
+### bin/sync-upstream.sh
 
-`bin/sync-skeleton.sh [<recipe-dir>...]`
+`bin/sync-upstream.sh [<recipe-dir>...]`
 
-Rewrites the recipe files from `sulu/skeleton` at the pin plus their patches, for all recipe folders or the ones given. Run it after a pin bump. It prints `updated` for every file it changed and `kept` for every file whose patch no longer applies; it exits 1 if it kept any file.
+Rewrites the recipe files from `sulu/skeleton` and the official recipes at their pins plus their patches, for all recipe folders or only the ones given. Run it after a pin bump. It prints `updated` for every file it changed and `kept` for every file whose patch no longer applies, and it exits 1 if it kept any file.
 
 ### bin/supersede.sh
 
 `bin/supersede.sh recipes|contrib <official-recipe-dir> <target-dir>`
 
-Copies an official recipe from `symfony/recipes` (`recipes`) or `symfony/recipes-contrib` (`contrib`) at the pin in `tests/pins.env` into `<target-dir>`. Each file that `sulu/skeleton` also has is taken from `sulu/skeleton`. It prints `sulu:` or `official:` for each file and then runs `bin/sync-skeleton.sh` on the target.
+Copies an official recipe from `symfony/recipes` (`recipes`) or `symfony/recipes-contrib` (`contrib`) at the pin in `tests/pins.env` into `<target-dir>`. Each file that `sulu/skeleton` also has is taken from `sulu/skeleton`. It prints `sulu:` or `official:` for each file and then runs `bin/sync-upstream.sh` on the target.
 
 ## Environment
 
