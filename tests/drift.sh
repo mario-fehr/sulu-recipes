@@ -117,6 +117,33 @@ for pkg in $SUPERSEDED $SULU_YAML_PACKAGES; do
     echo "Changed paths:"
     echo
     list "$(git -C "$UP/$repo" diff --name-only --no-renames "$pin" origin/main -- "$pkg/")"
+    case " $SUPERSEDED " in *" $pkg "*)
+      echo
+      echo "Patches against origin/main:"
+      echo
+      official_patched=""
+      for recipe in $(recipe_dirs "$REPO_ROOT"); do
+        [ "${recipe%/*}" = "$pkg" ] || continue
+        if ! origin="$(official_origin "$recipe" origin/main 2>/dev/null)"; then
+          official_patched="$official_patched- \`$recipe\`: no official folder at or below its version on origin/main"$'\n'
+          continue
+        fi
+        read -r o_clone o_ref folder <<<"$origin"
+        while IFS= read -r path; do
+          [ -f "$PATCH_ROOT/$recipe/$path.fix.patch" ] || [ -f "$PATCH_ROOT/$recipe/$path.adapt.patch" ] || continue
+          rc=0; rebuild_file "$recipe" "$path" "$o_ref" "$o_clone" "$folder/$path" >/dev/null 2>&1 || rc=$?
+          case "$rc" in
+            0) status="applies" ;;
+            1) status="removed upstream" ;;
+            2) status="does not apply (fix)" ;;
+            *) status="does not apply (adapt)" ;;
+          esac
+          official_patched="$official_patched- \`$recipe/$path\`: $status"$'\n'
+        done < <(official_files "$REPO_ROOT" "$recipe")
+      done
+      if [ -n "$official_patched" ]; then printf '%s' "$official_patched"; else echo "- none"; fi
+      ;;
+    esac
   } > "$OUT/official-${pkg//\//-}.md"
 done
 
