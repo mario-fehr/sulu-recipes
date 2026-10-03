@@ -25,6 +25,13 @@ if [ ! -f "$LINE_FILE" ]; then
 fi
 # shellcheck source=/dev/null
 source "$LINE_FILE"
+if [ -n "${SULU_PHP:-}" ]; then
+  php_running="$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')"
+  if [ "$php_running" != "$SULU_PHP" ]; then
+    echo "SULU_PHP=$SULU_PHP, but php is $php_running" >&2
+    exit 1
+  fi
+fi
 
 # shellcheck source=/dev/null
 source "$REPO_ROOT/tests/pins.env"
@@ -157,7 +164,9 @@ new_symfony_project() {
 }
 
 runtime_checks() {
-  local db=sulu-recipes-mysql
+  local db=sulu-recipes-mysql mysql="${SULU_MYSQL_VERSION:-8.4}" platform=()
+  # mysql:5.7 has no arm64 image.
+  [ "$mysql" != 5.7 ] || platform=(--platform linux/amd64)
   check "admin build present" test -f public/build/admin/manifest.json
   for console in adminconsole websiteconsole; do
     for env in dev prod test; do
@@ -167,10 +176,10 @@ runtime_checks() {
   done
   CONTAINERS="$CONTAINERS $db"
   docker rm -fv "$db" >/dev/null 2>&1 || true
-  docker run -d --name "$db" -e MYSQL_ROOT_PASSWORD=ChangeMe -p 3307:3306 mysql:8.4 >/dev/null
+  docker run -d --name "$db" ${platform[@]+"${platform[@]}"} -e MYSQL_ROOT_PASSWORD=ChangeMe -p 3307:3306 "mysql:$mysql" >/dev/null
   # mysqladmin ping already answers the init-phase server, which has no TCP; wait for a TCP connection.
   for _ in $(seq 1 90); do docker exec "$db" mysql -h 127.0.0.1 -uroot -pChangeMe -e "SELECT 1" >/dev/null 2>&1 && break; sleep 1; done
-  echo 'DATABASE_URL="mysql://root:ChangeMe@127.0.0.1:3307/sulu_recipes?serverVersion=8.4&charset=utf8mb4"' > .env.local
+  echo "DATABASE_URL=\"mysql://root:ChangeMe@127.0.0.1:3307/sulu_recipes?serverVersion=$mysql&charset=utf8mb4\"" > .env.local
   check "sulu:build dev" bin/adminconsole sulu:build dev --no-interaction
   serve web 8001 public config/router.php
   check "/admin answers 200 with the Sulu admin" sh -c 'curl -fsL http://127.0.0.1:8001/admin | grep -qi sulu'

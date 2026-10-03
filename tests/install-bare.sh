@@ -3,7 +3,12 @@ source "$(dirname "$0")/lib.sh"
 upstream sulu-skeleton sulu/skeleton "$SULU_SKELETON_SHA"
 SULU_BARE_SYMFONY="${SULU_BARE_SYMFONY:-7.4}"
 P="$WORK/project-bare"
-BARE_LOCK="$REPO_ROOT/tests/lines/$SULU_LINE.bare-lock.txt"
+BARE_LOCK="$REPO_ROOT/tests/lines/$SULU_LINE.bare-lock${SULU_BARE_LOCK:+.$SULU_BARE_LOCK}.txt"
+case "${SULU_BARE_DEPS:-highest}" in
+  highest) deps=() ;;
+  lowest) deps=(--prefer-lowest) ;;
+  *) echo "SULU_BARE_DEPS must be highest or lowest" >&2; exit 1 ;;
+esac
 : >"$WORK/checks.log"
 require_free_port "$ENDPOINT_PORT"
 require_free_port 8001
@@ -16,7 +21,7 @@ cd "$P"
 echo "symfony/framework-bundle $(composer show symfony/framework-bundle --format=json | jq -r '.versions[0]')"
 
 # The documented bare install, with sulu/sulu at the pinned sulu/skeleton version; no other package from sulu/skeleton's set.
-check "composer require sulu/sulu" composer require "sulu/sulu:~$SULU_SKELETON_VERSION" cmsig/seal-loupe-adapter --no-interaction
+check "composer require sulu/sulu" composer require "sulu/sulu:~$SULU_SKELETON_VERSION" cmsig/seal-loupe-adapter ${deps[@]+"${deps[@]}"} --no-interaction
 check "composer require --dev cmsig/seal-memory-adapter" composer require --dev cmsig/seal-memory-adapter --no-interaction
 check "admin build downloaded" update_build_guarded
 
