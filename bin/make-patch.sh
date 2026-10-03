@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Writes the fix or adapt patch of an edited recipe file into tests/patches/.
+# Usage: bin/make-patch.sh fix|adapt <recipe-file> [--reason <text> --evidence <text>]
 source "$(dirname "$0")/../tests/lib.sh"
 usage() { echo "usage: bin/make-patch.sh fix|adapt <recipe-file> [--reason <text> --evidence <text>]" >&2; exit 1; }
 kind="${1:-}"; file="${2:-}"; reason=""; evidence=""

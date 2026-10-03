@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Shared setup for every harness script: loads tests/lines/$SULU_LINE.env and tests/pins.env, prepares the work directory and defines the helpers.
+# Env: SULU_LINE SULU_RECIPES_WORKDIR SULU_RECIPES_REPO SULU_PHP SULU_MYSQL_VERSION
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"

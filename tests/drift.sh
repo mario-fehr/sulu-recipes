@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Writes one file per place where sulu/skeleton or an official recipe moved past its pin into $WORK/drift/.
+# Usage: tests/drift.sh
 source "$(dirname "$0")/lib.sh"
 UP="$WORK/clones"
 SKEL="$UP/sulu-skeleton"

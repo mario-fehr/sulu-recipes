@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Installs sulu/sulu into a fresh symfony/skeleton from the local endpoint and runs the checks.
+# Usage: tests/install.sh
 source "$(dirname "$0")/lib.sh"
 upstream sulu-skeleton sulu/skeleton "$SULU_SKELETON_SHA"
 P="$WORK/project-a"

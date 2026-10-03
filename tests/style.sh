@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Runs the style checks of symfony/recipes over the recipes; exceptions are in tests/style-exceptions.txt.
+# Usage: tests/style.sh [<dir>]
 source "$(dirname "$0")/lib.sh"
 ROOT="$(cd "${1:-$REPO_ROOT}" && pwd -P)"
 cd "$ROOT"

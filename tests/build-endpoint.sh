@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Lints the recipe sources and compiles the Flex endpoint into output/.
+# Usage: tests/build-endpoint.sh [<dir> [<flex-branch>]]
 source "$(dirname "$0")/lib.sh"
 require_repo_name
 SRC="$(cd "${1:-$REPO_ROOT}" && pwd -P)"
