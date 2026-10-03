@@ -16,12 +16,10 @@ Deferred ideas without a spec, one line each. Research starts when an item is pi
 - Give packages from `sulu/skeleton`'s set that are installed after a bare install their Sulu config. 2FA (together with `scheb/2fa-email` and `scheb/2fa-trusted-device`) and the profiler routes already work. Check whether `scheb/2fa-bundle` alone boots, since `scheb_2fa.yaml` enables `email` and `trusted_device`, and check the other packages.
 - Loosen parity so recipe files may differ from `sulu/skeleton` on purpose. Not chosen for the bare install.
 - Support adding `sulu/sulu` to an existing project. Superseded recipes of installed packages need `composer recipes:install <package> --force`, which overwrites files; document or script it.
-- Add recipe versions of `doctrine/doctrine-bundle` below `2.13` (derived from the official `2.10` and `2.12`) and a `--prefer-lowest` bare run in CI.
 - Add a `symfony/framework-bundle/8.1/` version (a copy of this repository's `6.4` version, without the `AGENTS.md` and `CLAUDE.md` that the official `8.1` recipe copies into the project), and before supporting Symfony 8.2, compare with the official `8.2` versions of `symfony/framework-bundle`, `symfony/security-bundle` and `symfony/web-profiler-bundle` and add a bare run on 8.2.
 
 ## CI and drift
 
-- Add a PHP 8.2 to 8.4 and MySQL 5.7/8.0 matrix to `qa.yml`, like the CI of `sulu/skeleton`.
 - A functional smoke test in CI (boot, build, admin login).
 - Move `qa.yml` and `drift.yml` from `ubuntu-24.04` to Ubuntu 26 once `setup-php` supports PHP 8.5 there; `ubuntu-latest` moves to Ubuntu 26 from 19 October 2026.
 
