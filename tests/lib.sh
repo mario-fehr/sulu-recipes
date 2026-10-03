@@ -157,6 +157,26 @@ official_files() {
   done < <(cd "$1/$2" && find . -type f | sed 's|^\./||' | sort)
 }
 
+add_lines_entries() {
+  local r
+  for r in $(recipe_dirs "$1"); do
+    jq -c --arg r "$r" '(."add-lines" // []) | to_entries[] | {recipe: $r, index: .key, file: (.value.file // "" | sub("^%CONFIG_DIR%"; "config")), position: (.value.position // ""), target: (.value.target // ""), content: (.value.content | if type == "array" then join("\n") elif type == "string" then . else null end)}' "$1/$r/manifest.json"
+  done
+}
+apply_add_line() {
+  local file="$1" position="$2" target="$3" content="$4" current out
+  current="$(cat "$file"; echo x)"; current="${current%x}"
+  if [[ "$current" == *"$content"* ]]; then printf '%s' "$current"; return 0; fi
+  case "$position" in
+    top) printf '%s\n%s' "$content" "$current" ;;
+    bottom) printf '%s\n%s' "$current" "$content" ;;
+    after_target)
+      out="$(T="$target" C="$content" awk '{ print } !done && index($0, ENVIRON["T"]) { print ENVIRON["C"]; done = 1 }' "$file"; echo x)"; out="${out%x}"
+      if [ -n "$current" ] && [ "${current: -1}" != $'\n' ]; then out="${out%$'\n'}"; fi
+      printf '%s' "$out" ;;
+  esac
+}
+
 SERVERS=""
 CONTAINERS=""
 cleanup() {

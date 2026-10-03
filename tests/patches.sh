@@ -66,4 +66,53 @@ while IFS= read -r recipe; do
     fi
   done < <(official_files "$ROOT" "$recipe")
 done < <(recipe_dirs "$ROOT")
+
+entries="$(add_lines_entries "$ROOT")"
+while IFS= read -r bad; do
+  if [ -n "$bad" ]; then fail "$bad: Flex skips this add-lines block (no file or content, unknown position, after_target without target, or an unexpanded placeholder)"; fi
+done < <(jq -r 'select(.file == "" or .content == null or (.position | IN("top", "bottom", "after_target") | not) or (.position == "after_target" and .target == "") or (.file | test("%"))) | "\(.recipe) add-lines[\(.index)]"' <<<"$entries")
+valid='select(.file != "" and .content != null and (.position | IN("top", "bottom", "after_target")) and (.position != "after_target" or .target != "") and (.file | test("%") | not))'
+add_lines_tmp="$(mktemp -d)"
+for line_file in "$ROOT"/tests/lines/*.env; do
+  line="$(basename "$line_file" .env)"
+  sha="$(sed -n 's/^SULU_SKELETON_SHA=//p' "$line_file")"
+  line_entries="$(jq -c --arg l "sulu/sulu/$line" "$valid | select((.recipe | startswith(\"sulu/sulu/\") | not) or .recipe == \$l)" <<<"$entries")"
+  while IFS= read -r file; do
+    [ -n "$file" ] || continue
+    git -C "$WORK/clones/sulu-skeleton" cat-file -e "$sha:$file" 2>/dev/null || continue
+    base=""
+    while IFS= read -r recipe; do
+      case "$recipe" in sulu/sulu/*) [ "$recipe" = "sulu/sulu/$line" ] || continue ;; esac
+      if [ -f "$ROOT/$recipe/$file" ]; then base="$base$recipe"$'\n'; fi
+    done < <(recipe_dirs "$ROOT")
+    if [ "$(grep -c . <<<"$base")" != 1 ]; then fail "$line $file: add-lines target must come from exactly one recipe folder, found: ${base//$'\n'/ }"; continue; fi
+    base="${base%$'\n'}"
+    conflicts="$(jq -s -r --arg f "$file" '
+      [.[] | select(.file == $f)]
+      | group_by([.position, .target, .content])
+      | map({position: .[0].position, target: .[0].target, content: .[0].content, recipes: (map(.recipe) | unique)})
+      | . as $b
+      | [range(0; length) as $i | range(0; length) as $j | select($i != $j) | $b[$i] as $x | $b[$j] as $y
+         | select(($x.recipes - $y.recipes) == $x.recipes)
+         | select(($i < $j and $x.position == $y.position and $x.target == $y.target)
+             or ($i < $j and $x.content == $y.content)
+             or ($y.target != "" and ($x.content | contains($y.target))))
+         | "\($x.recipes | join(",")) / \($y.recipes | join(","))"]
+      | unique | .[]' <<<"$line_entries")"
+    if [ -n "$conflicts" ]; then fail "$line $file: add-lines blocks of different recipes depend on the install order: ${conflicts//$'\n'/; }"; continue; fi
+    cp "$ROOT/$base/$file" "$add_lines_tmp/assembled"
+    while IFS= read -r e; do
+      content="$(jq -r .content <<<"$e"; echo x)"; content="${content%$'\n'x}"
+      apply_add_line "$add_lines_tmp/assembled" "$(jq -r .position <<<"$e")" "$(jq -r .target <<<"$e")" "$content" >"$add_lines_tmp/next"
+      mv "$add_lines_tmp/next" "$add_lines_tmp/assembled"
+    done < <(jq -c --arg f "$file" 'select(.file == $f) | {position, target, content}' <<<"$line_entries" | awk '!seen[$0]++')
+    mkdir -p "$add_lines_tmp/expected/$(dirname "$file")"
+    git -C "$WORK/clones/sulu-skeleton" show "$sha:$file" >"$add_lines_tmp/expected/$file"
+    if [ -f "$PATCH_ROOT/$base/$file.fix.patch" ] && ! (cd "$add_lines_tmp/expected" && git apply "$PATCH_ROOT/$base/$file.fix.patch"); then
+      fail "$line $file: the fix patch of $base/$file does not apply"; continue
+    fi
+    cmp -s "$add_lines_tmp/assembled" "$add_lines_tmp/expected/$file" || fail "$line $file: $base/$file plus the add-lines blocks differs from sulu/skeleton plus its fix patch"
+  done < <(jq -r .file <<<"$line_entries" | sort -u)
+done
+rm -rf "$add_lines_tmp"
 finish
