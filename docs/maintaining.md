@@ -32,10 +32,12 @@ When: Sulu needs to own a file that an official recipe installs.
 
 1. Run `bin/supersede.sh recipes|contrib <package>/<version> <package>/<version>`. The first path is the folder in the official repository, the second the target folder here. It prints `sulu:` for every file taken from `sulu/skeleton` and `official:` for every file kept from the official recipe.
 2. Review the files, and write a patch with `bin/make-patch.sh` for every change you make.
-3. Add the package to `SUPERSEDED` in `tests/lib.sh`, so drift watches its official recipe and the install checks expect this repository's recipe. If not every line installs the package, add it to the `installed` case in `tests/install.sh`.
+3. Add the package to `SUPERSEDED` in `tests/lib.sh`, so drift watches its official recipe and the install checks expect this repository's recipe. If its vendor is new, add the vendor to `RECIPE_VENDORS` there too, or `tests/build-endpoint.sh` leaves the recipe out. If not every line installs the package, add it to the `installed` case in `tests/install.sh`.
 4. Run `tests/style.sh`, `tests/patches.sh` and parity for every line, and update `tests/lines/<line>.parity-expected.txt`.
 
 Files: the new recipe folder, `tests/lib.sh`, `tests/install.sh`, `tests/patches/`, the parity expectations.
+
+For a package without an official recipe, create the recipe folder by hand instead of running `bin/supersede.sh`, and add the package to `OWN_RECIPES` in `tests/lib.sh` instead of `SUPERSEDED`.
 
 ## New release line
 
