@@ -43,7 +43,7 @@ SKELETON_DIR=<sulu-flex-skeleton checkout> tests/parity.sh
 
 | Job | Runs | Reproduce locally |
 |---|---|---|
-| `lint` | shellcheck, `tests/style.sh`, `tests/build-endpoint.sh`, `tests/patches.sh` | `shellcheck -x -P tests $(ls tests/*.sh bin/*.sh \| grep -v tests/lib.sh) && tests/style.sh && tests/build-endpoint.sh && tests/patches.sh` |
+| `lint` | shellcheck, `tests/style.sh`, `tests/docs.sh`, `tests/build-endpoint.sh`, `tests/patches.sh` | `shellcheck -x -P tests $(ls tests/*.sh bin/*.sh \| grep -v tests/lib.sh) && tests/style.sh && tests/docs.sh && tests/build-endpoint.sh && tests/patches.sh` |
 | `lines` | `tests/matrix.sh` | `tests/matrix.sh` |
 | `install (<line>, PHP <php>, MySQL <mysql>)` | `tests/install.sh` | `SULU_LINE=<line> SULU_PHP=<php> SULU_MYSQL_VERSION=<mysql> tests/install.sh` |
 | `install-bare (<line>, PHP <php>, Symfony <symfony>, <deps>)` | `tests/install-bare.sh` | `SULU_LINE=<line> SULU_PHP=<php> SULU_MYSQL_VERSION=<mysql> SULU_BARE_SYMFONY=<symfony> SULU_BARE_DEPS=<deps> tests/install-bare.sh`, plus `SULU_BARE_LOCK=<lock>` when the run in `SULU_BARE_RUNS` names one |

@@ -24,6 +24,12 @@ Lints the recipe sources and compiles the Flex endpoint into `output/`. Without 
 
 Runs the style checks of `symfony/recipes` over the recipes. Exceptions are listed with a reason in `tests/style-exceptions.txt`.
 
+### tests/docs.sh
+
+`tests/docs.sh [<dir>]`
+
+Checks that every script in `tests/` and `bin/` has a header comment with a `# Usage:` line, that this file names every script and every `SULU_*` and `SKELETON_DIR` variable they and the workflows use, and that `CONTRIBUTING.md` names every job of `qa.yml`. It reports every gap and exits 1 if there is one.
+
 ### tests/patches.sh
 
 `tests/patches.sh [<dir>]`
