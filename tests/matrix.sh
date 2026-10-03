@@ -25,7 +25,7 @@ for l in $(jq -r '.[]' <<<"$lines"); do
   install_push+=$pair
   for run in ${SULU_BARE_RUNS:-}; do
     IFS=: read -r php symfony deps lock <<<"$run"
-    [ -n "$php" ] && [ -n "$symfony" ] || { echo "bad bare run '$run' in tests/lines/$l.env" >&2; exit 1; }
+    if [ -z "$php" ] || [ -z "$symfony" ]; then echo "bad bare run '$run' in tests/lines/$l.env" >&2; exit 1; fi
     case "$deps" in highest|lowest) ;; *) echo "bad bare run '$run' in tests/lines/$l.env: deps must be highest or lowest" >&2; exit 1 ;; esac
     mysql=""
     for pm in $SULU_PHP_MYSQL; do [ "${pm%%:*}" != "$php" ] || mysql="${pm#*:}"; done
