@@ -1,8 +1,6 @@
 {
     "bundles": {
-        "Doctrine\\Bundle\\DoctrineBundle\\DoctrineBundle": [
-            "all"
-        ]
+        "Doctrine\\Bundle\\DoctrineBundle\\DoctrineBundle": ["all"]
     },
     "copy-from-recipe": {
         "config/": "%CONFIG_DIR%/",
@@ -35,9 +33,7 @@
                 "    # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!",
                 "    # - ./docker/db/data:/var/lib/mysql:rw"
             ],
-            "volumes": [
-                "database_data:"
-            ]
+            "volumes": ["database_data:"]
         },
         "docker-compose.override.yml": {
             "services": [
