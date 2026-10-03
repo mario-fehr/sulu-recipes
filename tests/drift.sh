@@ -83,7 +83,7 @@ for pkg in $SUPERSEDED $SULU_YAML_PACKAGES; do
   {
     echo "Official recipe changed: $pkg"
     echo
-    echo "\`$pkg/\` in \`$gh_repo\` changed since \`$pin\` (\`$pin_var\` in \`tests/lib.sh\`). $role"
+    echo "\`$pkg/\` in \`$gh_repo\` changed since \`${pin:0:7}\` (\`$pin_var\` in \`tests/pins.env\`). $role"
     echo
     echo "Commits:"
     echo

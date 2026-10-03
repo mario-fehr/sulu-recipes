@@ -17,8 +17,8 @@ fi
 # shellcheck source=/dev/null
 source "$LINE_FILE"
 
-SYMFONY_RECIPES_SHA=64dab29
-SYMFONY_RECIPES_CONTRIB_SHA=38fc43a
+# shellcheck source=/dev/null
+source "$REPO_ROOT/tests/pins.env"
 
 RECIPE_VENDORS="symfony scheb friendsofsymfony symfony-cmf doctrine sulu"
 SUPERSEDED="symfony/framework-bundle symfony/security-bundle symfony/console symfony/twig-bundle scheb/2fa-bundle friendsofsymfony/jsrouting-bundle doctrine/doctrine-bundle symfony/web-profiler-bundle"
