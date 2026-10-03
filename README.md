@@ -1,5 +1,8 @@
 # sulu-recipes
 
+> [!WARNING]
+> This project is in heavy development. The recipes, the file layout and the behavior may still change without notice, and it is not ready for production use.
+
 Symfony Flex recipes for Sulu. `sulu/sulu` has no official Flex recipe, so this repo adds one for `sulu/sulu` 3.0. It also adds a recipe for `symfony-cmf/routing-bundle`, which has none, and supersedes the official recipes of eight packages whose files Sulu must own: `symfony/framework-bundle`, `symfony/security-bundle`, `symfony/console`, `symfony/twig-bundle`, `symfony/web-profiler-bundle`, `scheb/2fa-bundle`, `friendsofsymfony/jsrouting-bundle` and `doctrine/doctrine-bundle`.
 
 ## Usage
