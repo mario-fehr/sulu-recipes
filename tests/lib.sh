@@ -42,6 +42,8 @@ source "$REPO_ROOT/tests/pins.env"
 RECIPE_VENDORS="symfony scheb friendsofsymfony symfony-cmf doctrine sulu phpstan rector php-cs-fixer vincentlanglet"
 SUPERSEDED="symfony/framework-bundle symfony/security-bundle symfony/console symfony/twig-bundle scheb/2fa-bundle friendsofsymfony/jsrouting-bundle doctrine/doctrine-bundle symfony/web-profiler-bundle doctrine/phpcr-bundle symfony/form phpstan/phpstan php-cs-fixer/shim vincentlanglet/twig-cs-fixer"
 SULU_YAML_PACKAGES="friendsofsymfony/rest-bundle jms/serializer-bundle league/flysystem-bundle stof/doctrine-extensions-bundle symfony/mailer symfony/messenger symfony/monolog-bundle symfony/routing symfony/translation"
+OWN_RECIPES="symfony-cmf/routing-bundle phpstan/phpstan-doctrine phpstan/phpstan-symfony phpstan/extension-installer rector/rector"
+TOOLING_FILES="phpstan.dist.neon tests/phpstan/object-manager.php tests/phpstan/console-application.php .php-cs-fixer.dist.php .twig-cs-fixer.dist.php rector.php tests/rector/symfony-container.php"
 
 mkdir -p "$WORK"
 # PHP reports physical paths (/private/var/... on macOS); path normalization needs the same form.

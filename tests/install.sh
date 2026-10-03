@@ -24,7 +24,7 @@ composer update --no-interaction
 # sulu/skeleton commits public/build/admin; recipes cannot ship it sensibly, Sulu downloads the matching build instead.
 update_build_guarded
 
-for pkg in $SUPERSEDED symfony-cmf/routing-bundle; do
+for pkg in $SUPERSEDED $OWN_RECIPES; do
   case "$pkg" in doctrine/phpcr-bundle|symfony/form) installed "$pkg" || continue ;; esac
   check "lock $pkg from this repo" lock_repo "$pkg" "$OUR_REPO"
 done
@@ -42,6 +42,7 @@ for f in config/packages/doctrine_phpcr.yaml config/packages/csrf.yaml; do
   skel_show "$f" >/dev/null 2>&1 || continue
   check "file $f matches sulu/skeleton" same_as_skeleton "$f"
 done
+for f in $TOOLING_FILES; do check "file $f matches sulu/skeleton" same_as_skeleton "$f"; done
 
 check "admin route 2fa_login_check_admin" bin/adminconsole debug:router 2fa_login_check_admin
 check "no website route fos_js_routing_js" sh -c 'bin/websiteconsole debug:router >/dev/null && ! bin/websiteconsole debug:router fos_js_routing_js'
