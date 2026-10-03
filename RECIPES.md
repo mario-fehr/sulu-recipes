@@ -14,6 +14,8 @@ Additional recipes can be found on the [Contrib Recipes Repository](https://gith
 | [phpstan/phpstan-symfony](https://packagist.org/packages/phpstan/phpstan-symfony) | [2.0](../../../tree/main/phpstan/phpstan-symfony/2.0) |  |
 | [rector/rector](https://packagist.org/packages/rector/rector) | [2.0](../../../tree/main/rector/rector/2.0) |  |
 | [scheb/2fa-bundle](https://packagist.org/packages/scheb/2fa-bundle) | [6.10](../../../tree/main/scheb/2fa-bundle/6.10) | `2fa` |
+| [scheb/2fa-email](https://packagist.org/packages/scheb/2fa-email) | [6.10](../../../tree/main/scheb/2fa-email/6.10) |  |
+| [scheb/2fa-trusted-device](https://packagist.org/packages/scheb/2fa-trusted-device) | [6.10](../../../tree/main/scheb/2fa-trusted-device/6.10) |  |
 | [sulu/sulu](https://packagist.org/packages/sulu/sulu) | [3.0](../../../tree/main/sulu/sulu/3.0) |  |
 | [symfony-cmf/routing-bundle](https://packagist.org/packages/symfony-cmf/routing-bundle) | [3.0](../../../tree/main/symfony-cmf/routing-bundle/3.0) |  |
 | [symfony/console](https://packagist.org/packages/symfony/console) | [6.4](../../../tree/main/symfony/console/6.4) | `cli`, `console` |

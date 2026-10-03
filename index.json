@@ -52,6 +52,12 @@
         "scheb/2fa-bundle": [
             "6.10"
         ],
+        "scheb/2fa-email": [
+            "6.10"
+        ],
+        "scheb/2fa-trusted-device": [
+            "6.10"
+        ],
         "sulu/sulu": [
             "2.6",
             "3.0"

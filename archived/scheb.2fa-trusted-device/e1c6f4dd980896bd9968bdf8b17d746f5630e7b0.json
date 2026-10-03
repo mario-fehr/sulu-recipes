@@ -1,0 +1,23 @@
+{
+    "manifests": {
+        "scheb/2fa-trusted-device": {
+            "manifest": {
+                "copy-from-recipe": {
+                    "config/": "%CONFIG_DIR%/"
+                }
+            },
+            "files": {
+                "config/packages/scheb_2fa_trusted_device.yaml": {
+                    "contents": [
+                        "scheb_two_factor:",
+                        "    trusted_device:",
+                        "        enabled: true",
+                        ""
+                    ],
+                    "executable": false
+                }
+            },
+            "ref": "e1c6f4dd980896bd9968bdf8b17d746f5630e7b0"
+        }
+    }
+}

@@ -1,0 +1,23 @@
+{
+    "manifests": {
+        "scheb/2fa-email": {
+            "manifest": {
+                "copy-from-recipe": {
+                    "config/": "%CONFIG_DIR%/"
+                }
+            },
+            "files": {
+                "config/packages/scheb_2fa_email.yaml": {
+                    "contents": [
+                        "scheb_two_factor:",
+                        "    email:",
+                        "        enabled: true",
+                        ""
+                    ],
+                    "executable": false
+                }
+            },
+            "ref": "93571001bff33dcd6c0feb29ab903069de482438"
+        }
+    }
+}
