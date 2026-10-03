@@ -67,6 +67,38 @@ upstream() {
 }
 
 skel_show() { git -C "$WORK/clones/sulu-skeleton" show "$SULU_SKELETON_SHA:$1"; }
+PATCH_ROOT="$REPO_ROOT/tests/patches"
+recipe_dirs() {
+  local v d
+  for v in $RECIPE_VENDORS; do
+    for d in "$1/$v"/*/*; do
+      if [ -f "$d/manifest.json" ]; then echo "${d#"$1"/}"; fi
+    done
+  done
+}
+recipe_files() { (cd "$1/$2" && find . -type f ! -name manifest.json ! -name post-install.txt | sed 's|^\./||' | sort); }
+rebuild_file() {
+  local recipe="$1" path="$2" ref="$3" tmp kind err rc=0 n=1
+  tmp="$(mktemp -d)"
+  mkdir -p "$tmp/$(dirname "$path")"
+  if ! git -C "$WORK/clones/sulu-skeleton" show "$ref:$path" >"$tmp/$path" 2>/dev/null; then
+    echo "sulu/skeleton has no $path at $ref" >&2
+    rm -rf "$tmp"
+    return 1
+  fi
+  for kind in fix adapt; do
+    n=$((n + 1))
+    [ -f "$PATCH_ROOT/$recipe/$path.$kind.patch" ] || continue
+    if ! err="$(cd "$tmp" && git apply "$PATCH_ROOT/$recipe/$path.$kind.patch" 2>&1)"; then
+      echo "$kind patch of $recipe/$path does not apply at $ref: ${err//$'\n'/; }" >&2
+      rc=$n
+      break
+    fi
+  done
+  if [ "$rc" = 0 ]; then cat "$tmp/$path"; fi
+  rm -rf "$tmp"
+  return "$rc"
+}
 
 SERVERS=""
 CONTAINERS=""

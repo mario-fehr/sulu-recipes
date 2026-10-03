@@ -1,0 +1,14 @@
+Reason: (f) DoctrineBundle 2.12 has no identity_generation_preferences, which 2.13 added.
+Evidence: Options checked against DoctrineBundle 2.12.0 Configuration.php:514-517 (bare install spec); no install selects this version.
+
+--- a/config/packages/doctrine.yaml
++++ b/config/packages/doctrine.yaml
+@@ -14,8 +14,6 @@
+         report_fields_where_declared: true
+         validate_xml_mapping: false # required for gedmo/doctrine-extensions to be false
+         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+-        identity_generation_preferences:
+-            Doctrine\DBAL\Platforms\PostgreSQLPlatform: identity
+         auto_mapping: true
+         mappings:
+             App:

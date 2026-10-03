@@ -1,0 +1,23 @@
+Reason: (f) DoctrineBundle 2.10 and 2.11 have neither identity_generation_preferences (2.13) nor controller_resolver (2.12).
+Evidence: The bare install with SULU_BARE_DEPS=lowest selects this recipe version and passes.
+
+--- a/config/packages/doctrine.yaml
++++ b/config/packages/doctrine.yaml
+@@ -14,8 +14,6 @@
+         report_fields_where_declared: true
+         validate_xml_mapping: false # required for gedmo/doctrine-extensions to be false
+         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+-        identity_generation_preferences:
+-            Doctrine\DBAL\Platforms\PostgreSQLPlatform: identity
+         auto_mapping: true
+         mappings:
+             App:
+@@ -24,8 +22,6 @@
+                 dir: '%kernel.project_dir%/src/Entity'
+                 prefix: 'App\Entity'
+                 alias: App
+-        controller_resolver:
+-            auto_mapping: false
+ 
+ when@test:
+     doctrine:

@@ -1,0 +1,13 @@
+Reason: (f) Recipe version for symfony/web-profiler-bundle 6.4 to 7.2, as the official 6.1 recipe; sulu/skeleton's file follows the 7.3 recipe.
+Evidence: Equal to symfony/recipes symfony/web-profiler-bundle/6.1 at SYMFONY_RECIPES_SHA (git archive).
+
+--- a/config/packages/web_profiler.yaml
++++ b/config/packages/web_profiler.yaml
+@@ -8,6 +8,4 @@
+ 
+ when@test:
+     framework:
+-        profiler:
+-            collect: false
+-            collect_serializer_data: true
++        profiler: { collect: false }
