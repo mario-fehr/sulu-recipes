@@ -1,0 +1,13 @@
+name: Cleanup Flex preview endpoint
+
+on:
+    pull_request_target:
+        types: [closed]
+
+permissions: {}
+
+jobs:
+    call-flex-cleanup:
+        uses: symfony/recipes/.github/workflows/callable-flex-cleanup.yml@64dab29717e418fa914be38c560172f1ec6a1120
+        permissions:
+            contents: write

@@ -1,0 +1,97 @@
+name: PR preview
+
+on:
+    pull_request_target:
+        types: [opened, synchronize, reopened]
+        branches:
+            - main
+
+permissions: {}
+
+concurrency:
+    group: pr-preview-${{ github.event.number }}
+    cancel-in-progress: true
+
+defaults:
+    run:
+        shell: bash
+
+jobs:
+    preview:
+        name: preview
+        runs-on: ubuntu-24.04
+        timeout-minutes: 15
+        permissions:
+            contents: write
+        outputs:
+            new: ${{ steps.publish.outputs.new }}
+        env:
+            BRANCH: flex/pull-${{ github.event.number }}
+        steps:
+            # No stored token while PR data is processed; only the publish step gets it.
+            -
+                uses: actions/checkout@v7
+                with:
+                    persist-credentials: false
+            # Data only: nothing under pr/ is executed, and it has no credentials.
+            -
+                uses: actions/checkout@v7
+                with:
+                    ref: refs/pull/${{ github.event.number }}/merge
+                    path: pr
+                    persist-credentials: false
+                    allow-unsafe-pr-checkout: true
+            -
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: '8.5'
+                    tools: 'composer:v2'
+                    coverage: none
+            -
+                run: echo "SULU_RECIPES_WORKDIR=$RUNNER_TEMP/sulu-recipes" >> "$GITHUB_ENV"
+            -
+                run: tests/setup-tools.sh
+            # generate:flex-endpoint follows symlinks, so a symlink in pr/ could publish any readable file.
+            -
+                run: tests/style.sh pr
+            -
+                run: tests/build-endpoint.sh pr "$BRANCH"
+            -
+                id: publish
+                env:
+                    GH_TOKEN: ${{ github.token }}
+                run: |
+                    remote="https://x-access-token:$GH_TOKEN@github.com/$GITHUB_REPOSITORY.git"
+                    rc=0
+                    git ls-remote --exit-code --heads "$remote" "$BRANCH" >/dev/null || rc=$?
+                    case "$rc" in
+                        0) echo "new=false" >> "$GITHUB_OUTPUT" ;;
+                        2) echo "new=true" >> "$GITHUB_OUTPUT" ;;
+                        *) echo "git ls-remote failed with $rc" >&2; exit 1 ;;
+                    esac
+                    git config user.name 'github-actions[bot]'
+                    git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+                    git switch --orphan "$BRANCH"
+                    cp output/*.json .
+                    git add -- *.json
+                    git commit -q -m 'Create Flex endpoint'
+                    git push -f "$remote" "$BRANCH"
+
+    comment:
+        name: comment
+        needs: preview
+        if: needs.preview.outputs.new == 'true'
+        runs-on: ubuntu-24.04
+        timeout-minutes: 5
+        permissions:
+            pull-requests: write
+        steps:
+            -
+                env:
+                    GH_TOKEN: ${{ github.token }}
+                    NUMBER: ${{ github.event.number }}
+                    URL: https://raw.githubusercontent.com/${{ github.repository }}/flex/pull-${{ github.event.number }}/index.json
+                run: |
+                    # shellcheck disable=SC2016 # the backticks are Markdown
+                    printf 'A Flex endpoint with the recipes from this pull request is published at %s. It is updated on every push.\n\nTo try it, prefix Composer with the env var, so Flex puts it in front of your project'"'"'s own endpoints:\n\n```shell\nSYMFONY_ENDPOINT=%s composer require sulu/sulu\n```\n\nThe branch behind the endpoint is deleted when the pull request is closed.\n' "$URL" "$URL" > "$RUNNER_TEMP/comment.md"
+                    gh pr comment "$NUMBER" --repo "$GITHUB_REPOSITORY" --body-file "$RUNNER_TEMP/comment.md"
