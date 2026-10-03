@@ -92,7 +92,7 @@ serve() {
 update_build_guarded() {
   local before after
   before="$(find assets/admin -path '*/node_modules' -prune -o -type f -exec shasum {} + | sort)"
-  bin/adminconsole sulu:admin:update-build --no-interaction
+  bin/adminconsole sulu:admin:update-build --no-interaction || return 1
   after="$(find assets/admin -path '*/node_modules' -prune -o -type f -exec shasum {} + | sort)"
   if [ "$before" != "$after" ]; then
     echo "sulu:admin:update-build changed recipe-shipped assets/admin files:" >&2
@@ -110,4 +110,33 @@ check() {
 finish() {
   echo "$FAILURES failure(s); details in $WORK/checks.log"
   [ "$FAILURES" -eq 0 ]
+}
+
+lock_repo() { [ "$(jq -r --arg p "$1" '.[$p].recipe.repo' symfony.lock)" = "$2" ]; }
+lock_version() { [ "$(jq -r --arg p "$1" '.[$p].recipe.version' symfony.lock)" = "$2" ]; }
+lock_recipes() {
+  jq -r 'to_entries[] | select(.value.recipe) | "\(.key) \(.value.recipe.version) \(.value.recipe.repo)"' symfony.lock \
+    | sed "s|$OUR_REPO|<this repo>|" | sort
+}
+same_as_skeleton() { skel_show "$1" | cmp -s - "$1"; }
+
+runtime_checks() {
+  local db=sulu-recipes-mysql
+  check "admin build present" test -f public/build/admin/manifest.json
+  for console in adminconsole websiteconsole; do
+    for env in dev prod test; do
+      check "$console boots in $env" env APP_ENV="$env" "bin/$console" cache:clear
+      check "$console container in $env" env APP_ENV="$env" "bin/$console" debug:container --env-vars
+    done
+  done
+  CONTAINERS="$CONTAINERS $db"
+  docker rm -f "$db" >/dev/null 2>&1 || true
+  docker run -d --name "$db" -e MYSQL_ROOT_PASSWORD=ChangeMe -p 3307:3306 mysql:8.4 >/dev/null
+  # mysqladmin ping already answers the init-phase server, which has no TCP; wait for a TCP connection.
+  for _ in $(seq 1 90); do docker exec "$db" mysql -h 127.0.0.1 -uroot -pChangeMe -e "SELECT 1" >/dev/null 2>&1 && break; sleep 1; done
+  echo 'DATABASE_URL="mysql://root:ChangeMe@127.0.0.1:3307/sulu_recipes?serverVersion=8.4&charset=utf8mb4"' > .env.local
+  check "sulu:build dev" bin/adminconsole sulu:build dev --no-interaction
+  serve web 8001 public config/router.php
+  check "/admin answers 200 with the Sulu admin" sh -c 'curl -fsL http://127.0.0.1:8001/admin | grep -qi sulu'
+  check "homepage renders the content block" sh -c 'curl -fs http://127.0.0.1:8001/ | grep -q "<h1>"'
 }
