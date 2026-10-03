@@ -11,7 +11,8 @@ case "${SULU_BARE_DEPS:-highest}" in
   highest) deps=() ;;
   # SULU_BARE_LOWEST_FLOOR: lowest versions sulu/sulu's constraints allow that do not boot on this Symfony, raised for the lowest run only.
   lowest) read -ra deps <<<"${SULU_BARE_LOWEST_FLOOR:-}"; deps+=(--prefer-lowest) ;;
-  *) echo "SULU_BARE_DEPS must be highest or lowest" >&2; exit 1 ;;
+  oldest) deps=() ;;
+  *) echo "SULU_BARE_DEPS must be highest, lowest or oldest" >&2; exit 1 ;;
 esac
 : >"$WORK/checks.log"
 require_free_port "$ENDPOINT_PORT"
@@ -28,10 +29,18 @@ new_symfony_project "$skeleton_constraint" "$P"
 cd "$P"
 echo "symfony/framework-bundle $(composer show symfony/framework-bundle --format=json | jq -r '.versions[0]')"
 
-# The documented bare install, with sulu/sulu at the pinned sulu/skeleton version; no other package from sulu/skeleton's set.
+# The documented bare install, with sulu/sulu at the pinned sulu/skeleton version (or the oldest installable one); no other package from sulu/skeleton's set.
 read -ra bare_require <<<"${SULU_BARE_REQUIRE:-}"
 read -ra bare_require_dev <<<"${SULU_BARE_REQUIRE_DEV:-}"
-check "composer require sulu/sulu" composer require "sulu/sulu:~$SULU_SKELETON_VERSION" ${bare_require[@]+"${bare_require[@]}"} ${deps[@]+"${deps[@]}"} --no-interaction
+sulu_constraint="~$SULU_SKELETON_VERSION"
+if [ "${SULU_BARE_DEPS:-highest}" = oldest ]; then
+  # The lowest resolution is the oldest release Composer installs; releases with security advisories are not loaded.
+  composer require "sulu/sulu:~${SULU_SKELETON_VERSION%.*}.0" ${bare_require[@]+"${bare_require[@]}"} --prefer-lowest --dry-run --no-interaction >"$WORK/oldest-dry-run.log" 2>&1 || true
+  sulu_constraint="$(sed -n 's/.*Locking sulu\/sulu (v*\([0-9.]*\)).*/\1/p' "$WORK/oldest-dry-run.log")"
+  [ -n "$sulu_constraint" ] || { echo "no installable sulu/sulu ~${SULU_SKELETON_VERSION%.*}.0 found for line $SULU_LINE; see $WORK/oldest-dry-run.log" >&2; exit 1; }
+  echo "oldest installable sulu/sulu: $sulu_constraint"
+fi
+check "composer require sulu/sulu" composer require "sulu/sulu:$sulu_constraint" ${bare_require[@]+"${bare_require[@]}"} ${deps[@]+"${deps[@]}"} --no-interaction
 if [ "${#bare_require_dev[@]}" -gt 0 ]; then
   check "composer require --dev ${bare_require_dev[*]}" composer require --dev "${bare_require_dev[@]}" --no-interaction
 fi

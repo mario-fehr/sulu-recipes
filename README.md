@@ -23,7 +23,7 @@ The skeleton points Flex at this endpoint via `extra.symfony.endpoint` in `compo
 
 ### Bare install
 
-You can also start from a plain `symfony/skeleton` instead of `sulu-flex-skeleton`. This is tested with `symfony/skeleton` 7.4 and 8.1.
+You can also start from a plain `symfony/skeleton` instead of `sulu-flex-skeleton`. This is tested with `symfony/skeleton` 7.4 and 8.1. CI also installs the oldest patch release of each line that Composer installs, with the newest other dependencies; older releases are currently blocked by Composer because of security advisories.
 
 ```bash
 composer create-project symfony/skeleton:7.4.* my-project --no-install   # or 8.1.*
@@ -43,6 +43,8 @@ composer require sulu/sulu:~2.6.0 jackalope/jackalope-doctrine-dbal handcraftedi
 ```
 
 Sulu 2.6 needs a PHPCR transport, or Composer cannot resolve `sulu/sulu`. `zendsearch` backs the default search adapter.
+
+`sulu/sulu` 2.6 and 3.0.8 allow `friendsofsymfony/jsrouting-bundle` below 3.6, which lacks the `routing.php` the recipe's admin routes import; such a project needs `jsrouting-bundle` 3.6 or newer (Composer installs it unless dependencies are pinned lower).
 
 The `stage` environment (`.env.stage`) needs `symfony/monolog-bundle`; without it, `APP_ENV=stage` fails with `Container extension "monolog" is not registered`.
 
