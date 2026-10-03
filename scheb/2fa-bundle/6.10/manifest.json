@@ -5,5 +5,29 @@
     "copy-from-recipe": {
         "config/": "%CONFIG_DIR%/"
     },
+    "add-lines": [
+        {
+            "file": "%CONFIG_DIR%/packages/security.yaml",
+            "position": "after_target",
+            "target": "path: sulu_admin.logout",
+            "content": [
+                "            two_factor:",
+                "                prepare_on_login: true",
+                "                prepare_on_access_denied: true",
+                "                check_path: 2fa_login_check_admin",
+                "                authentication_required_handler: sulu_security.two_factor_authentication_required_handler",
+                "                success_handler: sulu_security.two_factor_authentication_success_handler",
+                "                failure_handler: sulu_security.two_factor_authentication_failure_handler"
+            ]
+        },
+        {
+            "file": "%CONFIG_DIR%/packages/security.yaml",
+            "position": "after_target",
+            "target": "^/admin/login$",
+            "content": [
+                "        - { path: ^/admin/2fa, roles: PUBLIC_ACCESS }"
+            ]
+        }
+    ],
     "aliases": ["2fa"]
 }
