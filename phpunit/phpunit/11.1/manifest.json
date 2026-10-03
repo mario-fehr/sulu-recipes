@@ -1,0 +1,31 @@
+{
+    "add-lines": [
+        {
+            "file": "phpunit.dist.xml",
+            "content": [
+                "            <method>Doctrine\\Deprecations\\Deprecation::trigger</method>",
+                "            <method>Doctrine\\Deprecations\\Deprecation::delegateTriggerToBackend</method>"
+            ],
+            "position": "after_target",
+            "target": "<deprecationTrigger>",
+            "requires": ["doctrine/deprecations"]
+        },
+        {
+            "file": ".env.test",
+            "content": "SEAL_DSN=memory://",
+            "position": "after_target",
+            "target": "APP_SECRET=",
+            "requires": ["cmsig/seal-memory-adapter"]
+        }
+    ],
+    "copy-from-recipe": {
+        ".env.test": ".env.test",
+        "phpunit.dist.xml": "phpunit.dist.xml",
+        "tests/": "tests/",
+        "bin/": "%BIN_DIR%/"
+    },
+    "gitignore": [
+        "/phpunit.xml",
+        "/.phpunit.cache/"
+    ]
+}

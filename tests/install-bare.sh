@@ -44,11 +44,24 @@ lock_recipes > "$WORK/bare-lock.actual"
 check "recipes match $(basename "$BARE_LOCK")" diff "$BARE_LOCK" "$WORK/bare-lock.actual"
 check "security.yaml has no two_factor" sh -c '! grep -q two_factor config/packages/security.yaml'
 check "no config/routes/web_profiler_admin.yaml" test ! -e config/routes/web_profiler_admin.yaml
+check "no .env.test" test ! -e .env.test
 for f in $TOOLING_FILES; do check "no $f" test ! -e "$f"; done
 for d in tests/phpstan tests/rector; do check "no $d/" test ! -e "$d"; done
 check ".gitignore ignores /public/uploads/" grep -qx '/public/uploads/' .gitignore
 
 runtime_checks
+
+check "late require --dev phpunit/phpunit" composer require --dev phpunit/phpunit --no-interaction
+check "lock phpunit/phpunit from this repo" lock_repo phpunit/phpunit "$OUR_REPO"
+check "lock phpunit/phpunit recipe 11.1" lock_version phpunit/phpunit 11.1
+check ".env.test matches sulu/skeleton" same_as_skeleton .env.test
+if installed cmsig/seal-memory-adapter; then
+  remove_memory_adapter() {
+    composer remove --dev cmsig/seal-memory-adapter --no-interaction || return 1
+    ! grep -q SEAL_DSN .env.test
+  }
+  check "remove cmsig/seal-memory-adapter drops SEAL_DSN from .env.test" remove_memory_adapter
+fi
 
 # Packages from sulu/skeleton's set installed later get their Sulu config from their recipes.
 check "late require symfony/web-profiler-bundle" composer require --dev symfony/web-profiler-bundle --no-interaction

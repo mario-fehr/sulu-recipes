@@ -1,3 +1,4 @@
+cmsig/seal-memory-adapter 0.12 <this repo>
 cmsig/seal-symfony-bundle 0.8 github.com/symfony/recipes-contrib
 doctrine/deprecations 1.0 github.com/symfony/recipes
 doctrine/doctrine-bundle 3.0 <this repo>
