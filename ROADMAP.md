@@ -10,10 +10,9 @@ Deferred ideas without a spec, one line each. Research starts when an item is pi
 ## Release lines and versions
 
 - The 3.1 line, once `sulu/skeleton` tags `3.1.0`; the harness already takes one pin file per line in `tests/lines/`.
-- Test Symfony 6.4 and 8.x against the `6.4/` recipe folders, for the `sulu-flex-skeleton` path only (the bare install already runs on 8.1). The Symfony 6.4 run also installs `scheb/2fa-bundle`, `scheb/2fa-email` and `scheb/2fa-trusted-device` at `^6.10`, one at a time, because Composer picks scheb 7.x on Symfony 6.4 unless asked, and scheb 6.x is the only range where the `6.10` recipe split is untested.
 - Check the recipes against every `3.0.x` tag, not only the pinned one.
 - Support adding `sulu/sulu` to an existing project. Superseded recipes of installed packages need `composer recipes:install <package> --force`, which overwrites files; document or script it.
-- Add a `symfony/framework-bundle/8.1/` version (a copy of this repository's `6.4` version, without the `AGENTS.md` and `CLAUDE.md` that the official `8.1` recipe copies into the project), and before supporting Symfony 8.2, compare with the official `8.2` versions of `symfony/framework-bundle`, `symfony/security-bundle` and `symfony/web-profiler-bundle` and add a bare run on 8.2.
+- When Symfony 8.2.0 is released, follow "New Symfony minor" in `docs/maintaining.md`; the `8.2-dev` bare run becomes `8.2`.
 
 ## CI and drift
 

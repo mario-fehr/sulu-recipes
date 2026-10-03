@@ -1,0 +1,16 @@
+Reason: (f) AGENTS.md and CLAUDE.md are generic Symfony agent instructions built on bin/console; a Sulu project has two kernels (bin/adminconsole, bin/websiteconsole), and agent files belong to the project.
+Evidence: The official symfony/framework-bundle 8.1 and 8.2 recipes copy AGENTS.md (108 lines, bin/console commands) and CLAUDE.md (@AGENTS.md) into the project.
+
+--- a/manifest.json
++++ b/manifest.json
+@@ -7,9 +7,7 @@
+         "public/": "%PUBLIC_DIR%/",
+         "src/": "%SRC_DIR%/",
+         ".editorconfig": ".editorconfig",
+-        ".symfony.local.yaml": ".symfony.local.yaml",
+-        "AGENTS.md": "AGENTS.md",
+-        "CLAUDE.md": "CLAUDE.md"
++        ".symfony.local.yaml": ".symfony.local.yaml"
+     },
+     "composer-scripts": {
+         "cache:clear": "symfony-cmd",
