@@ -2,13 +2,13 @@
 <webspace xmlns="http://schemas.sulu.io/webspace/webspace"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://schemas.sulu.io/webspace/webspace http://schemas.sulu.io/webspace/webspace-1.1.xsd">
-    <!-- See: http://docs.sulu.io/en/latest/book/webspaces.html how to configure your webspace-->
+    <!-- See: https://docs.sulu.io/3.x/book/webspaces.html how to configure your webspace-->
 
     <name>Website</name>
     <key>website</key>
 
     <localizations>
-        <!-- See: http://docs.sulu.io/en/latest/book/localization.html how to add new localizations -->
+        <!-- See: https://docs.sulu.io/3.x/book/localization.html how to add new localizations -->
         <localization language="en" default="true"/>
     </localizations>
 
@@ -17,7 +17,7 @@
         <default-template type="home">homepage</default-template>
     </default-templates>
 
-    <!-- See: https://docs.sulu.io/en/2.6/book/webspaces.html#excluded-templates-optional
+    <!-- See: https://docs.sulu.io/3.x/book/webspaces.html#excluded-templates-optional
     <excluded-templates>
         <excluded-template>other</excluded-template>
     </excluded-templates>
@@ -25,7 +25,7 @@
 
     <templates>
         <template type="search">search/search</template>
-        <!-- See: http://docs.sulu.io/en/latest/cookbook/custom-error-page.html how to create a custom error page -->
+        <!-- See: https://docs.sulu.io/3.x/cookbook/custom-error-page.html how to create a custom error page -->
         <template type="error">error/error</template>
     </templates>
 

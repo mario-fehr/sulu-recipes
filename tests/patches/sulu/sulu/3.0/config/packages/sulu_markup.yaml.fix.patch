@@ -1,0 +1,11 @@
+Reason: (e) sulu/skeleton 3.0 links the Sulu 2.6 or unversioned docs, or the scheb 6.x docs.
+Evidence: Each new URL answers 200 without a redirect (curl, 2026-10-03); the anchor excluded-templates-optional exists on the 3.x webspaces page.
+
+--- a/config/packages/sulu_markup.yaml
++++ b/config/packages/sulu_markup.yaml
+@@ -1,4 +1,4 @@
+-# see also: https://docs.sulu.io/en/2.6/bundles/markup/index.html
++# see also: https://docs.sulu.io/3.x/bundles/markup/index.html
+ sulu_markup:
+     link_tag:
+         provider_attribute: 'data-provider'

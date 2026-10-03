@@ -1,0 +1,14 @@
+Reason: (e) sulu/skeleton 3.0 links the Sulu 2.6 or unversioned docs, or the scheb 6.x docs.
+Evidence: Each new URL answers 200 without a redirect (curl, 2026-10-03); the anchor excluded-templates-optional exists on the 3.x webspaces page.
+
+--- a/config/routes/sulu_admin.yaml
++++ b/config/routes/sulu_admin.yaml
+@@ -97,7 +97,7 @@
+     resource: "@SuluCustomUrlBundle/config/routing_admin_api.yaml"
+     prefix: /admin/api
+ 
+-# to enable audience targeting see: https://docs.sulu.io/en/2.6/bundles/audience_targeting.html
++# to enable audience targeting see: https://docs.sulu.io/3.x/bundles/audience_targeting.html
+ #sulu_audience_targeting_api:
+ #    resource: "@SuluAudienceTargetingBundle/Resources/config/routing_api.yaml"
+ #    prefix: /admin/api
