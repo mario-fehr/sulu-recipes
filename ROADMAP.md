@@ -11,9 +11,13 @@ Deferred ideas without a spec, one line each. Research starts when an item is pi
 
 - The 2.6 line.
 - The 3.1 line, once `sulu/skeleton` tags `3.1.0`; the harness already takes one pin file per line in `tests/lines/`.
-- Test Symfony 6.4 and 8.x against the `6.4/` recipe folders.
+- Test Symfony 6.4 and 8.x against the `6.4/` recipe folders, for the `sulu-flex-skeleton` path only (the bare install already runs on 8.1).
 - Check the recipes against every `3.0.x` tag, not only the pinned one.
-- Prove a bare `composer require sulu/sulu` (without `sulu/skeleton`'s package set): Sulu's config needs `scheb/2fa-bundle` and the web profiler routes, so the recipe would need to guard or drop those parts. Also: `/public/uploads` is then not gitignored, since only `sulu-flex-skeleton`'s hand-written `.gitignore` covers it.
+- Give packages from `sulu/skeleton`'s set that are installed after a bare install their Sulu config. 2FA (together with `scheb/2fa-email` and `scheb/2fa-trusted-device`) and the profiler routes already work. Check whether `scheb/2fa-bundle` alone boots, since `scheb_2fa.yaml` enables `email` and `trusted_device`, and check the other packages.
+- Loosen parity so recipe files may differ from `sulu/skeleton` on purpose. Not chosen for the bare install.
+- Support adding `sulu/sulu` to an existing project. Superseded recipes of installed packages need `composer recipes:install <package> --force`, which overwrites files; document or script it.
+- Add recipe versions of `doctrine/doctrine-bundle` below `2.13` (derived from the official `2.10` and `2.12`) and a `--prefer-lowest` bare run in CI.
+- Add a `symfony/framework-bundle/8.1/` version (the `6.4` of this repository plus the official `AGENTS.md` and `CLAUDE.md`), and before supporting Symfony 8.2, compare with the official `8.2` versions of `symfony/framework-bundle`, `symfony/security-bundle` and `symfony/web-profiler-bundle` and add a bare run on 8.2.
 
 ## CI and drift
 
