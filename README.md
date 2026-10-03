@@ -59,13 +59,15 @@ The harness clones the upstream repositories it reads into its work directory on
 - `tests/setup-tools.sh` installs the recipe checker.
 - `tests/build-endpoint.sh` lints the recipes and compiles the endpoint into `output/`.
 - `tests/install.sh` installs `sulu/sulu` into a fresh `symfony/skeleton` from that local endpoint.
-- `tests/install-bare.sh` installs `sulu/sulu` alone into a fresh `symfony/skeleton`, the version from `SULU_BARE_SYMFONY` (default `7.4`).
+- `tests/install-bare.sh` installs `sulu/sulu` alone into a fresh `symfony/skeleton`, the version from `SULU_BARE_SYMFONY` (default `7.4`). `SULU_BARE_DEPS=lowest` adds `--prefer-lowest` to `composer require sulu/sulu`, so only the packages that require adds drop to their lowest versions; the Symfony packages already in the fresh `symfony/skeleton` keep theirs; `SULU_BARE_LOCK=<name>` checks the recipe set against `tests/lines/<line>.bare-lock.<name>.txt`.
 - `tests/parity.sh` compares a `sulu-flex-skeleton` install with a `sulu/skeleton` install. It needs `SKELETON_DIR`, a clean `sulu-flex-skeleton` checkout.
 - `tests/style.sh` runs the style checks of `symfony/recipes` over the recipes; exceptions are listed with a reason in `tests/style-exceptions.txt`.
 
 Every pull request against `main` gets a preview endpoint on the branch `flex/pull-<number>`, linked in a comment on the pull request.
 
 The harness takes the repository name for the endpoint and the lock checks from the `origin` remote; `SULU_RECIPES_REPO=<owner>/<repo>` overrides it.
+
+CI runs the install on the PHP and MySQL versions `sulu/skeleton` tests, set per line in `tests/lines/<line>.env`; locally `SULU_MYSQL_VERSION` selects the MySQL image.
 
 CI runs all of them in `.github/workflows/qa.yml`.
 
