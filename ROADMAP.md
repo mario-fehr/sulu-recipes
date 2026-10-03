@@ -4,7 +4,7 @@ Deferred ideas without a spec, one line each. Research starts when an item is pi
 
 ## Hosting and publishing
 
-- Move both repos to the `sulu` GitHub org once proven; manifest content stays org-agnostic for that.
+- Move both repos to the `sulu` GitHub org once proven; manifest content stays org-agnostic for that, and the harness takes the repo name from the `origin` remote (`SULU_RECIPES_REPO` overrides it).
 - Register `sulu-flex-skeleton` on Packagist under its final name once the org move is done.
 
 ## Release lines and versions
@@ -17,7 +17,7 @@ Deferred ideas without a spec, one line each. Research starts when an item is pi
 - Loosen parity so recipe files may differ from `sulu/skeleton` on purpose. Not chosen for the bare install.
 - Support adding `sulu/sulu` to an existing project. Superseded recipes of installed packages need `composer recipes:install <package> --force`, which overwrites files; document or script it.
 - Add recipe versions of `doctrine/doctrine-bundle` below `2.13` (derived from the official `2.10` and `2.12`) and a `--prefer-lowest` bare run in CI.
-- Add a `symfony/framework-bundle/8.1/` version (the `6.4` of this repository plus the official `AGENTS.md` and `CLAUDE.md`), and before supporting Symfony 8.2, compare with the official `8.2` versions of `symfony/framework-bundle`, `symfony/security-bundle` and `symfony/web-profiler-bundle` and add a bare run on 8.2.
+- Add a `symfony/framework-bundle/8.1/` version (a copy of this repository's `6.4` version, without the `AGENTS.md` and `CLAUDE.md` that the official `8.1` recipe copies into the project), and before supporting Symfony 8.2, compare with the official `8.2` versions of `symfony/framework-bundle`, `symfony/security-bundle` and `symfony/web-profiler-bundle` and add a bare run on 8.2.
 
 ## CI and drift
 
@@ -27,7 +27,6 @@ Deferred ideas without a spec, one line each. Research starts when an item is pi
 - `pr-preview` and `flex-cleanup`, only once there are outside contributors; block symlinks and use `persist-credentials: false`.
 - A functional smoke test in CI (boot, build, admin login).
 - Move `qa.yml` and `drift.yml` from `ubuntu-24.04` to Ubuntu 26 once `setup-php` supports PHP 8.5 there; `ubuntu-latest` moves to Ubuntu 26 from 19 October 2026.
-- Harness polish left over from the milestone C review: check port 8000 before the endpoint build, notice a `php -S` that exits, a clear message when no install recorded `endpoint.tree`, labels in `checks.log`, a guard for an empty `require-dev` list, and a top-level-only `vendor` exclude in `parity.sh`.
 
 ## Content
 
