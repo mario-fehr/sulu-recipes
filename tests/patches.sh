@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Checks that every recipe file equals sulu/skeleton at the pin of every line plus its patches.
+# Usage: tests/patches.sh [<dir>]
 source "$(dirname "$0")/lib.sh"
 ROOT="$(cd "${1:-$REPO_ROOT}" && pwd -P)"
 PATCH_ROOT="$ROOT/tests/patches"

@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Copies an official recipe into this repository, taking each file sulu/skeleton has from sulu/skeleton.
+# Usage: bin/supersede.sh recipes|contrib <official-recipe-dir> <target-dir>
 source "$(dirname "$0")/../tests/lib.sh"
 repo="$1"; official="$2"; target="$REPO_ROOT/$3"
 case "$repo" in

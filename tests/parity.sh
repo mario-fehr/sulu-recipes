@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Compares a sulu-flex-skeleton install with a sulu/skeleton install.
+# Usage: SKELETON_DIR=<checkout> tests/parity.sh
+# Env: SKELETON_DIR SULU_RECIPES_REUSE
 source "$(dirname "$0")/lib.sh"
 : "${SKELETON_DIR:?set SKELETON_DIR to a clean sulu-flex-skeleton checkout}"
 [ -n "${SULU_PARITY_CONFIG:-}" ] || { echo "no SULU_PARITY_CONFIG in tests/lines/$SULU_LINE.env" >&2; exit 1; }

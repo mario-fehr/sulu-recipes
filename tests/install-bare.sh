@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Installs sulu/sulu alone into a fresh symfony/skeleton from the local endpoint and runs the checks.
+# Usage: tests/install-bare.sh
+# Env: SULU_BARE_SYMFONY SULU_BARE_DEPS SULU_BARE_LOCK
 source "$(dirname "$0")/lib.sh"
 upstream sulu-skeleton sulu/skeleton "$SULU_SKELETON_SHA"
 SULU_BARE_SYMFONY="${SULU_BARE_SYMFONY:-7.4}"

@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Rewrites the recipe files from sulu/skeleton at the pin plus their patches.
+# Usage: bin/sync-skeleton.sh [<recipe-dir>...]
 source "$(dirname "$0")/../tests/lib.sh"
 upstream sulu-skeleton sulu/skeleton "$SULU_SKELETON_SHA"
 failed=0

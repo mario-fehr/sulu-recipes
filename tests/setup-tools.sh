@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Installs symfony-tools/recipes-checker into .tools/, or updates it.
+# Usage: tests/setup-tools.sh
 source "$(dirname "$0")/lib.sh"
 
 if [ ! -d "$TOOLS/recipes-checker/.git" ]; then

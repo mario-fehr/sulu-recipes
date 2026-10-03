@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Prints the lines, install, install_push and bare matrices of qa.yml from tests/lines/*.env.
+# Usage: tests/matrix.sh [<line>]
 set -euo pipefail
 cd "$(dirname "$0")/lines"
 
