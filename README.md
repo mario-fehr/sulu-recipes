@@ -44,6 +44,8 @@ composer require sulu/sulu:~2.6.0 jackalope/jackalope-doctrine-dbal handcraftedi
 
 Sulu 2.6 needs a PHPCR transport, or Composer cannot resolve `sulu/sulu`. `zendsearch` backs the default search adapter.
 
+The `stage` environment (`.env.stage`) needs `symfony/monolog-bundle`; without it, `APP_ENV=stage` fails with `Container extension "monolog" is not registered`.
+
 `--no-install` matters: Flex applies a recipe only when it installs the package, and `symfony/skeleton` already contains `symfony/framework-bundle` and `symfony/console`. Their recipes (Sulu's kernel, `bin/console`) must come from this endpoint, so the endpoint has to be set before the first `composer install`. For the same reason the bare install does not work for an existing project.
 
 It needs `doctrine/doctrine-bundle` 2.13 or newer. A fresh project gets the newest version. A `doctrine/doctrine-bundle` below 2.13 installed together with `sulu/sulu` gets no Doctrine recipe from this endpoint.
