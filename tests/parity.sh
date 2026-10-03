@@ -84,6 +84,8 @@ compare() {
     done
   done
 } | sort > "$REPORT"
+check_servers
+[ "$FAILURES" -eq 0 ] || exit 1
 
 if diff <(sed 's/  #reason: .*$//' "$EXPECTED" | grep -v '^$' | sort) "$REPORT"; then
   echo "PASS parity: only documented differences"
