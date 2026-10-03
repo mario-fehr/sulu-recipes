@@ -35,6 +35,7 @@ Files <flex>/config/packages/mailer.yaml and <upstream>/config/packages/mailer.y
 Files <flex>/config/packages/messenger.yaml and <upstream>/config/packages/messenger.yaml differ  #reason: (d) official file plus sulu.yaml; effective config checked by debug:config
 Files <flex>/config/packages/monolog.yaml and <upstream>/config/packages/monolog.yaml differ  #reason: (d) official file plus sulu.yaml; effective config checked by debug:config
 Files <flex>/config/packages/routing.yaml and <upstream>/config/packages/routing.yaml differ  #reason: (d) official file plus sulu.yaml; effective config checked by debug:config
+Files <flex>/config/packages/scheb_2fa.yaml and <upstream>/config/packages/scheb_2fa.yaml differ  #reason: (d) email and trusted_device come from the scheb/2fa-email and scheb/2fa-trusted-device recipes; effective config checked by debug:config
 Files <flex>/config/packages/stof_doctrine_extensions.yaml and <upstream>/config/packages/stof_doctrine_extensions.yaml differ  #reason: (d) official file plus sulu.yaml; effective config checked by debug:config
 Files <flex>/config/packages/translation.yaml and <upstream>/config/packages/translation.yaml differ  #reason: (d) official file plus sulu.yaml; effective config checked by debug:config
 Files <flex>/config/routes.yaml and <upstream>/config/routes.yaml differ  #reason: (d) only a commented login example differs; debug:router identical
@@ -42,6 +43,8 @@ Files <flex>/README.md and <upstream>/README.md differ  #reason: (a) project ide
 Files <flex>/src/DataFixtures/AppFixtures.php and <upstream>/src/DataFixtures/AppFixtures.php differ  #reason: (b) official tooling and test file
 Files <flex>/symfony.lock and <upstream>/symfony.lock differ  #reason: (a) recipe repo, ref and version metadata only
 Files <flex>/tests/bootstrap.php and <upstream>/tests/bootstrap.php differ  #reason: (b) official tooling and test file
+Only in <flex>/config/packages: scheb_2fa_email.yaml  #reason: (d) email and trusted_device come from the scheb/2fa-email and scheb/2fa-trusted-device recipes; effective config checked by debug:config
+Only in <flex>/config/packages: scheb_2fa_trusted_device.yaml  #reason: (d) email and trusted_device come from the scheb/2fa-email and scheb/2fa-trusted-device recipes; effective config checked by debug:config
 Only in <flex>/config/packages: sulu.yaml  #reason: (d) carries Sulu values for non-superseded packages
 Only in <upstream>: .env.local  #reason: (b) APP_ENV=dev comes from the official .env instead of a generated .env.local
 .gitignore < sulu/sulu	/public/uploads/|  #reason: (d) /public/uploads/ in a sulu/sulu block as well as in sulu-flex-skeleton's own lines
