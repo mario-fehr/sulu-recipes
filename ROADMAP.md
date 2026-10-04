@@ -18,4 +18,4 @@ Deferred ideas without a spec, one line each. Research starts when an item is pi
 
 ## Content
 
-- Send the documentation fixes in `tests/patches/` upstream to `sulu/skeleton`; drift then reports them as no longer applying, and they can be dropped. A fix for both lines goes to the `2.6` branch of `sulu/skeleton`, which its maintainers merge into `3.0`; a fix with `Lines: 3.0` goes to `3.0`.
+- Send the `.fix.patch` files for files taken from `sulu/skeleton` (nine today) upstream to `sulu/skeleton`; drift then reports them as no longer applying, and they can be dropped. A fix in `sulu/sulu/<line>/` goes to that line's branch. A fix in a shared folder goes to the `2.6` branch, which the maintainers merge into `3.0`, unless `Lines: 3.0` limits it to `3.0`. The fix patches of official manifests (`manifest.json`, `post-install.txt`) carry Sulu choices such as MySQL and stay here.
