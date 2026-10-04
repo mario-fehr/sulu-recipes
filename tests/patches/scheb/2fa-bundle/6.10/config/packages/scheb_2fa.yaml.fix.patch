@@ -1,5 +1,5 @@
-Reason: (e) sulu/skeleton 3.0 links the Sulu 2.6 or unversioned docs, or the scheb 6.x docs.
-Evidence: Each new URL answers 200 without a redirect (curl, 2026-10-03); the anchor excluded-templates-optional exists on the 3.x webspaces page.
+Reason: (e) sulu/skeleton links the scheb/2fa-bundle 6.x docs, but both lines require scheb/2fa-bundle ^7.4.
+Evidence: sulu/skeleton composer.json at the pins in tests/lines/2.6.env and tests/lines/3.0.env requires ^7.4; https://symfony.com/bundles/SchebTwoFactorBundle/7.x/configuration.html answers 200 without a redirect (curl, 2026-10-04).
 
 --- a/config/packages/scheb_2fa.yaml
 +++ b/config/packages/scheb_2fa.yaml
