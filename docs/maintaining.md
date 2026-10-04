@@ -8,11 +8,19 @@ When: a drift issue reports a new `sulu/skeleton` tag of a line, or an official 
 
 1. Set `SULU_SKELETON_SHA` and `SULU_SKELETON_VERSION` in `tests/lines/<line>.env`, or `SYMFONY_RECIPES_SHA` or `SYMFONY_RECIPES_CONTRIB_SHA` in `tests/pins.env`.
 2. Run `SULU_LINE=<line> bin/sync-upstream.sh`. It rewrites the recipe files from the new pins in `tests/lines/<line>.env` and `tests/pins.env` and applies their patches. Files that a new upstream version adds are not picked up; copy those by hand.
-3. A file reported as `kept` has a patch that no longer applies. Edit the file and rewrite the patch with `bin/make-patch.sh`, or delete the patch if upstream took the change. `kept (removed upstream)` means `sulu/skeleton` or the official recipe no longer has the file: delete the patch and decide whether the recipe keeps the file.
-4. Run `tests/patches.sh` and the install harnesses of the line (`tests/install.sh`, `tests/install-bare.sh`, `tests/parity.sh`).
-5. Update `tests/lines/<line>.parity-expected.txt` and the bare-lock files only for differences you can explain.
+3. Sync `composer.json` of the `<line>` branch of `sulu-flex-skeleton` with `sulu/skeleton` at the new pin; the drift issue lists the changed keys. Only the identity keys, the endpoint and `post-root-package-install` may differ, so with that branch checked out in `SKELETON_DIR` this diff must print nothing:
 
-Files: `tests/lines/<line>.env` or `tests/pins.env`, the recipe files, `tests/patches/`, the expectation files of the line.
+   ```bash
+   . tests/lines/<line>.env
+   F='del(.name, .description, .authors, .homepage, .keywords, .support, .extra.symfony.endpoint, .scripts["post-root-package-install"])'
+   diff <(jq -S "$F" "$SKELETON_DIR/composer.json") <(git -C "${SULU_RECIPES_WORKDIR:-${TMPDIR:-/tmp}/sulu-recipes}/clones/sulu-skeleton" show "${SULU_SKELETON_SHA}:composer.json" | jq -S "$F")
+   ```
+
+4. A file reported as `kept` has a patch that no longer applies. Edit the file and rewrite the patch with `bin/make-patch.sh`, or delete the patch if upstream took the change. `kept (removed upstream)` means `sulu/skeleton` or the official recipe no longer has the file: delete the patch and decide whether the recipe keeps the file.
+5. Run `tests/patches.sh` and the install harnesses of the line (`tests/install.sh`, `tests/install-bare.sh`, `tests/parity.sh`).
+6. Update `tests/lines/<line>.parity-expected.txt` and the bare-lock files only for differences you can explain.
+
+Files: `tests/lines/<line>.env` or `tests/pins.env`, the recipe files, `tests/patches/`, the expectation files of the line, `composer.json` of `sulu-flex-skeleton`.
 
 ## Drift issue
 
@@ -20,7 +28,7 @@ When: `.github/workflows/drift.yml` runs `tests/drift.sh` every Monday at 06:00 
 
 The issue title tells you what moved:
 
-- `sulu/skeleton <line>: <tag> released`: a new tag of a line. The issue lists the changed files the recipes ship and whether each patch still applies to the new tag. Do a pin bump.
+- `sulu/skeleton <line>: <tag> released`: a new tag of a line. The issue lists the changed files the recipes ship and whether each patch still applies to the new tag, plus the changed `composer.json` keys if that file changed. Do a pin bump.
 - `Official recipe changed: <package>`: the official recipe of a package moved past `tests/pins.env`. If this repository supersedes the package, the issue says whether each of its patches still applies on `origin/main`. Do a pin bump, or record why the change does not fit. If the package is in `SULU_YAML_PACKAGES`, check that `config/packages/sulu.yaml` of the `sulu/sulu` recipe still fits, then bump the pin.
 - `sulu/skeleton: new line <minor>`: a new minor of `sulu/skeleton` has no line yet. Add a release line.
 
