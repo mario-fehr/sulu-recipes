@@ -16,6 +16,8 @@ When: a drift issue reports a new `sulu/skeleton` tag of a line, or an official 
    diff <(jq -S "$F" "$SKELETON_DIR/composer.json") <(git -C "${SULU_RECIPES_WORKDIR:-${TMPDIR:-/tmp}/sulu-recipes}/clones/sulu-skeleton" show "${SULU_SKELETON_SHA}:composer.json" | jq -S "$F")
    ```
 
+   Commit the synced `composer.json` on the `<line>` branch through a pull request. Once `qa` passes on the push, the `tag` job of its `ci.yml` tags the commit with `SULU_SKELETON_VERSION` from `tests/lines/<line>.env` on `main`. It fails while the branch's `sulu/sulu` constraint differs from the one in `sulu/skeleton` at that version, so merge the `sulu-recipes` pin bump first and the skeleton pull request right after. If the `tag` job failed because the constraints differed, sync whichever side is behind, then use "Re-run failed jobs" on that push run. The re-run reads `main` again and tags the commit. In the next merge-up the constraint conflicts; keep the target's.
+
 4. A file reported as `kept` has a patch that no longer applies. Edit the file and rewrite the patch with `bin/make-patch.sh`, or delete the patch if upstream took the change. `kept (removed upstream)` means `sulu/skeleton` or the official recipe no longer has the file: delete the patch and decide whether the recipe keeps the file.
 5. Run `tests/patches.sh` and the install harnesses of the line (`tests/install.sh`, `tests/install-bare.sh`, `tests/parity.sh`).
 6. Update `tests/lines/<line>.parity-expected.txt` and the bare-lock files only for differences you can explain.
@@ -55,10 +57,22 @@ When: a drift issue reports a new minor of `sulu/skeleton`.
 2. Create `sulu/sulu/<line>/` from the `sulu/skeleton` tag.
 3. Create `tests/lines/<line>.parity-expected.txt`. Create `tests/lines/<line>.bare-lock.txt` for the runs in `SULU_BARE_RUNS` that have no lock name, and `tests/lines/<line>.bare-lock.<name>.txt` for each lock name.
 4. Check both ends of the version range: `composer require` and `--prefer-lowest`, and which recipe version Flex selects for each package. If the lowest run does not boot because of an upstream version, raise it with `SULU_BARE_LOWEST_FLOOR`.
-5. Create a `<line>` branch in `sulu-flex-skeleton`.
+5. Create the `<line>` branch of `sulu-flex-skeleton` from the highest line branch, then change its line-specific values: `composer.json` from `sulu/skeleton`, the `push` branch and `line` in `ci.yml`, and the version in the `README.md` intro and `create-project` line. Merge-ups then run from the previous highest line into it. Until `tests/lines/<line>.env` is on `main`, `qa` and `tag` fail on that branch. Once it is merged, use "Re-run failed jobs" on the branch's push run.
 6. Update branch protection for `main` and the new skeleton branch.
 
 Files: `tests/lines/<line>.*`, `sulu/sulu/<line>/`, the skeleton branch.
+
+## Skeleton merge-up
+
+When: a change for all lines was merged into the lowest line branch of `sulu-flex-skeleton`.
+
+1. Run `git switch -c merge-up/<from>-<to> origin/<to>` and `git merge origin/<from>`.
+2. Resolve conflicts to the target's line-specific values: its `sulu/sulu` constraint, the `push` branch and `line` in `ci.yml`, and the version in the `README.md` intro and `create-project` line. If a conflict is in shared text where the target still has the old version, take the source's side. Never run `git checkout --theirs` on a whole file, which would take the lower line's values.
+3. Check that `jq -r '.require["sulu/sulu"]' composer.json` still prints the target's constraint and that `git diff origin/<to> HEAD` shows only the merged change.
+4. Open a pull request into `<to>` and merge it with a merge commit (`gh pr merge --merge`). Never squash or rebase, which drop the merge parent.
+5. Repeat for the next higher line.
+
+Files: the line branches of `sulu-flex-skeleton`.
 
 ## Branch protection
 
