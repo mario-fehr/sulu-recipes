@@ -10,7 +10,6 @@ Deferred ideas without a spec, one line each. Research starts when an item is pi
 ## Release lines and versions
 
 - The 3.1 line, once `sulu/skeleton` tags `3.1.0`; the harness already takes one pin file per line in `tests/lines/`.
-- Support adding `sulu/sulu` to an existing project. Superseded recipes of installed packages need `composer recipes:install <package> --force`, which overwrites files; document or script it.
 - When Symfony 8.2.0 is released, follow "New Symfony minor" in `docs/maintaining.md`; the `8.2-dev` bare run becomes `8.2`.
 
 ## CI and drift

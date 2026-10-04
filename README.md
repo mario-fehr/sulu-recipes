@@ -52,6 +52,10 @@ The `stage` environment (`.env.stage`) needs `symfony/monolog-bundle`; without i
 
 It needs `doctrine/doctrine-bundle` 2.13 or newer. A fresh project gets the newest version. A `doctrine/doctrine-bundle` below 2.13 installed together with `sulu/sulu` gets no Doctrine recipe from this endpoint.
 
+### Adding Sulu to an existing Symfony project
+
+I recommend starting a new project from `sulu-flex-skeleton` (see Usage above) and moving your existing code into it. Flex applies a recipe only when it installs the package, and in an existing project the packages Sulu's recipes replace (`symfony/framework-bundle`, `symfony/console`, `symfony/security-bundle`, `doctrine/doctrine-bundle` and others) are already installed, so the recipes would have to overwrite files you have usually changed: the kernel, the front controller, the console, the security and Doctrine config, `.env` and `compose.yaml`. Sulu describes the same approach in [Adding Sulu CMS to an existing Symfony project](https://sulu.io/blog/adding-sulu-cms-to-an-existing-symfony-project).
+
 ### Updating recipes
 
 Four recipe moves affect existing projects. The 2FA config (the `two_factor` firewall block and the `^/admin/2fa` access rule) moved from the `symfony/security-bundle` recipe to the add-lines of the `scheb/2fa-bundle` recipe. `templates/base.html.twig` and `config/packages/security.yaml` moved from the `symfony/twig-bundle` and `symfony/security-bundle` recipes into the `sulu/sulu` recipe, so they can differ between Sulu 2.6 and 3.0. Also, `config/routes/web_profiler_admin.yaml` moved from `sulu/sulu` to `symfony/web-profiler-bundle`, so `composer recipes:update sulu/sulu` removes the admin profiler routes. The `email` and `trusted_device` options moved from `config/packages/scheb_2fa.yaml` of `scheb/2fa-bundle` into `config/packages/scheb_2fa_email.yaml` and `config/packages/scheb_2fa_trusted_device.yaml`, which the new `scheb/2fa-email` and `scheb/2fa-trusted-device` recipes ship.
