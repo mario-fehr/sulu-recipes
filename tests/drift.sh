@@ -74,6 +74,16 @@ for line in $lines; do
     echo "Other changed files:"
     echo
     list "$others"
+    if grep -Fxq composer.json <<<"$changed"; then
+      echo
+      echo "Changed \`composer.json\` keys (sync \`sulu-flex-skeleton\`):"
+      echo
+      list "$(jq -n -r --slurpfile a <(git -C "$SKEL" show "$pin_sha:composer.json") --slurpfile b <(git -C "$SKEL" show "$latest:composer.json") '
+        def cut: .[:(map(type == "number") | index(true) // length)] | if .[0] == "extra" then .[:3] else .[:2] end;
+        $a[0] as $a | $b[0] as $b
+        | [$a, $b] | map([paths(type != "object") | cut]) | add | unique
+        | map(select(. as $p | ($a | getpath($p)) != ($b | getpath($p))))[] | join(".")')"
+    fi
   } > "$OUT/skeleton-$line.md"
 done
 unset PATCH_LINE

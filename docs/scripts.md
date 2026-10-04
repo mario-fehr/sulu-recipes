@@ -58,7 +58,7 @@ Installs `sulu-flex-skeleton` from the checkout in `SKELETON_DIR` and `sulu/skel
 
 `tests/drift.sh`
 
-Reports where `sulu/skeleton` or an official recipe moved past its pin, one file per finding in `$WORK/drift/`. It reads the clones in `$WORK/clones/`. `.github/workflows/drift.yml` runs it weekly and turns the files into issues.
+Reports where `sulu/skeleton` or an official recipe moved past its pin, one file per finding in `$WORK/drift/`. It reads the clones in `$WORK/clones/`. `.github/workflows/drift.yml` runs it weekly and turns the files into issues. If `composer.json` of `sulu/skeleton` changed, the report for that line also lists the changed keys, cut after two levels (three under `extra`). `sulu-flex-skeleton` has to follow them (see "Pin bump" in `docs/maintaining.md`).
 
 ### tests/matrix.sh
 
