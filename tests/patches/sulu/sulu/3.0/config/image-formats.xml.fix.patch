@@ -1,5 +1,5 @@
-Reason: (e) sulu/skeleton 3.0 links the Sulu 2.6 or unversioned docs, or the scheb 6.x docs.
-Evidence: Each new URL answers 200 without a redirect (curl, 2026-10-03); the anchor excluded-templates-optional exists on the 3.x webspaces page.
+Reason: (e) sulu/skeleton 3.0 links the unversioned latest Sulu docs on image formats.
+Evidence: https://docs.sulu.io/3.x/book/image-formats.html answers 200 without a redirect (curl, 2026-10-04).
 
 --- a/config/image-formats.xml
 +++ b/config/image-formats.xml

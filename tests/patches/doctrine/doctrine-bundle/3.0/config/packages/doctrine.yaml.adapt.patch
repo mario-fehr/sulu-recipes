@@ -1,5 +1,5 @@
 Reason: (f) The official doctrine/doctrine-bundle 2.13 -> 3.0 recipe changes: DoctrineBundle 3 removed use_savepoints, auto_generate_proxy_classes, enable_lazy_ghost_objects, report_fields_where_declared, controller_resolver and proxy_dir, and uses the underscore naming strategy.
-Evidence: Derived from this repository's 2.13 plus the official 2.13 -> 3.0 diff at SYMFONY_RECIPES_SHA (bare install plan, derivation-ok).
+Evidence: The lines changed by this repository's doctrine-bundle 2.13 -> 3.0 diff equal those of the official doctrine/doctrine-bundle 2.13 -> 3.0 diff at SYMFONY_RECIPES_SHA (git diff, 2026-10-04).
 
 --- a/config/packages/doctrine.yaml
 +++ b/config/packages/doctrine.yaml
