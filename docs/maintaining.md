@@ -66,10 +66,10 @@ Files: `tests/lines/<line>.*`, `sulu/sulu/<line>/`, the skeleton branch.
 
 When: a change for all lines was merged into the lowest line branch of `sulu-flex-skeleton`.
 
-1. Run `git switch -c merge-up/<from>-<to> origin/<to>` and `git merge origin/<from>`.
+1. Run `git switch -c merge-up/<from>-<to> origin/<to>` and `git merge origin/<from> -m "Merge branch '<from>' into <to>"`.
 2. Resolve conflicts to the target's line-specific values: its `sulu/sulu` constraint, the `push` branch and `line` in `ci.yml`, and the version in the `README.md` intro and `create-project` line. If a conflict is in shared text where the target still has the old version, take the source's side. Never run `git checkout --theirs` on a whole file, which would take the lower line's values.
 3. Check that `jq -r '.require["sulu/sulu"]' composer.json` still prints the target's constraint and that `git diff origin/<to> HEAD` shows only the merged change.
-4. Open a pull request into `<to>` and merge it with a merge commit (`gh pr merge --merge`). Never squash or rebase, which drop the merge parent.
+4. Open a pull request into `<to>` so the required checks run on the merge commit. Once they pass, fast-forward `<to>` with `git push origin merge-up/<from>-<to>:<to>`, which keeps the single merge commit and marks the pull request as merged. If GitHub rejects the push, merge the pull request with a merge commit (`gh pr merge --merge`) instead, which adds a second merge commit. Never squash or rebase, which drop the merge parent.
 5. Repeat for the next higher line.
 
 Files: the line branches of `sulu-flex-skeleton`.
