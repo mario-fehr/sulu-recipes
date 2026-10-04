@@ -18,6 +18,5 @@ Deferred ideas without a spec, one line each. Research starts when an item is pi
 
 ## Content
 
-- Spike to decide whether a trimmed `require` and `require-dev` is worth proposing upstream to `sulu/skeleton`; `sulu-flex-skeleton` stays identical to `sulu/skeleton`, so drift and parity stay meaningful. Run it with `tests/install.sh` and `tests/parity.sh` on a scratch branch in two variants: (a) without the fully redundant `symfony/monolog-bridge`, `symfony/error-handler` and `symfony/css-selector`; (b) without everything another required package brings, keeping the version limits through `extra.symfony.require` and `conflict`. Record the resolved versions, the selected recipe folders, parity, whether the project boots, and whether Flex unconfigures a recipe when a package is dropped.
 - Spike: minimal recipes, accepted by effective config (`debug:config`, `debug:router`) instead of file parity.
 - Send the documentation fixes in `tests/patches/` upstream to `sulu/skeleton`; drift then reports them as no longer applying, and they can be dropped. A fix for both lines goes to the `2.6` branch of `sulu/skeleton`, which its maintainers merge into `3.0`; a fix with `Lines: 3.0` goes to `3.0`.
